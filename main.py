@@ -78,13 +78,14 @@ class Lexer(object):
 
 	# 跳过一些不需要分析的词法，比如空白字符 & /**/注释
 	def If_skip_word(self,index):
+		# print("If_skip_word",source_stream[index],source_stream[index+1])
 		# 空白字符
 		if source_stream[index] == '\n' or source_stream[index] == '\t' or \
 			source_stream[index] == ' ' or source_stream[index] == '\r':
 			# print("skip",source_stream[index])
-			return index + 1
+			index += 1
 		# 注释 ,识别 /* */
-		if source_stream[index] == '/' and source_stream[index+1] == '*':
+		if index < len(source_stream) and source_stream[index] == '/' and source_stream[index+1] == '*':
 			index_temp = index
 			while index_temp < len(source_stream):
 				if source_stream[index_temp] == '*' and source_stream[index_temp+1] == '/':
