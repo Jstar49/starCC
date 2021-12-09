@@ -7,6 +7,8 @@ source_stream = ""
 
 # 操作符
 operatorList = ['+','-','*','/','=','&','|','>','<','>=','<=','++','--','!=','==']
+# 特殊符号
+specialChar = [	'(',')','[',']','{','}',',',';','\"']
 # 关键字
 keyWords = [
 	'int','double','float','char','void','for','while','if','else','do','return','include'
@@ -41,12 +43,16 @@ keyWords_Token = {
 	'--':'T_subsub',
 	'!=':'T_notequal',
 	'==':'T_equal',
+	'#':'T_sharp',
 	'(':'T_l1_bracket',
 	')':'T_r1_bracket',
 	'[':'T_l2_bracket',
 	']':'T_r2_bracket',
 	'{':'T_l3_braket',
 	'}':'T_r3_braket',
+	',':'T_comma',
+	';':'T_semicolon',
+	'\"':'T_quote'
 }
 # 其他Token
 other_Token = {
@@ -73,7 +79,8 @@ class Lexer(object):
 	# 跳过一些不需要分析的词法，比如空白字符 & /**/注释
 	def If_skip_word(self,index):
 		# 空白字符
-		if source_stream[index] == '\n' or source_stream[index] == '\t' or source_stream[index] == ' ' or source_stream[index] == '\r':
+		if source_stream[index] == '\n' or source_stream[index] == '\t' or \
+			source_stream[index] == ' ' or source_stream[index] == '\r':
 			# print("skip",source_stream[index])
 			return index + 1
 		# 注释 ,识别 /* */
@@ -84,23 +91,51 @@ class Lexer(object):
 					index_temp += 2
 					break
 				index_temp +=1
-			# print(source_stream[index:index_temp])
-			# print(source_stream[index_temp])
+			print(source_stream[index:index_temp])
+			print(source_stream[index_temp])
 			return index_temp
 		return index
 
 	def lexer(self):
 		word_num = 0
 		while word_num < len(source_stream):
+			# print(source_stream[word_num],source_stream[word_num+1])
 			# 判断是否为注释或者不需要分析的词法
 			word_num = self.If_skip_word(word_num)
 			if word_num >= len(source_stream):
 				break;
 			# print(word_num)
-			# 是否为引入头文件，或者16进制数
+			# 是否为引入头文件
 			if source_stream[word_num] == "#":
+				# word_num += 1
+				tk_str = source_stream[word_num]
+				# 收纳 '#'
+				self.tokens.append(Token(tk_str,tk_str))
 				word_num += 1
-			#  是下划线或者字母
+				# 匹配 'include'
+				if source_stream[word_num:word_num+7] == "include":
+					tk_str = source_stream[word_num:word_num+7]
+					self.tokens.append(Token(tk_str,tk_str))
+					word_num += 7
+					word_num = self.If_skip_word(word_num)
+					# 匹配 '\"' 和 '<'
+					if source_stream[word_num] == '\"' or source_stream[word_num] == '<':
+						end_char = '\"' if source_stream[word_num]=='\"' else '>'
+						tk_str = source_stream[word_num]
+						self.tokens.append(Token(tk_str,tk_str))
+						word_num += 1
+						tk_str = ''
+						while word_num < len(source_stream):
+							if source_stream[word_num] == end_char:
+								break
+							tk_str += source_stream[word_num]
+							word_num += 1
+						self.tokens.append(Token("identifier",tk_str))
+						word_num = self.If_skip_word(word_num)
+				else:
+					print("Error :'#' must used with 'include'.")
+					exit()
+			# 是下划线或者字母
 			elif source_stream[word_num] == "_" or source_stream[word_num].isalpha():
 				tk_str = ""
 				while word_num < len(source_stream) and \
@@ -124,15 +159,47 @@ class Lexer(object):
 					word_num += 1
 				# 识别为整型常量
 				self.tokens.append(Token("constant",tk_str))
-
 			# 是运算符
 			elif source_stream[word_num] in operatorList:
-				word_num += 1
+				# word_num = self.If_skip_word(word_num)
 				tk_str = ''
-				
+				# ++ | --
+				if (source_stream[word_num] == '+' or source_stream[word_num] == '-') and \
+					source_stream[word_num] == source_stream[word_num+1]:
+					tk_str += source_stream[word_num]
+					tk_str += source_stream[word_num+1]
+					word_num += 2
+					self.tokens.append(Token(tk_str,tk_str))
+				# >= | <= 
+				elif (source_stream[word_num] == '>' or source_stream[word_num] == '<') and \
+					source_stream[word_num+1] == '=':
+					tk_str += source_stream[word_num]
+					tk_str += source_stream[word_num+1]
+					word_num += 2
+					self.tokens.append(Token(tk_str,tk_str))
+				else:
+					tk_str += source_stream[word_num]
+					self.tokens.append(Token(tk_str,tk_str))
+					word_num +=1
 			# 是特殊符号
-			else:
+			elif source_stream[word_num] in specialChar:
+				# print(source_stream[word_num],source_stream[word_num+1])
+				tk_str = source_stream[word_num]
+				self.tokens.append(Token(tk_str,tk_str))
 				word_num += 1
+				# 遇到 '\"' ,匹配字符串
+				if source_stream[word_num-1] == '\"':
+					tk_str = ''
+					while word_num < len(source_stream):
+						if source_stream[word_num] == '\"':
+							break
+						tk_str += source_stream[word_num]
+						word_num += 1
+					self.tokens.append(Token("string",tk_str))
+					tk_str = source_stream[word_num]
+					self.tokens.append(Token(tk_str,tk_str))
+					word_num += 1
+				word_num = self.If_skip_word(word_num)
 			# word_num += 1
 
 def lexer():
