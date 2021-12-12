@@ -1,0 +1,18 @@
+// root
+digraph {
+	None [label=root]
+	0 [label=Statement]
+	None -> 0
+	1 [label=a]
+	0 -> 1
+	2 [label=10]
+	1 -> 2
+	3 [label=b]
+	0 -> 3
+	4 [label=0]
+	3 -> 4
+	5 [label=c]
+	0 -> 5
+	6 [label=Statement]
+	None -> 6
+}

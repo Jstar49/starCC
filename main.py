@@ -1,11 +1,20 @@
 import sys
 
 from starcc.lexer import Lexer
+from starcc.parse import Parse
 
 file_name = ""
 
 source_stream = ""
 
+
+
+def parse():
+	lexer = Lexer(source_stream)
+	lexer.lexer()
+	parse = Parse(lexer.tokens)
+	parse.parse()
+	parse.drawTree()
 
 def lexer():
 	lexer = Lexer(source_stream)
@@ -26,3 +35,5 @@ if __name__ == '__main__':
 			# print(len(source_stream))
 		elif opt == "-l":
 			lexer()
+		elif opt == "-p":
+			parse()

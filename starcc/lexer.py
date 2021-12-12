@@ -15,8 +15,6 @@ keyWords = [
 # 关键字,操作符 Token
 keyWords_Token = {
 	'int':'T_int',
-	'double':'T_double',
-	'float':'T_float',
 	'char':'T_char',
 	'void':'T_void',
 	'for':'T_for',
