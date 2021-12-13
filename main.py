@@ -15,7 +15,7 @@ def parse():
 	for i in lexer.tokens:
 		print("(%s, %s)" % (i.type,i.value))
 	parse = Parse(lexer.tokens)
-	parse.parse()
+	parse.main()
 	parse.drawTree()
 
 def lexer():

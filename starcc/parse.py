@@ -1,8 +1,9 @@
 # from graphviz import Digraph
 import graphviz
 import os
-# os.environ["PATH"] += os.pathsep + 'E:/Graphviz/bin'
-os.environ["PATH"] += os.pathsep + 'G:/Graphviz/bin'
+
+os.environ["PATH"] += os.pathsep + 'E:/Graphviz/bin'
+# os.environ["PATH"] += os.pathsep + 'G:/Graphviz/bin'
 dot = graphviz.Digraph(comment='root')
 
 def dot_exam():
@@ -45,7 +46,7 @@ class Tree(object):
 		dot.node(str(gram_node.dot_num),gram_node.key)
 		for i in gram_node.children:
 			self.dot_tree_in(i,gram_node)
-		print(dot.source)
+		# print(dot.source)
 		# dot.render('round-table.gv', view=True)
 		dot.render('round-table.gv')
 
@@ -57,13 +58,13 @@ class Parse(object):
 		self.dot_num = 0
 
 	# 是变量声明语句
-	def VarDeclaration(self,index):
+	def VarDeclaration(self,index,gram_root):
 		# VarDeclaration 节点
 		state_tree = Tree('VarDeclaration')
 		state_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		state_tree.type = self.tokens[index].type
-		self.grammar_tree.add_child(state_tree)
+		gram_root.add_child(state_tree)
 		# VarDeclaration 节点的左孩子,一个 Type 节点, 记录声明的变量的类型
 		type_tree = Tree(self.tokens[index].type)
 		type_tree.token = self.tokens[index]
@@ -119,7 +120,7 @@ class Parse(object):
 				index += 1
 
 	# 函数声明语句
-	def FuncDeclaration(self,index):
+	def FuncDeclaration(self,index,gram_root):
 		'''
 		# 两种类型的函数声明 :
 		# Type identifier(args);
@@ -130,7 +131,7 @@ class Parse(object):
 		state_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		state_tree.type = self.tokens[index].type
-		self.grammar_tree.add_child(state_tree)
+		gram_root.add_child(state_tree)
 		# FuncDeclaration 节点的左孩子,一个 Type 节点, 记录声明的变量的类型
 		type_tree = Tree(self.tokens[index].type)
 		type_tree.token = self.tokens[index]
@@ -153,10 +154,57 @@ class Parse(object):
 		args_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		state_tree.add_child(args_tree)
-		# while index <len(self.tokens):
-		# 	# 遇到了右括号 ')' 结束参数匹配
-		# 	if self.tokens[index].type == 'T_r1_bracket':
-		# 		break
+		index += 1
+		# print(self.tokens[index].value)
+		while index <len(self.tokens):
+			# 遇到了右括号 ')' 结束参数匹配
+			if self.tokens[index].type == 'T_r1_bracket':
+				break
+			elif self.tokens[index].type == 'T_int' or self.tokens[index].type == 'T_char':
+				# 函数参数节点
+				arg_tree = Tree("arg")
+				arg_tree.dot_num = self.dot_num
+				self.dot_num += 1
+				args_tree.add_child(arg_tree)
+				# 函数参数Type节点
+				arg_type_tree = Tree(self.tokens[index].type)
+				arg_type_tree.dot_num = self.dot_num
+				self.dot_num += 1
+				arg_tree.add_child(arg_type_tree)
+				# 函数参数修饰符节点
+				index += 1
+				var_name = self.tokens[index].value
+				# 参数是数组
+				if self.tokens[index+1].type == 'T_l2_bracket':
+					# print(self.tokens[index].value)
+					arr_var = ''
+					while index < len(self.tokens) and self.tokens[index].type != 'T_r2_bracket':
+						# print(self.tokens[index].value)
+						arr_var += self.tokens[index].value
+						index += 1
+					arr_var += self.tokens[index].value
+					var_name = arr_var
+				arg_iden_tree = Tree(var_name)
+				arg_iden_tree.dot_num = self.dot_num
+				self.dot_num += 1
+				arg_tree.add_child(arg_iden_tree)
+				index += 1
+			else:
+				index += 1
+		index += 1
+		# print(self.tokens[index].type)
+		# 该函数声明有代码块
+		if self.tokens[index].type == 'T_l3_braket':
+			# print("block")
+			block_tree = Tree("Stmt")
+			block_tree.dot_num = self.dot_num
+			self.dot_num += 1
+			state_tree.add_child(block_tree)
+			index = self.parse(index,block_tree)
+			# print(self.tokens[index].type)
+			# print(len(self.tokens))
+			# self.printhello()
+		index += 1
 		return index
 
 	def retTokenType(self,index):
@@ -170,20 +218,27 @@ class Parse(object):
 					retType = 'FuncDeclaration'
 			return retType
 
-	def parse(self):
-		index = 0
+	def parse(self,index_init,gram_root):
+		index = index_init
 		while index < len(self.tokens):
 			# print(self.tokens[index].type,self.tokens[index].value)
-			if self.tokens[index].value == 'main':
-				return
+			if self.tokens[index].type == 'T_r3_braket':
+				return index
 			# 遇到了类型token，很可能是一个变量声明
 			if self.retTokenType(index) == 'VarDeclaration':
-				index = self.VarDeclaration(index)
+				index = self.VarDeclaration(index,gram_root)
 			elif self.retTokenType(index) == 'FuncDeclaration':
-				index = self.FuncDeclaration(index)
+				index = self.FuncDeclaration(index,gram_root)
 			# self.tstack.append(self.tokens[index])
 			else:
 				index += 1
+		return index
+
+	def main(self):
+		index = self.parse(0,self.grammar_tree)
+
+	def printhello(self):
+		print("hello world")
 
 	def drawTree(self):
 		self.grammar_tree.Print_tree(self.grammar_tree)
