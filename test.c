@@ -1,8 +1,12 @@
-//#include<stdio.h>
+
 
 /* 你好 */
 int a = 10,b=0,c;
-//char ch='s';
+char ch[10]="hello";
+void play();
+int func(){
+	return 10;
+}
 
 int main(){
 	int i,j;

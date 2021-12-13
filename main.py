@@ -12,6 +12,8 @@ source_stream = ""
 def parse():
 	lexer = Lexer(source_stream)
 	lexer.lexer()
+	for i in lexer.tokens:
+		print("(%s, %s)" % (i.type,i.value))
 	parse = Parse(lexer.tokens)
 	parse.parse()
 	parse.drawTree()
