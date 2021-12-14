@@ -11,6 +11,7 @@ int func(){
 	// i = for;
 	// i = fung(i,j);
 	i = j+9*1-5;
+	j = i + 4-1*9;
 }
 
 

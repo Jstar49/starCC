@@ -214,19 +214,43 @@ class Parse(object):
 		iden_node = Tree(self.tokens[stmt_list[2]+1].value)
 		iden_node.dot_num = self.dot_num
 		self.dot_num += 1
-		if operator_priority[stmt_list[0]] >= operator_priority[stmt_syntax_list[0][0]]:
+		if len(stmt_syntax_list) == 0:
+			print("line 218",op_node.key,gram_root.key,iden_node.key)
 			op_node.add_child(gram_root)
 			op_node.add_child(iden_node)
 			return op_node
+		elif operator_priority[stmt_list[0]] >= operator_priority[stmt_syntax_list[0][0]]:
+			print(">=")
+			op_node.add_child(gram_root)
+			op_node.add_child(iden_node)
+			print('line 221',op_node.key,gram_root.key,iden_node.key)
+			# print(op_node.key)
+			ret_node = self.analyse_deeply(stmt_syntax_list,op_node)
+			print('line 229',ret_node.key)
+			# ret_node.add_child(op_node)
+			return ret_node
 		else:
-			# stmt_syntax_list.pop(0)
-			# op_node.add_child(gram_root)
-			op_node.add_child(self.analyse_deeply(stmt_syntax_list,iden_node))
 			if stmt_list[0] == '=':
-				return op_node
+				print("line 226",op_node.key)
+				ret_node = self.analyse_deeply(stmt_syntax_list,iden_node)
+				print('line 230',ret_node.key,iden_node.key)
+				# ret_node.add_child(iden_node)
+				# ret_node.add_child()
+				# self.analyse_deeply(stmt_syntax_list,iden_node).add_child(op_node)
+				return ret_node
 			else:
+				print("<")
+				print('line 238',op_node.key,gram_root.key,iden_node.key)
+				# gram_root.add_child(op_node)
+				# op_node.add_child(gram_root)
+				ret_node = self.analyse_deeply(stmt_syntax_list,iden_node)
+				print('line 242',op_node.key)
+				print('line 243',ret_node.key)
+				print('line 244',gram_root.key)
+				# op_node.add_child(self.analyse_deeply(stmt_syntax_list,iden_node))
 				op_node.add_child(gram_root)
-		return op_node
+				op_node.add_child(ret_node)
+				return op_node
 		
 	# 语句
 	def Statemet(self,index,gram_root):
@@ -238,7 +262,7 @@ class Parse(object):
 		if self.tokens[index].type == 'T_l1_bracket':
 			pass
 		stmt_syntax_list =[]
-		tmp = ['=',self.tokens[index].type,index]
+		tmp = ['=',self.tokens[index].type,index-1]
 		stmt_syntax_list.append(tmp)
 		index_tmp = index+1
 		while self.tokens[index_tmp].type != 'T_semicolon' and self.tokens[index_tmp].type != 'T_comma' \
@@ -247,12 +271,14 @@ class Parse(object):
 			tmp = [self.tokens[index_tmp].type,self.tokens[index_tmp+1].type,index_tmp]
 			stmt_syntax_list.append(tmp)
 			index_tmp += 2
-		print(stmt_syntax_list)
+		# print(stmt_syntax_list)
 		gram_root.add_child(self.analyse_deeply(stmt_syntax_list,gram_root))
 		# state_tree = Tree("Statemet")
 		# state_tree.dot_num = self.dot_num
 		# self.dot_num += 1
 		# gram_root.add_child(state_tree)
+		print(self.tokens[index_tmp].value)
+		index = index_tmp
 		return index+1
 
 	# 标识符
