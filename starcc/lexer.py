@@ -91,8 +91,14 @@ class Lexer(object):
 					index_temp += 2
 					break
 				index_temp +=1
-			# print(self.source_stream[index:index_temp])
-			# print(self.source_stream[index_temp])
+			return index_temp
+		if index < len(self.source_stream) and self.source_stream[index] == '/' and self.source_stream[index+1] == '/':
+			index_temp = index
+			while index_temp < len(self.source_stream):
+				if self.source_stream[index_temp] == '\n':
+					index_temp += 1
+					break
+				index_temp +=1
 			return index_temp
 		return index
 

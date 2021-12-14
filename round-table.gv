@@ -3,72 +3,44 @@ digraph {
 	None [label=root]
 	0 [label=VarDeclaration]
 	None -> 0
-	1 [label=T_int]
+	1 [label=T_char]
 	0 -> 1
 	2 [label=Identifier]
 	0 -> 2
-	3 [label=a]
+	3 [label="ch[10]"]
 	2 -> 3
-	4 [label=10]
+	4 [label=hello]
 	3 -> 4
-	5 [label=b]
+	5 [label="sh[]"]
 	2 -> 5
-	6 [label=0]
-	5 -> 6
-	7 [label=c]
-	2 -> 7
-	8 [label=VarDeclaration]
-	None -> 8
-	9 [label=T_char]
+	6 [label=FuncDeclaration]
+	None -> 6
+	7 [label=T_int]
+	6 -> 7
+	8 [label=Identifier]
+	6 -> 8
+	9 [label=func]
 	8 -> 9
-	10 [label=Identifier]
-	8 -> 10
-	11 [label="ch[10]"]
-	10 -> 11
-	12 [label=hello]
+	10 [label=Args]
+	6 -> 10
+	11 [label=Stmt]
+	6 -> 11
+	12 [label=Assign]
 	11 -> 12
-	13 [label=FuncDeclaration]
-	None -> 13
-	14 [label=T_int]
-	13 -> 14
-	15 [label=Identifier]
-	13 -> 15
-	16 [label=fung]
-	15 -> 16
-	17 [label=Args]
-	13 -> 17
-	18 [label=arg]
-	17 -> 18
-	19 [label=T_int]
-	18 -> 19
-	20 [label=ars]
-	18 -> 20
-	21 [label=arg]
-	17 -> 21
-	22 [label=T_char]
-	21 -> 22
-	23 [label="ss[10]"]
-	21 -> 23
-	24 [label=FuncDeclaration]
-	None -> 24
-	25 [label=T_int]
-	24 -> 25
-	26 [label=Identifier]
-	24 -> 26
-	27 [label=func]
-	26 -> 27
-	28 [label=Args]
-	24 -> 28
-	29 [label=Stmt]
-	24 -> 29
-	30 [label=VarDeclaration]
-	29 -> 30
-	31 [label=T_int]
-	30 -> 31
-	32 [label=Identifier]
-	30 -> 32
-	33 [label=j]
-	32 -> 33
-	34 [label=10]
-	33 -> 34
+	14 [label="="]
+	12 -> 14
+	13 [label=i]
+	14 -> 13
+	15 [label=j]
+	14 -> 15
+	17 [label="+"]
+	15 -> 17
+	19 [label="*"]
+	17 -> 19
+	18 [label=9]
+	19 -> 18
+	20 [label=1]
+	19 -> 20
+	16 [label="+"]
+	17 -> 16
 }
