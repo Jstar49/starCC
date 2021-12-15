@@ -211,9 +211,19 @@ class Parse(object):
 		op_node = Tree(self.tokens[stmt_list[2]].value)
 		op_node.dot_num = self.dot_num
 		self.dot_num += 1
-		iden_node = Tree(self.tokens[stmt_list[2]+1].value)
-		iden_node.dot_num = self.dot_num
-		self.dot_num += 1
+		iden_tree = None
+		if stmt_list[1] == 'code_block':
+			code_block_tree = Tree("Code_block")
+			code_block_tree.dot_num = self.dot_num
+			self.dot_num += 1
+			print('stmt_list[2] + 2',stmt_list[2] + 2)
+			self.Statemet(stmt_list[2] + 2,code_block_tree)
+			iden_tree = code_block_tree
+		else:
+			iden_node = Tree(self.tokens[stmt_list[2]+1].value)
+			iden_node.dot_num = self.dot_num
+			self.dot_num += 1
+		
 		if len(stmt_syntax_list) == 0:
 			print("line 218",op_node.key,gram_root.key,iden_node.key)
 			op_node.add_child(gram_root)
@@ -253,34 +263,98 @@ class Parse(object):
 				return op_node
 		
 	# 语句
-	def Statemet(self,index,gram_root):
+	def Statemet1(self,index,gram_root):
 		# 不是 iden | constant | ++ | -- ,语法错误
 		if not (self.tokens[index].type == 'T_identifier' or self.tokens[index].type == 'T_constant' or\
 			self.tokens[index].type == 'T_addadd' or self.tokens[index].type == 'T_subsub'):
 			exit("Syntax error : '"+self.tokens[index-2].value+self.tokens[index-1].value+self.tokens[index].value+"'")
-		# 这是一个函数调用
-		if self.tokens[index].type == 'T_l1_bracket':
-			pass
+		print("Statemet index",self.tokens[index].value)
 		stmt_syntax_list =[]
 		tmp = ['=',self.tokens[index].type,index-1]
 		stmt_syntax_list.append(tmp)
 		index_tmp = index+1
 		while self.tokens[index_tmp].type != 'T_semicolon' and self.tokens[index_tmp].type != 'T_comma' \
-			and index_tmp < len(self.tokens):
+			and self.tokens[index_tmp].type != 'T_r1_bracket'and index_tmp < len(self.tokens):
 			# print(self.tokens[index_tmp].value)
 			tmp = [self.tokens[index_tmp].type,self.tokens[index_tmp+1].type,index_tmp]
+			# 遇到括号
+			print("index_tmp value",self.tokens[index_tmp].value)
+			if self.tokens[index_tmp+1].type == 'T_l1_bracket':
+				index_tmp += 1
+				fun_braket = []
+				fun_braket.append(self.tokens[index_tmp])
+				index_tmp += 1
+				while index_tmp <len(self.tokens):
+					if self.tokens[index_tmp].type == 'T_l1_bracket':
+						fun_braket.append(self.tokens[index_tmp])
+					elif self.tokens[index_tmp].type == 'T_r1_bracket':
+						# print("pop")
+						fun_braket.pop()
+						if len(fun_braket) == 0:
+							# print("0")
+							break
+					index_tmp += 1
+				tmp[1] = 'code_block'
+			print("line 289",self.tokens[index_tmp].value)
 			stmt_syntax_list.append(tmp)
-			index_tmp += 2
-		# print(stmt_syntax_list)
+			print(stmt_syntax_list)
+			index_tmp += 1
+			print("line 301",self.tokens[index_tmp].value,self.tokens[index_tmp].value)
+		print(stmt_syntax_list)
 		gram_root.add_child(self.analyse_deeply(stmt_syntax_list,gram_root))
-		# state_tree = Tree("Statemet")
-		# state_tree.dot_num = self.dot_num
-		# self.dot_num += 1
-		# gram_root.add_child(state_tree)
 		print(self.tokens[index_tmp].value)
 		index = index_tmp
 		return index+1
 
+	# yj
+	def Statemet(self,index,gram_root):
+		stmt_list = []
+		stmt_list_tree = []
+		index_tmp = index
+		# print("line",self.tokens[index_tmp].value)
+		while self.tokens[index_tmp].type != 'T_semicolon' and self.tokens[index_tmp].type != 'T_comma' \
+			and self.tokens[index_tmp].type != 'T_r1_bracket'and index_tmp < len(self.tokens):
+			print("line 317",self.tokens[index_tmp].value)
+			if self.tokens[index_tmp].type == 'T_l1_bracket':
+				block_tree,index_tmp = self.Statemet(index_tmp+1,gram_root)
+				print("block_tree.key",block_tree.key)
+				stmt_list_tree.append(block_tree)
+				while self.tokens[index_tmp].type != 'T_r1_bracket':
+					print("line 322",self.tokens[index_tmp].value)
+					index_tmp+=1
+				index_tmp += 1
+				print("line 326",self.tokens[index_tmp].value)
+			else:
+				stmt_list.append(self.tokens[index_tmp].value)
+				stmts_tree = Tree(self.tokens[index_tmp].value)
+				stmts_tree.dot_num = self.dot_num
+				self.dot_num += 1
+				stmt_list_tree.append(stmts_tree)
+				index_tmp += 1
+		print(stmt_list)
+		for i in stmt_list_tree:
+			print(i.key,end=' ')
+		print()
+		while len(stmt_list_tree)>1:
+			right_tree = stmt_list_tree.pop()
+			print("right_tree",right_tree.key)
+			op_tree = stmt_list_tree.pop()
+			print("op_tree",op_tree.key)
+			left_tree = stmt_list_tree.pop()
+			print("left_tree",left_tree.key)
+			print(len(stmt_list_tree))
+			op_tree.add_child(left_tree)
+			op_tree.add_child(right_tree)
+			stmt_list_tree.append(op_tree)
+		ret_node = stmt_list_tree.pop()
+		# self.drawTree(ret_node)
+		print("ret index_tmp",self.tokens[index_tmp].value)
+		return ret_node,index_tmp
+		
+		# return index + 1
+		
+
+	
 	# 标识符
 	def Identifier(self,index,gram_root):
 		iden_tree = Tree(self.tokens[index].value)
@@ -311,7 +385,11 @@ class Parse(object):
 		assign_tree.add_child(assign_char_tree)
 		assign_char_tree.add_child(iden_tree)
 		index += 1
-		index = self.Statemet(index,assign_char_tree)
+		# index = self.Statemet(index,assign_char_tree)
+		ret_node,index = self.Statemet(index,assign_char_tree)
+		# return len(self.tokens)-1
+		self.drawTree(ret_node)
+		# exit()
 		return index
 
 	# 函数调用
@@ -418,7 +496,7 @@ class Parse(object):
 	def printhello(self):
 		print("hello world")
 
-	def drawTree(self):
-		self.grammar_tree.Print_tree(self.grammar_tree)
+	def drawTree(self,gram_node):
+		gram_node.Print_tree(gram_node)
 		# dot(self.grammar_tree)
 

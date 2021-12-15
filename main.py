@@ -16,7 +16,7 @@ def parse():
 		print("(%s, %s)" % (i.type,i.value))
 	parse = Parse(lexer.tokens)
 	parse.main()
-	parse.drawTree()
+	# parse.drawTree(parse.grammar_tree)
 
 def lexer():
 	lexer = Lexer(source_stream)
