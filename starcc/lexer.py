@@ -93,12 +93,15 @@ class Lexer(object):
 				index_temp +=1
 			return index_temp
 		if index < len(self.source_stream) and self.source_stream[index] == '/' and self.source_stream[index+1] == '/':
+			# print(self.source_stream[index:index+6])
 			index_temp = index
 			while index_temp < len(self.source_stream):
+				# print(self.source_stream[index_temp],end='')
 				if self.source_stream[index_temp] == '\n':
 					index_temp += 1
 					break
 				index_temp +=1
+			# print("line 104",self.source_stream[index_temp:index+8])
 			return index_temp
 		return index
 
@@ -168,7 +171,7 @@ class Lexer(object):
 				# 识别为整型常量
 				self.tokens.append(Token("constant",tk_str))
 			# 是运算符
-			elif self.source_stream[word_num] in operatorList:
+			elif self.source_stream[word_num] in operatorList and not (self.source_stream[word_num] == '/' and self.source_stream[word_num+1] == '/'):
 				# word_num = self.If_skip_word(word_num)
 				tk_str = ''
 				# ++ | --

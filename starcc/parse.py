@@ -52,7 +52,7 @@ class Tree(object):
 			self.dot_tree_in(i,gram_node)
 		# print(dot.source)
 		# dot.render('round-table.gv', view=True)
-		dot.render('round-table.gv')
+		dot.render('test.gv')
 
 class Parse(object):
 	def __init__(self,l_stream):
@@ -201,110 +201,8 @@ class Parse(object):
 			self.dot_num += 1
 			state_tree.add_child(block_tree)
 			index = self.parse(index,block_tree)
-		index += 1
+		# index += 1
 		return index
-
-	# 语句中的迭代
-	def analyse_deeply(self,stmt_syntax_list,gram_root):
-		print(stmt_syntax_list)
-		stmt_list = stmt_syntax_list.pop(0)
-		op_node = Tree(self.tokens[stmt_list[2]].value)
-		op_node.dot_num = self.dot_num
-		self.dot_num += 1
-		iden_tree = None
-		if stmt_list[1] == 'code_block':
-			code_block_tree = Tree("Code_block")
-			code_block_tree.dot_num = self.dot_num
-			self.dot_num += 1
-			print('stmt_list[2] + 2',stmt_list[2] + 2)
-			self.Statemet(stmt_list[2] + 2,code_block_tree)
-			iden_tree = code_block_tree
-		else:
-			iden_node = Tree(self.tokens[stmt_list[2]+1].value)
-			iden_node.dot_num = self.dot_num
-			self.dot_num += 1
-		
-		if len(stmt_syntax_list) == 0:
-			print("line 218",op_node.key,gram_root.key,iden_node.key)
-			op_node.add_child(gram_root)
-			op_node.add_child(iden_node)
-			return op_node
-		elif operator_priority[stmt_list[0]] >= operator_priority[stmt_syntax_list[0][0]]:
-			print(">=")
-			op_node.add_child(gram_root)
-			op_node.add_child(iden_node)
-			print('line 221',op_node.key,gram_root.key,iden_node.key)
-			# print(op_node.key)
-			ret_node = self.analyse_deeply(stmt_syntax_list,op_node)
-			print('line 229',ret_node.key)
-			# ret_node.add_child(op_node)
-			return ret_node
-		else:
-			if stmt_list[0] == '=':
-				print("line 226",op_node.key)
-				ret_node = self.analyse_deeply(stmt_syntax_list,iden_node)
-				print('line 230',ret_node.key,iden_node.key)
-				# ret_node.add_child(iden_node)
-				# ret_node.add_child()
-				# self.analyse_deeply(stmt_syntax_list,iden_node).add_child(op_node)
-				return ret_node
-			else:
-				print("<")
-				print('line 238',op_node.key,gram_root.key,iden_node.key)
-				# gram_root.add_child(op_node)
-				# op_node.add_child(gram_root)
-				ret_node = self.analyse_deeply(stmt_syntax_list,iden_node)
-				print('line 242',op_node.key)
-				print('line 243',ret_node.key)
-				print('line 244',gram_root.key)
-				# op_node.add_child(self.analyse_deeply(stmt_syntax_list,iden_node))
-				op_node.add_child(gram_root)
-				op_node.add_child(ret_node)
-				return op_node
-		
-	# 语句
-	def Statemet1(self,index,gram_root):
-		# 不是 iden | constant | ++ | -- ,语法错误
-		if not (self.tokens[index].type == 'T_identifier' or self.tokens[index].type == 'T_constant' or\
-			self.tokens[index].type == 'T_addadd' or self.tokens[index].type == 'T_subsub'):
-			exit("Syntax error : '"+self.tokens[index-2].value+self.tokens[index-1].value+self.tokens[index].value+"'")
-		print("Statemet index",self.tokens[index].value)
-		stmt_syntax_list =[]
-		tmp = ['=',self.tokens[index].type,index-1]
-		stmt_syntax_list.append(tmp)
-		index_tmp = index+1
-		while self.tokens[index_tmp].type != 'T_semicolon' and self.tokens[index_tmp].type != 'T_comma' \
-			and self.tokens[index_tmp].type != 'T_r1_bracket'and index_tmp < len(self.tokens):
-			# print(self.tokens[index_tmp].value)
-			tmp = [self.tokens[index_tmp].type,self.tokens[index_tmp+1].type,index_tmp]
-			# 遇到括号
-			print("index_tmp value",self.tokens[index_tmp].value)
-			if self.tokens[index_tmp+1].type == 'T_l1_bracket':
-				index_tmp += 1
-				fun_braket = []
-				fun_braket.append(self.tokens[index_tmp])
-				index_tmp += 1
-				while index_tmp <len(self.tokens):
-					if self.tokens[index_tmp].type == 'T_l1_bracket':
-						fun_braket.append(self.tokens[index_tmp])
-					elif self.tokens[index_tmp].type == 'T_r1_bracket':
-						# print("pop")
-						fun_braket.pop()
-						if len(fun_braket) == 0:
-							# print("0")
-							break
-					index_tmp += 1
-				tmp[1] = 'code_block'
-			print("line 289",self.tokens[index_tmp].value)
-			stmt_syntax_list.append(tmp)
-			print(stmt_syntax_list)
-			index_tmp += 1
-			print("line 301",self.tokens[index_tmp].value,self.tokens[index_tmp].value)
-		print(stmt_syntax_list)
-		gram_root.add_child(self.analyse_deeply(stmt_syntax_list,gram_root))
-		print(self.tokens[index_tmp].value)
-		index = index_tmp
-		return index+1
 
 	# yj
 	def Statemet(self,index,gram_root):
@@ -315,15 +213,23 @@ class Parse(object):
 		while self.tokens[index_tmp].type != 'T_semicolon' and self.tokens[index_tmp].type != 'T_comma' \
 			and self.tokens[index_tmp].type != 'T_r1_bracket'and index_tmp < len(self.tokens):
 			print("line 317",self.tokens[index_tmp].value)
-			if self.tokens[index_tmp].type == 'T_l1_bracket':
+			# 'iden (' 函数调用
+			if self.tokens[index_tmp+1].type == 'T_l1_bracket' and self.tokens[index_tmp].type == 'T_identifier':
+				print("line 218,stmt funcall",self.tokens[index_tmp].type)
+				funcall_tree,index_tmp = self.FunctionCall(index_tmp)
+				# print('line 220 ret funcall ',self.tokens[index_tmp].type)
+				print("debug line 221",len(self.tokens),index_tmp)
+				stmt_list_tree.append(funcall_tree)
+			# '+|-|*|/(' 优先运算
+			elif self.tokens[index_tmp].type == 'T_l1_bracket' and self.tokens[index_tmp-1].type != 'T_identifier':
 				block_tree,index_tmp = self.Statemet(index_tmp+1,gram_root)
 				print("block_tree.key",block_tree.key)
 				stmt_list_tree.append(block_tree)
 				while self.tokens[index_tmp].type != 'T_r1_bracket':
-					print("line 322",self.tokens[index_tmp].value)
+					# print("line 322",self.tokens[index_tmp].value)
 					index_tmp+=1
 				index_tmp += 1
-				print("line 326",self.tokens[index_tmp].value)
+				# print("line 326",self.tokens[index_tmp].value)
 			else:
 				stmt_list.append(self.tokens[index_tmp].value)
 				stmts_tree = Tree(self.tokens[index_tmp].value)
@@ -393,12 +299,13 @@ class Parse(object):
 		return index
 
 	# 函数调用
-	def FunctionCall(self,index,gram_root):
+	def FunctionCall(self,index):
 		# 函数调用节点
+		print('debug line 304',self.tokens[index].value)
 		funcall_tree = Tree("FunctionCall")
 		funcall_tree.dot_num = self.dot_num
 		self.dot_num += 1
-		gram_root.add_child(funcall_tree)
+		# gram_root.add_child(funcall_tree)
 		# 被调用的函数节点
 		func_name_tree = Tree(self.tokens[index].value)
 		func_name_tree.dot_num = self.dot_num
@@ -415,20 +322,24 @@ class Parse(object):
 		fun_braket.append(self.tokens[index])
 		index += 1
 		while index < len(self.tokens):
+			print('deubg line 325',index,self.tokens[index].value)
 			if self.tokens[index].type == 'T_l1_bracket':
 				fun_braket.append(self.tokens[index])
 			elif self.tokens[index].type == 'T_r1_bracket':
-				# print("pop")
+				print("pop")
 				fun_braket.pop()
 				if len(fun_braket) == 0:
 					# print("0")
 					break
 			if self.tokens[index].type == 'T_identifier':
+				print("debug line 335",)
 				index = self.parse(index,func_arg_tree)
+				# print("debug line 336",)
 			else:
 				index += 1
-		index += 1
-		return index
+		# index += 1
+		print('debug line 338',self.tokens[index].value,len(self.tokens),index,func_name_tree.key)
+		return funcall_tree, index
 
 	# 返回接下来的token句型
 	def retTokenType(self,index):
@@ -462,36 +373,40 @@ class Parse(object):
 
 	def parse(self,index_init,gram_root):
 		index = index_init
-		while index < len(self.tokens):
-			# print(self.tokens[index].type,self.tokens[index].value)
-			if self.tokens[index].type == 'T_r3_braket':
-				return index
-			# 遇到了类型token，很可能是一个变量声明
-			if self.retTokenType(index) == 'VarDeclaration':
-				index = self.VarDeclaration(index,gram_root)
-			# 也有可能是函数定义捏
-			elif self.retTokenType(index) == 'FuncDeclaration':
-				index = self.FuncDeclaration(index,gram_root)
-			# 修饰符开头？首先考虑是一条语句
-			elif self.retTokenType(index) == 'Stmt':
-				index = self.Statemet(index,gram_root)
-			# 也有可能是函数调用捏
-			elif self.retTokenType(index) == 'FunctionCall':
-				index = self.FunctionCall(index,gram_root)
-				# break
-			# 一个简单的修饰符罢了
-			elif self.retTokenType(index) == 'Identifier':
-				index = self.Identifier(index,gram_root)
-				break
-			# 赋值语句
-			elif self.retTokenType(index) == 'Assign':
-				index = self.Assign(index,gram_root)
-			else:
-				index += 1
+		# print(self.tokens[index].type,self.tokens[index].value)
+		if self.tokens[index].type == 'T_r3_braket':
+			return index+1
+		# 遇到了类型token，很可能是一个变量声明
+		elif self.retTokenType(index) == 'VarDeclaration':
+			index = self.VarDeclaration(index,gram_root)
+		# 也有可能是函数定义捏
+		elif self.retTokenType(index) == 'FuncDeclaration':
+			index = self.FuncDeclaration(index,gram_root)
+			print(index,len(self.tokens))
+			print(index,self.tokens[index].value)
+		# 修饰符开头？首先考虑是一条语句
+		elif self.retTokenType(index) == 'Stmt':
+			index = self.Statemet(index,gram_root)
+		# 也有可能是函数调用捏
+		elif self.retTokenType(index) == 'FunctionCall':
+			funcall_tree, index = self.FunctionCall(index)
+			gram_root.add_child(funcall_tree)
+			# break
+		# 一个简单的修饰符罢了
+		elif self.retTokenType(index) == 'Identifier':
+			index = self.Identifier(index,gram_root)
+		# 赋值语句
+		elif self.retTokenType(index) == 'Assign':
+			index = self.Assign(index,gram_root)
+		else:
+			index += 1
 		return index
 
 	def main(self):
-		index = self.parse(0,self.grammar_tree)
+		# index = self.parse(0,self.grammar_tree)
+		index = 0
+		while index < len(self.tokens):
+			index = self.parse(index,self.grammar_tree)
 
 	def printhello(self):
 		print("hello world")

@@ -1,0 +1,46 @@
+// root
+digraph {
+	None [label=root]
+	0 [label=FuncDeclaration]
+	None -> 0
+	1 [label=T_int]
+	0 -> 1
+	2 [label=Identifier]
+	0 -> 2
+	3 [label=func]
+	2 -> 3
+	4 [label=Args]
+	0 -> 4
+	5 [label=Stmt]
+	0 -> 5
+	6 [label=VarDeclaration]
+	None -> 6
+	7 [label=T_int]
+	6 -> 7
+	8 [label=Identifier]
+	6 -> 8
+	9 [label=j]
+	8 -> 9
+	10 [label=10]
+	9 -> 10
+	11 [label=i]
+	8 -> 11
+	12 [label=FunctionCall]
+	None -> 12
+	13 [label=fung]
+	12 -> 13
+	14 [label=fun_call_arg]
+	12 -> 14
+	15 [label=FunctionCall]
+	14 -> 15
+	16 [label=fung]
+	15 -> 16
+	17 [label=fun_call_arg]
+	15 -> 17
+	18 [label=j]
+	17 -> 18
+	19 [label=i]
+	17 -> 19
+	20 [label=i]
+	None -> 20
+}
