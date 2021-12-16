@@ -200,7 +200,18 @@ class Parse(object):
 			block_tree.dot_num = self.dot_num
 			self.dot_num += 1
 			state_tree.add_child(block_tree)
-			index = self.parse(index,block_tree)
+			# index += 1
+			print("debug line 203",self.tokens[index].value)
+			fun_braket = []
+			fun_braket.append(self.tokens[index])
+			index += 1
+			while index < len(self.tokens):
+				if self.tokens[index].type == 'T_r3_braket':
+					fun_braket.pop()
+					if len(fun_braket) == 0:
+						break
+				index = self.parse(index,block_tree)
+			# index = self.parse(index,block_tree)
 		# index += 1
 		return index
 
@@ -330,11 +341,12 @@ class Parse(object):
 				fun_braket.pop()
 				if len(fun_braket) == 0:
 					# print("0")
+					index += 1
 					break
 			if self.tokens[index].type == 'T_identifier':
 				print("debug line 335",)
 				index = self.parse(index,func_arg_tree)
-				# print("debug line 336",)
+				print("debug line 348",index,self.tokens[index].value)
 			else:
 				index += 1
 		# index += 1
@@ -378,6 +390,7 @@ class Parse(object):
 			return index+1
 		# 遇到了类型token，很可能是一个变量声明
 		elif self.retTokenType(index) == 'VarDeclaration':
+			print("debug line 381",gram_root.key)
 			index = self.VarDeclaration(index,gram_root)
 		# 也有可能是函数定义捏
 		elif self.retTokenType(index) == 'FuncDeclaration':
