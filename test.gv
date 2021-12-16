@@ -1,25 +1,5 @@
 // root
 digraph {
-	9 [label=FunctionCall]
-	10 [label=fung]
-	9 -> 10
-	11 [label=fun_call_arg]
-	9 -> 11
-	12 [label=FunctionCall]
-	11 -> 12
-	13 [label=fung]
-	12 -> 13
-	14 [label=fun_call_arg]
-	12 -> 14
-	15 [label=j]
-	14 -> 15
-	16 [label=i]
-	14 -> 16
-	17 [label=i]
-	11 -> 17
-	18 [label=t]
-	11 -> 18
-	22 [label=x]
 	None [label=root]
 	0 [label=FuncDeclaration]
 	None -> 0
@@ -37,12 +17,28 @@ digraph {
 	5 -> 6
 	8 [label="="]
 	6 -> 8
-	7 [label=j]
+	7 [label=i]
 	8 -> 7
-	19 [label=Assign]
-	5 -> 19
-	21 [label="="]
-	19 -> 21
-	20 [label=i]
-	21 -> 20
+	10 [label="+"]
+	8 -> 10
+	9 [label=j]
+	10 -> 9
+	12 [label="*"]
+	10 -> 12
+	11 [label=9]
+	12 -> 11
+	14 [label="-"]
+	12 -> 14
+	13 [label=1]
+	14 -> 13
+	16 [label="/"]
+	14 -> 16
+	15 [label=5]
+	16 -> 15
+	18 [label="-"]
+	16 -> 18
+	17 [label=8]
+	18 -> 17
+	19 [label=8]
+	18 -> 19
 }

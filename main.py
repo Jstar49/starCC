@@ -12,8 +12,8 @@ source_stream = ""
 def parse():
 	lexer = Lexer(source_stream)
 	lexer.lexer()
-	for i in lexer.tokens:
-		print("(%s, %s)" % (i.type,i.value))
+	# for i in lexer.tokens:
+	# 	print("(%s, %s)" % (i.type,i.value))
 	parse = Parse(lexer.tokens)
 	parse.main()
 	parse.drawTree(parse.grammar_tree)
@@ -33,7 +33,7 @@ if __name__ == '__main__':
 			# print(file_name)
 			source_file = open(file_name,"r")
 			source_stream = source_file.read()
-			print(source_stream)
+			# print(source_stream)
 			# print(len(source_stream))
 		elif opt == "-l":
 			lexer()
