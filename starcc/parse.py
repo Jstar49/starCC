@@ -264,6 +264,15 @@ class Parse(object):
 		index += 1
 		return index
 
+	# Break
+	def Break(self,index,gram_root):
+		break_node = Tree(self.tokens[index].value)
+		break_node.dot_num = self.dot_num
+		self.dot_num += 1
+		# break_node.token = self.tokens[index]
+		gram_root.add_child(break_node)
+		index += 1
+		return index
 
 	# 赋值语句
 	def Assign(self,index,gram_root):
@@ -340,17 +349,15 @@ class Parse(object):
 		if_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		gram_root.add_child(if_tree)
+		# 条件节点
 		condition_node = Tree("Condition")
 		condition_node.dot_num = self.dot_num
 		self.dot_num += 1
 		if_tree.add_child(condition_node)
 		index+= 2
-		print("debug line 349",self.tokens[index].value)
 		index = self.parse(index,condition_node)
-		print("debug line 353",self.tokens[index+1].value)
 		index += 1
 		if self.tokens[index].type == 'T_semicolon':
-			print("debug line 356",self.tokens[index].value)
 			return index+1
 		if_braket = []
 		if_braket.append(self.tokens[index])
@@ -369,9 +376,59 @@ class Parse(object):
 					index += 1
 					break
 			index = self.parse(index,if_true_node)
-		# print("debug line 372",self.tokens[index].value)
 		if self.tokens[index].type == 'T_else':
-			pass
+			if_false_node = Tree("False")
+			if_false_node.dot_num = self.dot_num
+			self.dot_num += 1
+			if_tree.add_child(if_false_node)
+			index += 1
+			if_braket = []
+			if_braket.append(self.tokens[index])
+			index += 1
+			while index <len(self.tokens):
+				if self.tokens[index].type == 'T_l3_braket':
+					if_braket.append(self.tokens[index])
+				elif self.tokens[index].type == 'T_r3_braket':
+					if_braket.pop()
+					if len(if_braket) == 0:
+						index += 1
+						break
+				index = self.parse(index,if_false_node)
+		return index
+
+	# while 节点
+	def While(self,index,gram_root):
+		while_node = Tree(self.tokens[index].value)
+		while_node.dot_num = self.dot_num
+		self.dot_num += 1
+		gram_root.add_child(while_node)
+		# 条件节点
+		condition_node = Tree("Condition")
+		condition_node.dot_num = self.dot_num
+		self.dot_num += 1
+		while_node.add_child(condition_node)
+		index += 2
+		index = self.parse(index,condition_node)
+		index += 1
+		if self.tokens[index].type == 'T_semicolon':
+			return index+1
+		while_braket = []
+		while_braket.append(self.tokens[index])
+		index += 1
+		# 条件为True的节点
+		while_true_node = Tree("True")
+		while_true_node.dot_num = self.dot_num
+		self.dot_num += 1
+		while_node.add_child(while_true_node)
+		while index <len(self.tokens):
+			if self.tokens[index].type == 'T_l3_braket':
+				while_braket.append(self.tokens[index])
+			elif self.tokens[index].type == 'T_r3_braket':
+				while_braket.pop()
+				if len(while_braket) == 0:
+					index += 1
+					break
+			index = self.parse(index,while_true_node)
 		return index
 
 	# 返回接下来的token句型
@@ -406,6 +463,10 @@ class Parse(object):
 			return 'Constant'
 		elif self.tokens[index].type == 'T_if':
 			return 'If'
+		elif self.tokens[index].type == 'T_while':
+			return 'While'
+		elif self.tokens[index].type == 'T_break':
+			return 'Break'
 
 	def parse(self,index_init,gram_root):
 		index = index_init
@@ -442,6 +503,10 @@ class Parse(object):
 			index = self.Assign(index,gram_root)
 		elif self.retTokenType(index) == 'If':
 			index = self.If(index,gram_root)
+		elif self.retTokenType(index) == 'While':
+			index = self.While(index,gram_root)
+		elif self.retTokenType(index) == 'Break':
+			index = self.Break(index,gram_root)
 		else:
 			index += 1
 		return index

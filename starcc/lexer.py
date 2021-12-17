@@ -22,6 +22,7 @@ keyWords_Token = {
 	'if':'T_if',
 	'else':'T_else',
 	'do':'T_do',
+	'break':'T_break',
 	'return':'T_return',
 	'include':'T_include',
 	'+':'T_add',
