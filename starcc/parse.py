@@ -352,11 +352,26 @@ class Parse(object):
 		if self.tokens[index].type == 'T_semicolon':
 			print("debug line 356",self.tokens[index].value)
 			return index+1
-		if self.tokens[index].type == 'T_l3_braket':
-			if_braket = []
-			if_braket.append(self.tokens[index])
-			index += 1
-
+		if_braket = []
+		if_braket.append(self.tokens[index])
+		index += 1
+		# 条件为True的节点
+		if_true_node = Tree("True")
+		if_true_node.dot_num = self.dot_num
+		self.dot_num += 1
+		if_tree.add_child(if_true_node)
+		while index <len(self.tokens):
+			if self.tokens[index].type == 'T_l3_braket':
+				if_braket.append(self.tokens[index])
+			elif self.tokens[index].type == 'T_r3_braket':
+				if_braket.pop()
+				if len(if_braket) == 0:
+					index += 1
+					break
+			index = self.parse(index,if_true_node)
+		# print("debug line 372",self.tokens[index].value)
+		if self.tokens[index].type == 'T_else':
+			pass
 		return index
 
 	# 返回接下来的token句型

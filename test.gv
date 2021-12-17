@@ -17,18 +17,56 @@ digraph {
 	4 -> 5
 	7 [label=8]
 	6 -> 7
-	8 [label=if]
+	8 [label=FuncDeclaration]
 	None -> 8
-	9 [label=Condition]
+	9 [label=T_int]
 	8 -> 9
-	13 [label=">"]
-	9 -> 13
-	11 [label="+"]
-	13 -> 11
-	10 [label=a]
-	11 -> 10
-	12 [label=5]
-	11 -> 12
-	14 [label=5]
+	10 [label=Identifier]
+	8 -> 10
+	11 [label=func]
+	10 -> 11
+	12 [label=Args]
+	8 -> 12
+	13 [label=arg]
+	12 -> 13
+	14 [label=T_int]
 	13 -> 14
+	15 [label=b]
+	13 -> 15
+	16 [label=arg]
+	12 -> 16
+	17 [label=T_char]
+	16 -> 17
+	18 [label=c]
+	16 -> 18
+	19 [label=Stmt]
+	8 -> 19
+	20 [label=if]
+	19 -> 20
+	21 [label=Condition]
+	20 -> 21
+	25 [label=">"]
+	21 -> 25
+	23 [label="+"]
+	25 -> 23
+	22 [label=a]
+	23 -> 22
+	24 [label=5]
+	23 -> 24
+	26 [label=5]
+	25 -> 26
+	27 [label=True]
+	20 -> 27
+	28 [label=Assign]
+	27 -> 28
+	30 [label="="]
+	28 -> 30
+	29 [label=j]
+	30 -> 29
+	32 [label="+"]
+	30 -> 32
+	31 [label=k]
+	32 -> 31
+	33 [label=3]
+	32 -> 33
 }

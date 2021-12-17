@@ -3,11 +3,15 @@
 /* 你好 */
 // int i = x+19;
 j = (9*8)-8;
-// int func(int b,char c){
-// }
+int func(int b,char c){
+    if(a+5>5){
+        j = k+3;
+    }
+    else{
+    }
 
-if(a+5>5){
-	
 }
+
+
 
 
