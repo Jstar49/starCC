@@ -7,6 +7,10 @@ import os
 dot = graphviz.Digraph(comment='root')
 
 operator_priority = {
+	'>':8,
+	'>=':8,
+	'<':8,
+	'<=':8,
 	'=':9,
 	'+':10,
 	'-':10,
@@ -50,8 +54,6 @@ class Tree(object):
 		dot.node(str(gram_node.dot_num),gram_node.key)
 		for i in gram_node.children:
 			self.dot_tree_in(i,gram_node)
-		# print(dot.source)
-		# dot.render('round-table.gv', view=True)
 		dot.render('test.gv')
 
 class Parse(object):
@@ -187,16 +189,10 @@ class Parse(object):
 		stmt_list = []
 		stmt_list_tree = []
 		index_tmp = index
-		# print("line",self.tokens[index_tmp].value)
 		while self.tokens[index_tmp].type != 'T_semicolon' and self.tokens[index_tmp].type != 'T_comma' \
 			and self.tokens[index_tmp].type != 'T_r1_bracket'and index_tmp < len(self.tokens):
-			# print("line 317",self.tokens[index_tmp].value)
-			# 'iden (' 函数调用
 			if self.tokens[index_tmp+1].type == 'T_l1_bracket' and self.tokens[index_tmp].type == 'T_identifier':
-				# print("line 218,stmt funcall",self.tokens[index_tmp].type)
 				funcall_tree,index_tmp = self.FunctionCall(index_tmp)
-				# print('line 220 ret funcall ',self.tokens[index_tmp].type)
-				# print("debug line 221",len(self.tokens),index_tmp)
 				stmt_list_tree.append(funcall_tree)
 			# '+|-|*|/(' 优先运算
 			elif self.tokens[index_tmp].type == 'T_l1_bracket' and self.tokens[index_tmp-1].type != 'T_identifier':
@@ -220,17 +216,18 @@ class Parse(object):
 		# 	print(x.key,end="")
 		# print()
 		while len(stmt_list_tree)>2:
-			print("stmt_list_tree: ",end="")
-			for x in stmt_list_tree:
-				print(x.key,end="")
-			print()
+			# print("stmt_list_tree: ",end="")
+			# for x in stmt_list_tree:
+			# 	print(x.key,end="")
+			# print()
 			max_op = -2
 			i = len(stmt_list_tree) - 2
-			print(stmt_list_tree[i].key)
+			
 			while i >0:
 				if operator_priority[stmt_list_tree[i].key] > operator_priority[stmt_list_tree[max_op].key]:
 					max_op = i
 				i -= 2
+			# print("debug line 234,this op key",stmt_list_tree[max_op].key)
 			right_tree = stmt_list_tree[max_op+1]
 			# print("right_tree",right_tree.key)
 			op_tree = stmt_list_tree[max_op]
@@ -238,12 +235,12 @@ class Parse(object):
 			left_tree = stmt_list_tree[max_op-1]
 			# print("left_tree",left_tree.key)
 			# print(len(stmt_list_tree))
-			stmt_list_tree = stmt_list_tree[0:max_op-1] + [op_tree]+stmt_list_tree[max_op+2:]
 			op_tree.add_child(left_tree)
 			op_tree.add_child(right_tree)
-			stmt_list_tree.append(op_tree)
+			stmt_list_tree.remove(right_tree)
+			stmt_list_tree.remove(left_tree)
+			# stmt_list_tree.append(op_tree)
 		ret_node = stmt_list_tree.pop()
-		# self.drawTree(ret_node)
 		# print("ret index_tmp",self.tokens[index_tmp].value)
 		return ret_node,index_tmp
 	
@@ -327,7 +324,6 @@ class Parse(object):
 				# print("pop")
 				fun_braket.pop()
 				if len(fun_braket) == 0:
-					# print("0")
 					index += 1
 					break
 			if self.tokens[index].type == 'T_identifier':
@@ -336,9 +332,32 @@ class Parse(object):
 				# print("debug line 348",index,self.tokens[index].value)
 			else:
 				index += 1
-		# index += 1
-		# print('debug line 338',self.tokens[index].value,len(self.tokens),index,func_name_tree.key)
 		return funcall_tree, index
+
+	# If 语句
+	def If(self,index,gram_root):
+		if_tree = Tree(self.tokens[index].value)
+		if_tree.dot_num = self.dot_num
+		self.dot_num += 1
+		gram_root.add_child(if_tree)
+		condition_node = Tree("Condition")
+		condition_node.dot_num = self.dot_num
+		self.dot_num += 1
+		if_tree.add_child(condition_node)
+		index+= 2
+		print("debug line 349",self.tokens[index].value)
+		index = self.parse(index,condition_node)
+		print("debug line 353",self.tokens[index+1].value)
+		index += 1
+		if self.tokens[index].type == 'T_semicolon':
+			print("debug line 356",self.tokens[index].value)
+			return index+1
+		if self.tokens[index].type == 'T_l3_braket':
+			if_braket = []
+			if_braket.append(self.tokens[index])
+			index += 1
+
+		return index
 
 	# 返回接下来的token句型
 	def retTokenType(self,index):
@@ -370,6 +389,8 @@ class Parse(object):
 			return retType
 		elif self.tokens[index].type == 'T_constant':
 			return 'Constant'
+		elif self.tokens[index].type == 'T_if':
+			return 'If'
 
 	def parse(self,index_init,gram_root):
 		index = index_init
@@ -398,11 +419,14 @@ class Parse(object):
 		# 一个简单的修饰符罢了
 		elif self.retTokenType(index) == 'Identifier':
 			index = self.Identifier(index,gram_root)
+		# 常数
 		elif self.retTokenType(index) == 'Constant':
 			index = self.Constant(index,gram_root)
 		# 赋值语句
 		elif self.retTokenType(index) == 'Assign':
 			index = self.Assign(index,gram_root)
+		elif self.retTokenType(index) == 'If':
+			index = self.If(index,gram_root)
 		else:
 			index += 1
 		return index
