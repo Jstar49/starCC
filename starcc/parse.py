@@ -431,6 +431,10 @@ class Parse(object):
 			index = self.parse(index,while_true_node)
 		return index
 
+	# for节点
+	def For(self,index,gram_node):
+		pass
+
 	# 返回接下来的token句型
 	def retTokenType(self,index):
 		# type 为类型关键字？很可能是变量声明或者函数声明
@@ -467,6 +471,8 @@ class Parse(object):
 			return 'While'
 		elif self.tokens[index].type == 'T_break':
 			return 'Break'
+		elif self.tokens[index].type == 'T_for':
+			return 'For'
 
 	def parse(self,index_init,gram_root):
 		index = index_init
@@ -507,6 +513,8 @@ class Parse(object):
 			index = self.While(index,gram_root)
 		elif self.retTokenType(index) == 'Break':
 			index = self.Break(index,gram_root)
+		elif self.retTokenType(index) == 'For':
+			index = self.For(index,gram_root)
 		else:
 			index += 1
 		return index
