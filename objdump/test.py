@@ -3,7 +3,7 @@ import re
 import graphviz
 '''
 # author : jxx
-# how to use:
+# how to use: python test.py hello.txt
 # > python3.6 thisScriptName.py large_hcc.txt large_armgcc.txt large.csv
 # argv[1] : input file. hcc 的汇编代码文件或者反汇编的指令文件
 # argv[2] : input file. armgcc 的汇编代码文件或者反汇编的指令文件
@@ -11,29 +11,74 @@ import graphviz
 '''
 
 dot = graphviz.Digraph(comment='root')
+dot.attr(compound='true')
+dot.attr('node', shape='box')
+dot_num = 0
+
+def gratest():
+	g = graphviz.Digraph('G', filename='cluster_edge.gv')
+	g.attr(compound='true')
+
+	with g.subgraph(name='cluster0') as c:
+	    c.edges(['ab', 'ac', 'bd', 'cd'])
+
+	with g.subgraph(name='cluster1') as c:
+	    c.edges(['eg', 'ef'])
+
+	g.edge('b', 'f', lhead='cluster1')
+	g.edge('d', 'e')
+	g.edge('c', 'g', ltail='cluster0', lhead='cluster1')
+	g.edge('c', 'e', ltail='cluster0')
+	g.edge('d', 'h')
+
+	g.render()
 
 class Tree(object):
 	def __init__(self,key):
 		self.key = key
 		self.dot_num = None
-		self.token = None
-		self.children = []
-		self.father = None
-		# self.dot = None
-		if self.key == 'Statement':
-			self.type = None
+		self.block_code = None
 
 def printdot(fun_info):
-	# print(fun_info['name'])
+	global dot_num
+	block_list = []
 	fun_block = fun_info['name']+"\n"
 	fun_block_name = fun_info['name']+"\n"
-	# dot.node(fun_info['name'],fun_info['name'])
+	jump_in_fun = []
 	for line in fun_info["api_stmt"]:
 		if len(re.findall(r'<(.*)>:',line)):
 			print(re.findall(r'<(.*)>:',line)[0])
+			block_node = Tree(fun_block_name)
+			block_node.dot_num = str(dot_num)
+			dot_num += 1
+			block_node.block_code = fun_block
+			block_list.append(block_node)
+			# update 
 			fun_block = line
+			fun_block_name = re.findall(r'<(.*)>:',line)[0]
 			continue
+		if len(re.findall(r'<(.*)>',line)):
+			jump_in_fun.append([fun_block_name,re.findall(r'<(.*)>',line)[0]])
 		fun_block += line
+	print(jump_in_fun)
+	
+	with dot.subgraph(name=fun_info['name']) as d:
+		fun_suck = []
+		d.node(str(block_list[0].dot_num),block_list[0].block_code)
+		for node_index in range(1,len(block_list)):
+			d.node(block_list[node_index].dot_num,block_list[node_index].block_code)
+			fun_suck.append((block_list[node_index-1].dot_num,block_list[node_index].dot_num))
+		print(fun_suck)
+		for i in jump_in_fun:
+			for j in block_list:
+				if i[0] == j.key:
+					begin = j.dot_num
+				if i[1] == j.key:
+					end = j.dot_num
+			fun_suck.append((begin,end))
+		d.edges(fun_suck)
+	# dot.render('test.gv')
+
 
 def get_api_diff(file1_result):
 	# list for store api
@@ -87,3 +132,6 @@ if __name__ =='__main__':
 	f_stream = f.readlines()
 	f.close()
 	get_api_diff(f_stream)
+	dot.edge('1','11')
+	dot.render('test.gv')
+	gratest()
