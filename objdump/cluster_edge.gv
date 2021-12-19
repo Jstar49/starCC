@@ -1,18 +1,260 @@
 digraph G {
+	node [color=lightblue2 style=filled]
 	compound=true
-	subgraph cluster0 {
-		a -> b
-		a -> c
-		b -> d
-		c -> d
+	node [shape=box]
+	0 [label="HAL_WDG_Init
+   0:	cd05                	beqz	a0,38 <.L3>
+   2:	4118                	lw	a4,0(a0)
+
+"]
+	1 [label="00000004 <.LBB34>:
+   4:	6685                	lui	a3,0x1
+   6:	1acc e551 079f      	l.li	a5,0x1acce551
+   c:	9736                	add	a4,a4,a3
+   e:	c0f72223          	sw	a5,-1020(a4)
+
+"]
+	2 [label="00000012 <.LBE34>:
+  12:	411c                	lw	a5,0(a0)
+  14:	4158                	lw	a4,4(a0)
+  16:	c398                	sw	a4,0(a5)
+
+"]
+	3 [label="00000018 <.LBB36>:
+  18:	411c                	lw	a5,0(a0)
+  1a:	4798                	lw	a4,8(a5)
+  1c:	00276713          	ori	a4,a4,2
+  20:	c798                	sw	a4,8(a5)
+
+"]
+	4 [label="00000022 <.LBB38>:
+  22:	411c                	lw	a5,0(a0)
+  24:	4798                	lw	a4,8(a5)
+  26:	00176713          	ori	a4,a4,1
+  2a:	c798                	sw	a4,8(a5)
+
+"]
+	5 [label="0000002c <.LVL4>:
+  2c:	411c                	lw	a5,0(a0)
+
+"]
+	6 [label="0000002e <.LBE38>:
+  2e:	4501                	li	a0,0
+
+"]
+	7 [label="00000030 <.LBB40>:
+  30:	97b6                	add	a5,a5,a3
+  32:	c007a223          	sw	zero,-1020(a5)
+
+"]
+	8 [label="00000036 <.LBE40>:
+  36:	8082                	ret
+
+"]
+	9 [label="00000038 <.L3>:
+  38:	4505                	li	a0,1
+
+"]
+	subgraph clusterHAL_WDG_Init {
+		0 -> 1
+		1 -> 2
+		2 -> 3
+		3 -> 4
+		4 -> 5
+		5 -> 6
+		6 -> 7
+		7 -> 8
+		8 -> 9
+		0 -> 9
 	}
-	subgraph cluster1 {
-		e -> g
-		e -> f
+	10 [label="HAL_WDG_Start
+   0:	4118                	lw	a4,0(a0)
+
+"]
+	11 [label="00000002 <.LBB42>:
+   2:	6685                	lui	a3,0x1
+   4:	1acc e551 079f      	l.li	a5,0x1acce551
+   a:	9736                	add	a4,a4,a3
+   c:	c0f72223          	sw	a5,-1020(a4)
+
+"]
+	12 [label="00000010 <.LBB44>:
+  10:	411c                	lw	a5,0(a0)
+  12:	4798                	lw	a4,8(a5)
+  14:	00276713          	ori	a4,a4,2
+  18:	c798                	sw	a4,8(a5)
+
+"]
+	13 [label="0000001a <.LBB46>:
+  1a:	411c                	lw	a5,0(a0)
+  1c:	4798                	lw	a4,8(a5)
+  1e:	00176713          	ori	a4,a4,1
+  22:	c798                	sw	a4,8(a5)
+
+"]
+	14 [label="00000024 <.LBB48>:
+  24:	411c                	lw	a5,0(a0)
+  26:	0007a623          	sw	zero,12(a5)
+
+"]
+	15 [label="0000002a <.LVL14>:
+  2a:	411c                	lw	a5,0(a0)
+
+"]
+	16 [label="0000002c <.LBE48>:
+  2c:	4501                	li	a0,0
+
+"]
+	17 [label="0000002e <.LBB50>:
+  2e:	97b6                	add	a5,a5,a3
+  30:	c007a223          	sw	zero,-1020(a5)
+
+"]
+	subgraph clusterHAL_WDG_Start {
+		10 -> 11
+		11 -> 12
+		12 -> 13
+		13 -> 14
+		14 -> 15
+		15 -> 16
+		16 -> 17
 	}
-	b -> f [lhead=cluster1]
-	d -> e
-	c -> g [lhead=cluster1 ltail=cluster0]
-	c -> e [ltail=cluster0]
-	d -> h
+	18 [label="HAL_WDG_Stop
+   0:	4118                	lw	a4,0(a0)
+
+"]
+	19 [label="00000002 <.LBB52>:
+   2:	6685                	lui	a3,0x1
+   4:	1acc e551 079f      	l.li	a5,0x1acce551
+   a:	9736                	add	a4,a4,a3
+   c:	c0f72223          	sw	a5,-1020(a4)
+
+"]
+	20 [label="00000010 <.LBB54>:
+  10:	411c                	lw	a5,0(a0)
+  12:	4798                	lw	a4,8(a5)
+  14:	9b75                	andi	a4,a4,-3
+  16:	c798                	sw	a4,8(a5)
+
+"]
+	21 [label="00000018 <.LBB56>:
+  18:	411c                	lw	a5,0(a0)
+  1a:	4798                	lw	a4,8(a5)
+  1c:	9b79                	andi	a4,a4,-2
+  1e:	c798                	sw	a4,8(a5)
+
+"]
+	22 [label="00000020 <.LVL21>:
+  20:	411c                	lw	a5,0(a0)
+
+"]
+	23 [label="00000022 <.LBE56>:
+  22:	4501                	li	a0,0
+
+"]
+	24 [label="00000024 <.LBB58>:
+  24:	97b6                	add	a5,a5,a3
+  26:	c007a223          	sw	zero,-1020(a5)
+
+"]
+	subgraph clusterHAL_WDG_Stop {
+		18 -> 19
+		19 -> 20
+		20 -> 21
+		21 -> 22
+		22 -> 23
+		23 -> 24
+	}
+	25 [label="HAL_WDG_Refresh
+   0:	411c                	lw	a5,0(a0)
+   2:	4501                	li	a0,0
+
+"]
+	subgraph clusterHAL_WDG_Refresh {
+	}
+	26 [label="DCL_WDG_EnableReset
+   0:	4118                	lw	a4,0(a0)
+   2:	4501                	li	a0,0
+
+"]
+	subgraph clusterDCL_WDG_EnableReset {
+	}
+	27 [label="DCL_WDG_DisableReset
+   0:	4118                	lw	a4,0(a0)
+   2:	4501                	li	a0,0
+
+"]
+	subgraph clusterDCL_WDG_DisableReset {
+	}
+	28 [label="DCL_WDG_EnableINT
+   0:	4118                	lw	a4,0(a0)
+   2:	4501                	li	a0,0
+
+"]
+	subgraph clusterDCL_WDG_EnableINT {
+	}
+	29 [label="DCL_WDG_DisableINT
+   0:	4118                	lw	a4,0(a0)
+   2:	4501                	li	a0,0
+
+"]
+	subgraph clusterDCL_WDG_DisableINT {
+	}
+	30 [label="HAL_WDG_IRQHandler
+   0:	4118                	lw	a4,0(a0)
+
+"]
+	31 [label="00000002 <.LBB60>:
+   2:	6685                	lui	a3,0x1
+   4:	1acc e551 079f      	l.li	a5,0x1acce551
+   a:	9736                	add	a4,a4,a3
+   c:	c0f72223          	sw	a5,-1020(a4)
+
+"]
+	32 [label="00000010 <.LBB62>:
+  10:	411c                	lw	a5,0(a0)
+  12:	0007a623          	sw	zero,12(a5)
+
+"]
+	33 [label="00000016 <.LVL37>:
+  16:	411c                	lw	a5,0(a0)
+
+"]
+	34 [label="00000018 <.LBE62>:
+  18:	4501                	li	a0,0
+
+"]
+	35 [label="0000001a <.LBB64>:
+  1a:	97b6                	add	a5,a5,a3
+  1c:	c007a223          	sw	zero,-1020(a5)
+
+"]
+	subgraph clusterHAL_WDG_IRQHandler {
+		30 -> 31
+		31 -> 32
+		32 -> 33
+		33 -> 34
+		34 -> 35
+	}
+	36 [label="HAL_WDG_GetValue
+   0:	411c                	lw	a5,0(a0)
+   2:	43c8                	lw	a0,4(a5)
+
+"]
+	subgraph clusterHAL_WDG_GetValue {
+	}
+	37 [label="HAL_WDG_GetRIS
+   0:	411c                	lw	a5,0(a0)
+   2:	4b88                	lw	a0,16(a5)
+
+"]
+	subgraph clusterHAL_WDG_GetRIS {
+	}
+	38 [label="HAL_WDG_GetMIS
+   0:	411c                	lw	a5,0(a0)
+   2:	4bc8                	lw	a0,20(a5)
+
+"]
+	subgraph clusterHAL_WDG_GetMIS {
+	}
 }

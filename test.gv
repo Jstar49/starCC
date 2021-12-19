@@ -1,108 +1,152 @@
 // root
 digraph {
 	None [label=root]
-	0 [label=while]
+	0 [label=For]
 	None -> 0
-	1 [label=Condition]
+	1 [label=for_init]
 	0 -> 1
-	2 [label=a]
+	2 [label=Assign]
 	1 -> 2
-	3 [label=True]
-	0 -> 3
-	4 [label=Assign]
-	3 -> 4
-	6 [label="="]
-	4 -> 6
-	5 [label=x]
-	6 -> 5
-	8 [label="+"]
+	4 [label="="]
+	2 -> 4
+	3 [label=i]
+	4 -> 3
+	5 [label=g]
+	4 -> 5
+	6 [label=Assign]
+	1 -> 6
+	8 [label="="]
 	6 -> 8
-	7 [label=k]
+	7 [label=j]
 	8 -> 7
-	9 [label=3]
+	9 [label=9]
 	8 -> 9
-	10 [label=if]
-	3 -> 10
-	11 [label=Condition]
-	10 -> 11
-	15 [label=">"]
-	11 -> 15
-	13 [label="+"]
-	15 -> 13
-	12 [label=a]
-	13 -> 12
-	14 [label=5]
-	13 -> 14
-	16 [label=5]
-	15 -> 16
-	17 [label=True]
-	10 -> 17
-	18 [label=Assign]
-	17 -> 18
-	20 [label="="]
-	18 -> 20
-	19 [label=j]
-	20 -> 19
-	22 [label="+"]
-	20 -> 22
-	21 [label=k]
-	22 -> 21
-	23 [label=3]
+	10 [label=Condition]
+	0 -> 10
+	12 [label=">"]
+	10 -> 12
+	11 [label=s]
+	12 -> 11
+	13 [label=0]
+	12 -> 13
+	14 [label=For_add]
+	0 -> 14
+	15 [label=Assign]
+	14 -> 15
+	17 [label="="]
+	15 -> 17
+	16 [label=i]
+	17 -> 16
+	19 [label="+"]
+	17 -> 19
+	18 [label=i]
+	19 -> 18
+	20 [label=1]
+	19 -> 20
+	21 [label=Stmt]
+	0 -> 21
+	22 [label=For]
+	None -> 22
+	23 [label=for_init]
 	22 -> 23
-	24 [label=False]
-	10 -> 24
-	25 [label=Assign]
-	24 -> 25
-	27 [label="="]
-	25 -> 27
-	26 [label=j]
-	27 -> 26
-	29 [label="+"]
-	27 -> 29
-	28 [label=000]
-	29 -> 28
-	30 [label=y]
-	29 -> 30
-	31 [label=if]
-	24 -> 31
+	24 [label=Assign]
+	23 -> 24
+	26 [label="="]
+	24 -> 26
+	25 [label=i]
+	26 -> 25
+	27 [label=g]
+	26 -> 27
+	28 [label=Assign]
+	23 -> 28
+	30 [label="="]
+	28 -> 30
+	29 [label=j]
+	30 -> 29
+	31 [label=9]
+	30 -> 31
 	32 [label=Condition]
-	31 -> 32
-	33 [label=ig]
-	32 -> 33
-	34 [label=True]
-	31 -> 34
-	35 [label=Assign]
+	22 -> 32
+	34 [label=">"]
+	32 -> 34
+	33 [label=s]
+	34 -> 33
+	35 [label=0]
 	34 -> 35
-	37 [label="="]
-	35 -> 37
-	36 [label=i]
-	37 -> 36
-	38 [label=s]
-	37 -> 38
-	39 [label=break]
-	34 -> 39
-	40 [label=while]
-	3 -> 40
-	41 [label=Condition]
-	40 -> 41
-	43 [label="+"]
-	41 -> 43
-	42 [label=g]
-	43 -> 42
-	44 [label=hb]
+	36 [label=For_add]
+	22 -> 36
+	37 [label=Assign]
+	36 -> 37
+	39 [label="="]
+	37 -> 39
+	38 [label=i]
+	39 -> 38
+	41 [label="+"]
+	39 -> 41
+	40 [label=i]
+	41 -> 40
+	42 [label=1]
+	41 -> 42
+	43 [label=Stmt]
+	22 -> 43
+	44 [label=Assign]
 	43 -> 44
-	45 [label=True]
-	40 -> 45
-	46 [label=Assign]
-	45 -> 46
-	48 [label="="]
-	46 -> 48
-	47 [label=g]
-	48 -> 47
-	50 [label="+"]
-	48 -> 50
-	49 [label=g]
-	50 -> 49
-	51 [label=sd]
-	50 -> 51
+	46 [label="="]
+	44 -> 46
+	45 [label=a]
+	46 -> 45
+	47 [label=s]
+	46 -> 47
+	48 [label=For]
+	43 -> 48
+	49 [label=for_init]
+	48 -> 49
+	50 [label=Assign]
+	49 -> 50
+	52 [label="="]
+	50 -> 52
+	51 [label=i]
+	52 -> 51
+	53 [label=g]
+	52 -> 53
+	54 [label=Assign]
+	49 -> 54
+	56 [label="="]
+	54 -> 56
+	55 [label=j]
+	56 -> 55
+	57 [label=9]
+	56 -> 57
+	58 [label=Condition]
+	48 -> 58
+	60 [label=">"]
+	58 -> 60
+	59 [label=s]
+	60 -> 59
+	61 [label=0]
+	60 -> 61
+	62 [label=For_add]
+	48 -> 62
+	63 [label=Assign]
+	62 -> 63
+	65 [label="="]
+	63 -> 65
+	64 [label=i]
+	65 -> 64
+	67 [label="+"]
+	65 -> 67
+	66 [label=i]
+	67 -> 66
+	68 [label=1]
+	67 -> 68
+	69 [label=Stmt]
+	48 -> 69
+	70 [label=Assign]
+	69 -> 70
+	72 [label="="]
+	70 -> 72
+	71 [label=a]
+	72 -> 71
+	73 [label=s]
+	72 -> 73
 }

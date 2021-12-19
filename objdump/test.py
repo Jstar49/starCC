@@ -10,27 +10,59 @@ import graphviz
 # argv[3] : output file. 结果保存文件,唯一格式 .csv
 '''
 
-dot = graphviz.Digraph(comment='root')
-dot.attr(compound='true')
-dot.attr('node', shape='box')
+
 dot_num = 0
 
-def gratest():
-	g = graphviz.Digraph('G', filename='cluster_edge.gv')
+def gratest(funs):
+	global dot_num
+	g = graphviz.Digraph('G', filename='cluster_edge.gv',format='png',node_attr={'color': 'lightblue2', 'style': 'filled'})
 	g.attr(compound='true')
+	g.attr('node', shape='box')
 
-	with g.subgraph(name='cluster0') as c:
-	    c.edges(['ab', 'ac', 'bd', 'cd'])
-
-	with g.subgraph(name='cluster1') as c:
-	    c.edges(['eg', 'ef'])
-
-	g.edge('b', 'f', lhead='cluster1')
-	g.edge('d', 'e')
-	g.edge('c', 'g', ltail='cluster0', lhead='cluster1')
-	g.edge('c', 'e', ltail='cluster0')
-	g.edge('d', 'h')
-
+	for fun_info in funs:
+		# with g.subgraph(name='cluster1') as c:
+		# 	c.edges(['eg', 'ef'])
+		block_list = []
+		fun_block = funs[fun_info]['name']+"\n"
+		fun_block_name = funs[fun_info]['name']+"\n"
+		jump_in_fun = []
+		for line in funs[fun_info]["api_stmt"]:
+			if len(re.findall(r'<(.*)>:',line)):
+				# print(re.findall(r'<(.*)>:',line)[0])
+				block_node = Tree(fun_block_name)
+				block_node.dot_num = str(dot_num)
+				dot_num += 1
+				block_node.block_code = fun_block
+				block_list.append(block_node)
+				# update 
+				fun_block = line
+				fun_block_name = re.findall(r'<(.*)>:',line)[0]
+				continue
+			if len(re.findall(r'<(.*)>',line)):
+				jump_in_fun.append([fun_block_name,re.findall(r'<(.*)>',line)[0]])
+			fun_block += line
+		print(jump_in_fun)
+		fun_suck = []
+		g.node(str(block_list[0].dot_num),block_list[0].block_code)
+		for node_index in range(1,len(block_list)):
+			g.node(block_list[node_index].dot_num,block_list[node_index].block_code)
+			fun_suck.append((block_list[node_index-1].dot_num,block_list[node_index].dot_num))
+		for i in jump_in_fun:
+				for j in block_list:
+					if i[0] == j.key:
+						begin = j.dot_num
+					if i[1] == j.key:
+						end = j.dot_num
+				fun_suck.append((begin,end))
+		print(fun_suck)
+		with g.subgraph(name='cluster'+funs[fun_info]['name']) as d:
+			d.edges(fun_suck)
+	# dot.render('test.gv')
+	# print(funs[fun_info]['name'])
+	# with g.subgraph(name='cluster1HAL_WDG_Start') as c:
+	# 	c.edges([('eg', 'ef'),('sf','ll')])
+	# with g.subgraph(name=str(funs[fun_info]['name'])+'1') as c:
+	# 	c.edges([('op','sdf'),('sf','ll')])
 	g.render()
 
 class Tree(object):
@@ -39,45 +71,50 @@ class Tree(object):
 		self.dot_num = None
 		self.block_code = None
 
-def printdot(fun_info):
+def printdot(funs):
+	dot = graphviz.Digraph(comment='root')
+	dot.attr(compound='true')
+	dot.attr('node', shape='box')
 	global dot_num
-	block_list = []
-	fun_block = fun_info['name']+"\n"
-	fun_block_name = fun_info['name']+"\n"
-	jump_in_fun = []
-	for line in fun_info["api_stmt"]:
-		if len(re.findall(r'<(.*)>:',line)):
-			print(re.findall(r'<(.*)>:',line)[0])
-			block_node = Tree(fun_block_name)
-			block_node.dot_num = str(dot_num)
-			dot_num += 1
-			block_node.block_code = fun_block
-			block_list.append(block_node)
-			# update 
-			fun_block = line
-			fun_block_name = re.findall(r'<(.*)>:',line)[0]
-			continue
-		if len(re.findall(r'<(.*)>',line)):
-			jump_in_fun.append([fun_block_name,re.findall(r'<(.*)>',line)[0]])
-		fun_block += line
-	print(jump_in_fun)
-	
-	with dot.subgraph(name=fun_info['name']) as d:
+	for fun_info in funs:
+		block_list = []
+		fun_block = funs[fun_info]['name']+"\n"
+		fun_block_name = funs[fun_info]['name']+"\n"
+		jump_in_fun = []
+		for line in funs[fun_info]["api_stmt"]:
+			if len(re.findall(r'<(.*)>:',line)):
+				print(re.findall(r'<(.*)>:',line)[0])
+				block_node = Tree(fun_block_name)
+				block_node.dot_num = str(dot_num)
+				dot_num += 1
+				block_node.block_code = fun_block
+				block_list.append(block_node)
+				# update 
+				fun_block = line
+				fun_block_name = re.findall(r'<(.*)>:',line)[0]
+				continue
+			if len(re.findall(r'<(.*)>',line)):
+				jump_in_fun.append([fun_block_name,re.findall(r'<(.*)>',line)[0]])
+			fun_block += line
+		print(jump_in_fun)
 		fun_suck = []
-		d.node(str(block_list[0].dot_num),block_list[0].block_code)
+		dot.node(str(block_list[0].dot_num),block_list[0].block_code)
 		for node_index in range(1,len(block_list)):
-			d.node(block_list[node_index].dot_num,block_list[node_index].block_code)
+			dot.node(block_list[node_index].dot_num,block_list[node_index].block_code)
 			fun_suck.append((block_list[node_index-1].dot_num,block_list[node_index].dot_num))
-		print(fun_suck)
 		for i in jump_in_fun:
-			for j in block_list:
-				if i[0] == j.key:
-					begin = j.dot_num
-				if i[1] == j.key:
-					end = j.dot_num
-			fun_suck.append((begin,end))
-		d.edges(fun_suck)
+				for j in block_list:
+					if i[0] == j.key:
+						begin = j.dot_num
+					if i[1] == j.key:
+						end = j.dot_num
+				fun_suck.append((begin,end))
+		print(fun_suck)
+		with dot.subgraph(name=funs[fun_info]['name']) as d:
+			d.edges(fun_suck)
 	# dot.render('test.gv')
+	dot.edge('1','11')
+	dot.render('test.gv')
 
 
 def get_api_diff(file1_result):
@@ -121,7 +158,7 @@ def get_api_diff(file1_result):
 			# print(api_name)
 			# for i in api_stmt:
 			# 	print(i)
-			printdot(file1_api_list[api_name])
+	gratest(file1_api_list)
 	# print(file1_api_list)
 
 
@@ -132,6 +169,5 @@ if __name__ =='__main__':
 	f_stream = f.readlines()
 	f.close()
 	get_api_diff(f_stream)
-	dot.edge('1','11')
-	dot.render('test.gv')
-	gratest()
+	
+	# gratest()

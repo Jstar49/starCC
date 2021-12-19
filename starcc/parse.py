@@ -260,7 +260,7 @@ class Parse(object):
 		constant_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		constant_tree.token = self.tokens[index]
-		gram_root.add_child(iden_tree)
+		gram_root.add_child(constant_tree)
 		index += 1
 		return index
 
@@ -276,6 +276,7 @@ class Parse(object):
 
 	# 赋值语句
 	def Assign(self,index,gram_root):
+		print('debug line 279',self.tokens[index].value,gram_root.key)
 		# 赋值语句根节点
 		assign_tree = Tree("Assign")
 		assign_tree.dot_num = self.dot_num
@@ -432,8 +433,71 @@ class Parse(object):
 		return index
 
 	# for节点
-	def For(self,index,gram_node):
-		pass
+	def For(self,index,gram_root):
+		# for节点
+		for_node = Tree("For")
+		for_node.dot_num = self.dot_num
+		self.dot_num += 1
+		gram_root.add_child(for_node)
+		index+=2
+		# index = self.parse(index,for_node)
+		# print("debug line 441",index,self.tokens[index].value)
+		# for 的初始化
+		for_init_node = Tree("for_init")
+		for_init_node.dot_num = self.dot_num
+		self.dot_num += 1
+		for_node.add_child(for_init_node)
+		if self.tokens[index].type =='T_semicolon':
+			index +=1
+		else:
+			# print("debug line 453",self.tokens[index].value)
+			while(self.tokens[index].type !='T_semicolon'):
+				index = self.parse(index,for_init_node)
+		index += 1
+		# for 节点的条件Node
+		condition_node = Tree("Condition")
+		condition_node.dot_num = self.dot_num
+		self.dot_num += 1
+		for_node.add_child(condition_node)
+		if self.tokens[index].type =='T_semicolon':
+			index +=1
+		else:
+			# print("debug line 453",self.tokens[index].value)
+			while(self.tokens[index].type !='T_semicolon'):
+				index = self.parse(index,condition_node)
+		index += 1
+		# for增量Node
+		add_node = Tree("For_add")
+		add_node.dot_num = self.dot_num
+		self.dot_num += 1
+		for_node.add_child(add_node)
+		if self.tokens[index].type =='T_r1_bracket':
+			index +=1
+		else:
+			# print("debug line 453",self.tokens[index].value)
+			while(self.tokens[index].type !='T_r1_bracket'):
+				index = self.parse(index,add_node)
+		print("debug line 485",self.tokens[index].value)
+		index += 1
+		stmt_node = Tree("Stmt")
+		stmt_node.dot_num = self.dot_num
+		self.dot_num += 1
+		for_node.add_child(stmt_node)
+		print("debug line 485",self.tokens[index].value)
+		if self.tokens[index].type == 'T_semicolon':
+			return index+1
+		for_braket = []
+		for_braket.append(self.tokens[index])
+		while index <len(self.tokens):
+			if self.tokens[index].type == 'T_l3_braket':
+				for_braket.append(self.tokens[index])
+			elif self.tokens[index].type == 'T_r3_braket':
+				for_braket.pop()
+				if len(for_braket) == 0:
+					index += 1
+					break
+			index = self.parse(index,stmt_node)
+		return index
 
 	# 返回接下来的token句型
 	def retTokenType(self,index):
