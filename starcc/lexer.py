@@ -78,15 +78,12 @@ class Lexer(object):
 		# print("init")
 		self.tokens = []
 		self.source_stream = stream
-		# print(self.source_stream)
 
 	# 跳过一些不需要分析的词法，比如空白字符 & /**/注释
 	def If_skip_word(self,index):
-		# print("If_skip_word",self.source_stream[index],self.source_stream[index+1])
 		# 空白字符
 		if self.source_stream[index] == '\n' or self.source_stream[index] == '\t' or \
 			self.source_stream[index] == ' ' or self.source_stream[index] == '\r':
-			# print("skip",self.source_stream[index])
 			index += 1
 		# 注释 ,识别 /* */
 		if index < len(self.source_stream) and self.source_stream[index] == '/' and self.source_stream[index+1] == '*':
@@ -97,33 +94,26 @@ class Lexer(object):
 					break
 				index_temp +=1
 			return index_temp
+		# // 注释
 		if index < len(self.source_stream) and self.source_stream[index] == '/' and self.source_stream[index+1] == '/':
-			# print(self.source_stream[index:index+6])
 			index_temp = index
 			while index_temp < len(self.source_stream):
-				# print(self.source_stream[index_temp],end='')
 				if self.source_stream[index_temp] == '\n':
 					index_temp += 1
 					break
 				index_temp +=1
-			# print("line 104",self.source_stream[index_temp:index+8])
 			return index_temp
 		return index
 
 	def lexer(self):
-		# print("lexer")
-		# print(self.source_stream)
 		word_num = 0
 		while word_num < len(self.source_stream):
-			# print(self.source_stream[word_num],self.source_stream[word_num+1])
 			# 判断是否为注释或者不需要分析的词法
 			word_num = self.If_skip_word(word_num)
 			if word_num >= len(self.source_stream):
 				break;
-			# print(word_num)
 			# 是否为引入头文件
 			if self.source_stream[word_num] == "#":
-				# word_num += 1
 				tk_str = self.source_stream[word_num]
 				# 收纳 '#'
 				self.tokens.append(Token(tk_str,tk_str))
@@ -160,7 +150,6 @@ class Lexer(object):
 					self.source_stream[word_num] == '_'):
 					tk_str += self.source_stream[word_num]
 					word_num += 1
-				# print(tk_str)
 				if tk_str in keyWords:
 					# 识别为关键字,如 int, double ...
 					self.tokens.append(Token(tk_str,tk_str))
@@ -177,7 +166,6 @@ class Lexer(object):
 				self.tokens.append(Token("constant",tk_str))
 			# 是运算符
 			elif self.source_stream[word_num] in operatorList and not (self.source_stream[word_num] == '/' and self.source_stream[word_num+1] == '/'):
-				# word_num = self.If_skip_word(word_num)
 				tk_str = ''
 				# ++ | --
 				if (self.source_stream[word_num] == '+' or self.source_stream[word_num] == '-') and \
@@ -213,7 +201,6 @@ class Lexer(object):
 					word_num +=1
 			# 是特殊符号
 			elif self.source_stream[word_num] in specialChar:
-				# print(self.source_stream[word_num],self.source_stream[word_num+1])
 				tk_str = self.source_stream[word_num]
 				self.tokens.append(Token(tk_str,tk_str))
 				word_num += 1
@@ -230,4 +217,3 @@ class Lexer(object):
 					self.tokens.append(Token(tk_str,tk_str))
 					word_num += 1
 				word_num = self.If_skip_word(word_num)
-			# word_num += 1
