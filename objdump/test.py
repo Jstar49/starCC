@@ -27,6 +27,8 @@ def gratest(funs):
 		fun_block_name = funs[fun_info]['name']+"\n"
 		jump_in_fun = []
 		for line in funs[fun_info]["api_stmt"]:
+			print(line,end='')
+		for line in funs[fun_info]["api_stmt"]:
 			if len(re.findall(r'<(.*)>:',line)):
 				# print(re.findall(r'<(.*)>:',line)[0])
 				block_node = Tree(fun_block_name)
@@ -38,11 +40,12 @@ def gratest(funs):
 				fun_block = line
 				fun_block_name = re.findall(r'<(.*)>:',line)[0]
 				continue
-			if len(re.findall(r'<(.*)>',line)):
-				jump_in_fun.append([fun_block_name,re.findall(r'<(.*)>',line)[0]])
+			# if len(re.findall(r'<(.*)>',line)):
+			# 	jump_in_fun.append([fun_block_name,re.findall(r'<(.*)>',line)[0]])
 			fun_block += line
 		print(jump_in_fun)
 		fun_suck = []
+		print(block_list[0].block_code)
 		g.node(str(block_list[0].dot_num),block_list[0].block_code)
 		for node_index in range(1,len(block_list)):
 			g.node(block_list[node_index].dot_num,block_list[node_index].block_code)
@@ -81,6 +84,8 @@ def printdot(funs):
 		fun_block = funs[fun_info]['name']+"\n"
 		fun_block_name = funs[fun_info]['name']+"\n"
 		jump_in_fun = []
+		for line in funs[fun_info]["api_stmt"]:
+			print(line,end='')
 		for line in funs[fun_info]["api_stmt"]:
 			if len(re.findall(r'<(.*)>:',line)):
 				print(re.findall(r'<(.*)>:',line)[0])
@@ -156,8 +161,8 @@ def get_api_diff(file1_result):
 										'api_length': api_length,
 										'api_stmt':api_stmt}
 			# print(api_name)
-			# for i in api_stmt:
-			# 	print(i)
+			for i in api_stmt:
+				print(i)
 	gratest(file1_api_list)
 	# print(file1_api_list)
 

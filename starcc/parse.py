@@ -523,18 +523,23 @@ class Parse(object):
 				# print('line 288',self.tokens[index+1].value)
 				retType = 'Identifier'
 			# 'iden = *',赋值语句
-			elif self.tokens[index+1].type == 'T_assign':
+			elif self.tokens[index+1].type in ['T_assign','T_add_assign','T_sub_assign','T_mul_assign','T_div_assign','T_notequal','T_equal']:
 				retType = 'Assign'
 			# print("debug line 383 ",self.tokens[index+1].value,retType)
 			return retType
+		# 常数
 		elif self.tokens[index].type == 'T_constant':
 			return 'Constant'
+		# if
 		elif self.tokens[index].type == 'T_if':
 			return 'If'
+		# while
 		elif self.tokens[index].type == 'T_while':
 			return 'While'
+		# break
 		elif self.tokens[index].type == 'T_break':
 			return 'Break'
+		# for
 		elif self.tokens[index].type == 'T_for':
 			return 'For'
 
@@ -584,7 +589,6 @@ class Parse(object):
 		return index
 
 	def main(self):
-		# index = self.parse(0,self.grammar_tree)
 		index = 0
 		while index < len(self.tokens):
 			index = self.parse(index,self.grammar_tree)

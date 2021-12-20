@@ -40,6 +40,10 @@ keyWords_Token = {
 	'--':'T_subsub',
 	'!=':'T_notequal',
 	'==':'T_equal',
+	'+=':'T_add_assign',
+	'-=':'T_sub_assign',
+	'*=':'T_mul_assign',
+	'/=':'T_div_assign',
 	'#':'T_sharp',
 	'(':'T_l1_bracket',
 	')':'T_r1_bracket',
@@ -184,6 +188,20 @@ class Lexer(object):
 					self.tokens.append(Token(tk_str,tk_str))
 				# >= | <= 
 				elif (self.source_stream[word_num] == '>' or self.source_stream[word_num] == '<') and \
+					self.source_stream[word_num+1] == '=':
+					tk_str += self.source_stream[word_num]
+					tk_str += self.source_stream[word_num+1]
+					word_num += 2
+					self.tokens.append(Token(tk_str,tk_str))
+				# += | -= | *= | /=
+				elif (self.source_stream[word_num] in ['+','-','*','/']) and \
+					self.source_stream[word_num+1] == '=':
+					tk_str += self.source_stream[word_num]
+					tk_str += self.source_stream[word_num+1]
+					word_num += 2
+					self.tokens.append(Token(tk_str,tk_str))
+				# != | ==
+				elif (self.source_stream[word_num] == '!' or self.source_stream[word_num] == '=') and \
 					self.source_stream[word_num+1] == '=':
 					tk_str += self.source_stream[word_num]
 					tk_str += self.source_stream[word_num+1]
