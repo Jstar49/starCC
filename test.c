@@ -1,18 +1,18 @@
 // for(i=g,j=9;s>0;i=i+1);
-for(i=g,j=9;s>0;i=i+1){
-	a = s;
-	if(j==0){
-    k=i;
-}else if(f){
-    k=9;
-}else if(g==0){
-    k=i;
-}else{
-	h=i;
-}
-    k=0;
-}
-
+//for(i=g,j=9;s>0;i=i+1){
+//	a = s;
+//	if(j==0){
+//    k=i;
+//}else if(f){
+//    k=9;
+//}else if(g==0){
+//    k=i;
+//}else{
+//	h=i;
+//}
+//    k=0;
+//}
+sum = j+7*i-i/5+4;
 // if(j==0){
 //     k=i;
 // }else if(f){
