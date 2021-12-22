@@ -105,6 +105,7 @@ class Lexer(object):
 			return index_temp
 		return index
 
+	# 词法分析函数
 	def lexer(self):
 		word_num = 0
 		while word_num < len(self.source_stream):
@@ -217,3 +218,12 @@ class Lexer(object):
 					self.tokens.append(Token(tk_str,tk_str))
 					word_num += 1
 				word_num = self.If_skip_word(word_num)
+
+
+	# 检查
+	def CheckLexer():
+		pass
+
+	# 主函数
+	def main(self):
+		self.lexer()
