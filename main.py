@@ -33,9 +33,9 @@ def passes():
 		print("(%s, %s)" % (i.type,i.value))
 	parse = Parse(lexer.tokens)
 	parse.main()
-	# parse.drawTree(parse.grammar_tree)
-
-
+	parse.drawTree(parse.grammar_tree)
+	check = Check(parse)
+	# check.main()
 
 if __name__ == '__main__':
 	for opt in sys.argv[1:]:

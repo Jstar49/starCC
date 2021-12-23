@@ -12,7 +12,9 @@
 //}
 //    k=0;
 //}
-sum = j+7*i-i/5+4;
+int temp = 8,k,j=9;
+sum = temp + 8;
+// sum = j+7*i-i/5+4;
 // if(j==0){
 //     k=i;
 // }else if(f){

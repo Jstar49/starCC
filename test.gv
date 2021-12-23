@@ -1,32 +1,30 @@
 // root
 digraph {
 	None [label=root]
-	0 [label=Assign]
+	0 [label=VarDeclaration]
 	None -> 0
-	2 [label="="]
+	1 [label=T_int]
+	0 -> 1
+	2 [label=Identifier]
 	0 -> 2
-	1 [label=sum]
-	2 -> 1
-	4 [label="+"]
-	2 -> 4
-	3 [label=j]
-	4 -> 3
-	8 [label="-"]
-	4 -> 8
-	6 [label="*"]
-	8 -> 6
-	5 [label=7]
-	6 -> 5
-	7 [label=i]
-	6 -> 7
-	12 [label="+"]
-	8 -> 12
-	10 [label="/"]
-	12 -> 10
-	9 [label=i]
-	10 -> 9
-	11 [label=5]
-	10 -> 11
-	13 [label=4]
-	12 -> 13
+	3 [label=Assign]
+	2 -> 3
+	5 [label="="]
+	3 -> 5
+	4 [label=temp]
+	5 -> 4
+	6 [label=8]
+	5 -> 6
+	7 [label=Assign]
+	None -> 7
+	9 [label="="]
+	7 -> 9
+	8 [label=sum]
+	9 -> 8
+	11 [label="+"]
+	9 -> 11
+	10 [label=temp]
+	11 -> 10
+	12 [label=8]
+	11 -> 12
 }
