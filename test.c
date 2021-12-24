@@ -13,7 +13,15 @@
 //    k=0;
 //}
 int temp = 8,k,j=9;
+short a = 5;
 sum = temp + 8;
+int func(){
+	// char[] sh = "fg";
+	char sh = 5;
+}
+int funs(int h,char j){
+	k = h + j;
+}
 // sum = j+7*i-i/5+4;
 // if(j==0){
 //     k=i;

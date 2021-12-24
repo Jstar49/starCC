@@ -15,16 +15,91 @@ digraph {
 	5 -> 4
 	6 [label=8]
 	5 -> 6
-	7 [label=Assign]
-	None -> 7
-	9 [label="="]
-	7 -> 9
-	8 [label=sum]
-	9 -> 8
-	11 [label="+"]
-	9 -> 11
-	10 [label=temp]
-	11 -> 10
-	12 [label=8]
-	11 -> 12
+	7 [label=k]
+	2 -> 7
+	8 [label=Assign]
+	2 -> 8
+	10 [label="="]
+	8 -> 10
+	9 [label=j]
+	10 -> 9
+	11 [label=9]
+	10 -> 11
+	12 [label=VarDeclaration]
+	None -> 12
+	13 [label=T_short]
+	12 -> 13
+	14 [label=Identifier]
+	12 -> 14
+	15 [label=Assign]
+	14 -> 15
+	17 [label="="]
+	15 -> 17
+	16 [label=a]
+	17 -> 16
+	18 [label=5]
+	17 -> 18
+	19 [label=Assign]
+	None -> 19
+	21 [label="="]
+	19 -> 21
+	20 [label=sum]
+	21 -> 20
+	23 [label="+"]
+	21 -> 23
+	22 [label=temp]
+	23 -> 22
+	24 [label=8]
+	23 -> 24
+	25 [label=FuncDeclaration]
+	None -> 25
+	26 [label=T_int]
+	25 -> 26
+	27 [label=Identifier]
+	25 -> 27
+	28 [label=func]
+	27 -> 28
+	29 [label=Args]
+	25 -> 29
+	30 [label=Stmt]
+	25 -> 30
+	31 [label=VarDeclaration]
+	30 -> 31
+	32 [label=T_char]
+	31 -> 32
+	33 [label=Identifier]
+	31 -> 33
+	34 [label=Assign]
+	33 -> 34
+	36 [label="="]
+	34 -> 36
+	35 [label=sh]
+	36 -> 35
+	37 [label=5]
+	36 -> 37
+	None [label=root]
+	19 [label=Assign]
+	None -> 19
+	21 [label="="]
+	19 -> 21
+	20 [label=sum]
+	21 -> 20
+	23 [label="+"]
+	21 -> 23
+	22 [label=temp]
+	23 -> 22
+	24 [label=8]
+	23 -> 24
+	25 [label=FuncDeclaration]
+	None -> 25
+	26 [label=T_int]
+	25 -> 26
+	27 [label=Identifier]
+	25 -> 27
+	28 [label=func]
+	27 -> 28
+	29 [label=Args]
+	25 -> 29
+	30 [label=Stmt]
+	25 -> 30
 }

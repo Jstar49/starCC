@@ -35,7 +35,8 @@ def passes():
 	parse.main()
 	parse.drawTree(parse.grammar_tree)
 	check = Check(parse)
-	# check.main()
+	check.main()
+	parse.drawTree(check.parse.grammar_tree)
 
 if __name__ == '__main__':
 	for opt in sys.argv[1:]:

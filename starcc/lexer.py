@@ -9,13 +9,14 @@ operatorList = ['+','-','*','/','=','&','|','>','<','>=','<=','++','--','!=','==
 specialChar = [	'(',')','[',']','{','}',',',';','\"']
 # 关键字
 keyWords = [
-	'int','double','float','char','void','for','while','if','else','do','return','include'
+	'int','short','double','float','char','void','for','while','if','else','do','return','include'
 ]
 
 # 关键字,操作符 Token
 keyWords_Token = {
 	'int':'T_int',
 	'char':'T_char',
+	'short':'T_short',
 	'void':'T_void',
 	'for':'T_for',
 	'while':'T_while',
