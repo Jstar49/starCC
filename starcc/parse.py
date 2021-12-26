@@ -4,7 +4,7 @@ import os
 
 # os.environ["PATH"] += os.pathsep + 'E:/Graphviz/bin'
 # os.environ["PATH"] += os.pathsep + 'G:/Graphviz/bin'
-dot = graphviz.Digraph(comment='root')
+dot = graphviz.Digraph(comment='root',format='png')
 
 operator_priority = {
 	'>':8,

@@ -18,6 +18,7 @@ sum = temp + 8;
 int func(){
 	// char[] sh = "fg";
 	char sh = 5;
+	sh += a;
 }
 int funs(int h,char j){
 	k = h + j;
