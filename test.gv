@@ -47,7 +47,7 @@ digraph {
 	21 -> 20
 	23 [label="+"]
 	21 -> 23
-	22 [label=temp]
+	22 [label=_temp__]
 	23 -> 22
 	24 [label=8]
 	23 -> 24
@@ -130,7 +130,7 @@ digraph {
 	21 -> 20
 	23 [label="+"]
 	21 -> 23
-	22 [label=temp]
+	22 [label=_temp__]
 	23 -> 22
 	24 [label=8]
 	23 -> 24

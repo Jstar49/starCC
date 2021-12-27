@@ -10,8 +10,9 @@ file_name = ""
 source_stream = ""
 
 
-
+# 语法分析
 def parse():
+	# 词法分析
 	lexer = Lexer(source_stream)
 	lexer.main()
 	for i in lexer.tokens:
@@ -20,23 +21,31 @@ def parse():
 	parse.main()
 	parse.drawTree(parse.grammar_tree)
 
+# 词法分析
 def lexer():
 	lexer = Lexer(source_stream)
 	lexer.main()
 	for i in lexer.tokens:
 		print("(%s, %s)" % (i.type,i.value))
 
+# 中间代码生成器
 def passes():
+	# 词法分析
 	lexer = Lexer(source_stream)
 	lexer.main()
 	for i in lexer.tokens:
 		print("(%s, %s)" % (i.type,i.value))
+	# 语法分析
 	parse = Parse(lexer.tokens)
 	parse.main()
 	parse.drawTree(parse.grammar_tree)
+	# 符号检查
 	check = Check(parse)
 	check.main()
 	parse.drawTree(check.parse.grammar_tree)
+	# 中间代码生成
+	passes = Passes(check)
+	passes.main()
 
 if __name__ == '__main__':
 	for opt in sys.argv[1:]:
