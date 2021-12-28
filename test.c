@@ -14,7 +14,8 @@
 //}
 int temp = 8,k,j=9;
 short a = 5;
-sum = _temp__ + 8;
+sum = _temp__ + 8-8*4;
+sum = temp;
 int func(){
 	// char[] sh = "fg";
 	char sh = 5;
