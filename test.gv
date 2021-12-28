@@ -49,78 +49,94 @@ digraph {
 	21 -> 23
 	22 [label=_temp__]
 	23 -> 22
+	25 [label="-"]
+	23 -> 25
 	24 [label=8]
-	23 -> 24
-	25 [label=FuncDeclaration]
-	None -> 25
-	26 [label=T_int]
-	25 -> 26
-	27 [label=Identifier]
+	25 -> 24
+	27 [label="*"]
 	25 -> 27
-	28 [label=func]
+	26 [label=8]
+	27 -> 26
+	28 [label=4]
 	27 -> 28
-	29 [label=Args]
-	25 -> 29
-	30 [label=Stmt]
-	25 -> 30
-	31 [label=VarDeclaration]
-	30 -> 31
-	32 [label=T_char]
+	29 [label=Assign]
+	None -> 29
+	31 [label="="]
+	29 -> 31
+	30 [label=sum]
+	31 -> 30
+	32 [label=temp]
 	31 -> 32
-	33 [label=Identifier]
-	31 -> 33
-	34 [label=Assign]
+	33 [label=FuncDeclaration]
+	None -> 33
+	34 [label=T_int]
 	33 -> 34
-	36 [label="="]
-	34 -> 36
-	35 [label=sh]
-	36 -> 35
-	37 [label=5]
-	36 -> 37
-	38 [label=Assign]
-	30 -> 38
-	40 [label="+="]
-	38 -> 40
-	39 [label=sh]
-	40 -> 39
-	41 [label=a]
-	40 -> 41
-	42 [label=FuncDeclaration]
-	None -> 42
-	43 [label=T_int]
-	42 -> 43
-	44 [label=Identifier]
+	35 [label=Identifier]
+	33 -> 35
+	36 [label=func]
+	35 -> 36
+	37 [label=Args]
+	33 -> 37
+	38 [label=Stmt]
+	33 -> 38
+	39 [label=VarDeclaration]
+	38 -> 39
+	40 [label=T_char]
+	39 -> 40
+	41 [label=Identifier]
+	39 -> 41
+	42 [label=Assign]
+	41 -> 42
+	44 [label="="]
 	42 -> 44
-	45 [label=funs]
+	43 [label=sh]
+	44 -> 43
+	45 [label=5]
 	44 -> 45
-	46 [label=Args]
-	42 -> 46
-	47 [label=arg]
-	46 -> 47
-	48 [label=T_int]
-	47 -> 48
-	49 [label=h]
-	47 -> 49
-	50 [label=arg]
-	46 -> 50
-	51 [label=T_char]
+	46 [label=Assign]
+	38 -> 46
+	48 [label="+="]
+	46 -> 48
+	47 [label=sh]
+	48 -> 47
+	49 [label=a]
+	48 -> 49
+	50 [label=FuncDeclaration]
+	None -> 50
+	51 [label=T_int]
 	50 -> 51
-	52 [label=j]
+	52 [label=Identifier]
 	50 -> 52
-	53 [label=Stmt]
-	42 -> 53
-	54 [label=Assign]
-	53 -> 54
-	56 [label="="]
-	54 -> 56
-	55 [label=k]
-	56 -> 55
-	58 [label="+"]
-	56 -> 58
+	53 [label=funs]
+	52 -> 53
+	54 [label=Args]
+	50 -> 54
+	55 [label=arg]
+	54 -> 55
+	56 [label=T_int]
+	55 -> 56
 	57 [label=h]
-	58 -> 57
-	59 [label=j]
+	55 -> 57
+	58 [label=arg]
+	54 -> 58
+	59 [label=T_char]
 	58 -> 59
+	60 [label=j]
+	58 -> 60
+	61 [label=Stmt]
+	50 -> 61
+	62 [label=Assign]
+	61 -> 62
+	64 [label="="]
+	62 -> 64
+	63 [label=k]
+	64 -> 63
+	66 [label="+"]
+	64 -> 66
+	65 [label=h]
+	66 -> 65
+	67 [label=j]
+	66 -> 67
 	None [label=root]
 	19 [label=Assign]
 	None -> 19
@@ -132,62 +148,78 @@ digraph {
 	21 -> 23
 	22 [label=_temp__]
 	23 -> 22
+	25 [label="-"]
+	23 -> 25
 	24 [label=8]
-	23 -> 24
-	25 [label=FuncDeclaration]
-	None -> 25
-	26 [label=T_int]
-	25 -> 26
-	27 [label=Identifier]
+	25 -> 24
+	27 [label="*"]
 	25 -> 27
-	28 [label=func]
+	26 [label=8]
+	27 -> 26
+	28 [label=4]
 	27 -> 28
-	29 [label=Args]
-	25 -> 29
-	30 [label=Stmt]
-	25 -> 30
-	38 [label=Assign]
-	30 -> 38
-	40 [label="+="]
-	38 -> 40
-	39 [label=sh]
-	40 -> 39
-	41 [label=a]
-	40 -> 41
-	42 [label=FuncDeclaration]
-	None -> 42
-	43 [label=T_int]
-	42 -> 43
-	44 [label=Identifier]
-	42 -> 44
-	45 [label=funs]
-	44 -> 45
-	46 [label=Args]
-	42 -> 46
-	47 [label=arg]
-	46 -> 47
-	48 [label=T_int]
-	47 -> 48
-	49 [label=h]
-	47 -> 49
-	50 [label=arg]
-	46 -> 50
-	51 [label=T_char]
+	29 [label=Assign]
+	None -> 29
+	31 [label="="]
+	29 -> 31
+	30 [label=sum]
+	31 -> 30
+	32 [label=temp]
+	31 -> 32
+	33 [label=FuncDeclaration]
+	None -> 33
+	34 [label=T_int]
+	33 -> 34
+	35 [label=Identifier]
+	33 -> 35
+	36 [label=func]
+	35 -> 36
+	37 [label=Args]
+	33 -> 37
+	38 [label=Stmt]
+	33 -> 38
+	46 [label=Assign]
+	38 -> 46
+	48 [label="+="]
+	46 -> 48
+	47 [label=sh]
+	48 -> 47
+	49 [label=a]
+	48 -> 49
+	50 [label=FuncDeclaration]
+	None -> 50
+	51 [label=T_int]
 	50 -> 51
-	52 [label=j]
+	52 [label=Identifier]
 	50 -> 52
-	53 [label=Stmt]
-	42 -> 53
-	54 [label=Assign]
-	53 -> 54
-	56 [label="="]
-	54 -> 56
-	55 [label=k]
-	56 -> 55
-	58 [label="+"]
-	56 -> 58
+	53 [label=funs]
+	52 -> 53
+	54 [label=Args]
+	50 -> 54
+	55 [label=arg]
+	54 -> 55
+	56 [label=T_int]
+	55 -> 56
 	57 [label=h]
-	58 -> 57
-	59 [label=j]
+	55 -> 57
+	58 [label=arg]
+	54 -> 58
+	59 [label=T_char]
 	58 -> 59
+	60 [label=j]
+	58 -> 60
+	61 [label=Stmt]
+	50 -> 61
+	62 [label=Assign]
+	61 -> 62
+	64 [label="="]
+	62 -> 64
+	63 [label=k]
+	64 -> 63
+	66 [label="+"]
+	64 -> 66
+	65 [label=h]
+	66 -> 65
+	67 [label=j]
+	66 -> 67
 }
