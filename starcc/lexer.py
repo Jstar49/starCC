@@ -9,13 +9,14 @@ operatorList = ['+','-','*','/','=','&','|','>','<','>=','<=','++','--','!=','==
 specialChar = [	'(',')','[',']','{','}',',',';','\"']
 # 关键字
 keyWords = [
-	'int','double','float','char','void','for','while','if','else','do','return','include'
+	'int','short','double','float','char','void','for','while','if','else','do','return','include'
 ]
 
 # 关键字,操作符 Token
 keyWords_Token = {
 	'int':'T_int',
 	'char':'T_char',
+	'short':'T_short',
 	'void':'T_void',
 	'for':'T_for',
 	'while':'T_while',
@@ -105,6 +106,7 @@ class Lexer(object):
 			return index_temp
 		return index
 
+	# 词法分析函数
 	def lexer(self):
 		word_num = 0
 		while word_num < len(self.source_stream):
@@ -217,3 +219,12 @@ class Lexer(object):
 					self.tokens.append(Token(tk_str,tk_str))
 					word_num += 1
 				word_num = self.If_skip_word(word_num)
+
+
+	# 检查
+	def CheckLexer():
+		pass
+
+	# 主函数
+	def main(self):
+		self.lexer()

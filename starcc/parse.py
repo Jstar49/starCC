@@ -4,7 +4,7 @@ import os
 
 # os.environ["PATH"] += os.pathsep + 'E:/Graphviz/bin'
 # os.environ["PATH"] += os.pathsep + 'G:/Graphviz/bin'
-dot = graphviz.Digraph(comment='root')
+dot = graphviz.Digraph(comment='root',format='png')
 
 operator_priority = {
 	'>':8,
@@ -88,6 +88,8 @@ class Parse(object):
 				return index
 			elif self.tokens[index].type == 'T_identifier':
 				index = self.parse(index,iden_tree)
+			elif self.tokens[index].type == 'T_comma':
+				index += 1
 
 	
 	# 函数声明语句
@@ -180,8 +182,6 @@ class Parse(object):
 					if len(fun_braket) == 0:
 						break
 				index = self.parse(index,block_tree)
-			# index = self.parse(index,block_tree)
-		# index += 1
 		return index
 
 	# 默认语句
@@ -346,9 +346,7 @@ class Parse(object):
 					index += 1
 					break
 			index = self.parse(index,if_true_node)
-		print("debug line 349",self.tokens[index].value,self.tokens[index+1].value)
 		if self.tokens[index].type == 'T_else' and self.tokens[index+1].type == 'T_if':
-			print("debug line 350")
 			while self.tokens[index].type == 'T_else' and self.tokens[index+1].type == 'T_if':
 				else_if_node = Tree("Else_if")
 				else_if_node.dot_num = self.dot_num
@@ -475,13 +473,11 @@ class Parse(object):
 		else:
 			while(self.tokens[index].type !='T_r1_bracket'):
 				index = self.parse(index,add_node)
-		print("debug line 485",self.tokens[index].value)
 		index += 1
 		stmt_node = Tree("Stmt")
 		stmt_node.dot_num = self.dot_num
 		self.dot_num += 1
 		for_node.add_child(stmt_node)
-		print("debug line 485",self.tokens[index].value)
 		if self.tokens[index].type == 'T_semicolon':
 			return index+1
 		for_braket = []
@@ -500,7 +496,7 @@ class Parse(object):
 	# 返回接下来的token句型
 	def retTokenType(self,index):
 		# type 为类型关键字？很可能是变量声明或者函数声明
-		if self.tokens[index].type == 'T_int' or self.tokens[index].type == 'T_char' or self.tokens[index].type == 'T_void':
+		if self.tokens[index].type in ['T_int','T_char','T_void','T_short']:
 			retType = 'VarDeclaration'
 			index_tmp = index
 			index_tmp += 1
