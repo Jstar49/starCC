@@ -17,10 +17,25 @@ class Passes(object):
 		self.var_pool = check.var_pool
 		self.fun_pool = check.fun_pool
 		self.symbol_dict = {}
+		self.fun_symbol_dict = {}
 
 	# 用 insn 数据流保存中间代码
 
 	# 验证符号池，禁止未声明的变量使用
+	def FunSymbolInit(self,func_d):
+		# print(func_d)
+		self.fun_symbol_dict = {}
+		for sym in func_d["args"]:
+			func_sym = func_d["args"][sym]["arg_symbol"]
+			func_sym_type = func_d["args"][sym]["arg_type"]
+			self.fun_symbol_dict[func_sym] = {"symbol":func_sym,"type":func_sym_type,"index":0}
+		for sym in func_d["var_pool"]:
+			# print(sym)
+			func_sym = sym
+			func_sym_type = func_d["var_pool"][sym]["type"]
+			self.fun_symbol_dict[func_sym] = {"symbol":func_sym,"type":func_sym_type,"index":0}
+		print("fun_symbol_dict",self.fun_symbol_dict)
+
 
 	# 符号迭代,传入符号 var_temp,返回该符号的下一次计数,var_temp_n
 	# 从标号0开始,但标号0禁止使用
@@ -41,7 +56,7 @@ class Passes(object):
 		# insn：父insn
 		# root_symbol：所属符号
 		"""
-		print(node.key)
+		# print(node.key)
 		if len(node.children):
 			left = node.children[0].key
 			right = node.children[1].key
@@ -58,8 +73,8 @@ class Passes(object):
 
 
 
-	def main(self):
-		for node in self.parse_tree.children:
+	def Node_2_IR(self,root_node):
+		for node in root_node.children:
 			if node.key == "Assign":
 				Assign_insn = Insn()
 				symbol = node.children[0].children[0].key
@@ -69,4 +84,12 @@ class Passes(object):
 				symbol = self.Symbol(symbol)
 				print("=",symbol,right)
 
-		
+	def FunIteration(self):
+		for func in self.fun_pool:
+			# print(self.fun_pool[func]["node"].key)
+			self.FunSymbolInit(self.fun_pool[func])
+			self.Node_2_IR(self.fun_pool[func]["node"].children[3])
+
+	# 主函数
+	def main(self):
+		self.FunIteration()

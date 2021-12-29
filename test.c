@@ -14,12 +14,13 @@
 //}
 int temp = 8,k,j=9;
 short a = 5;
-sum = _temp__ + 8-8*4;
-sum = temp;
-int func(){
+int func(int a,int b,int c){
 	// char[] sh = "fg";
-	char sh = 5;
-	sh += a;
+	int sum = 5;
+	sum = sum + a;
+	sum = sum -b;
+	sum = sum/c;
+	return sum;
 }
 int funs(int h,char j){
 	k = h + j;

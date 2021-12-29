@@ -25,6 +25,7 @@ class Check(object):
 	def CheckVarDeclaration(self,root_node,root_key):
 		# print(root_node.key)
 		varDec_list = []
+		var_pool = {}
 		for node in root_node.children:
 			if node.key == 'VarDeclaration':
 				# print(node.key)
@@ -42,18 +43,19 @@ class Check(object):
 					iden = iden_node.key
 					if iden_node.key == 'Assign':
 						iden = iden_node.children[0].children[0].key
-					self.var_pool[iden] = {"type":var_type}
+					var_pool[iden] = {"type":var_type}
 					# 是不是有初始值
 					if iden_node.key == 'Assign':
-						self.var_pool[iden]["init_value"] = iden_node.children[0].children[1].key
+						var_pool[iden]["init_value"] = iden_node.children[0].children[1].key
 					# 设置变量生存范围
-					self.var_pool[iden]["SurvivalRange"] = root_key
+					var_pool[iden]["SurvivalRange"] = root_key
 					if root_key == 'root':
-						self.var_pool[iden]["SurvivalRange"] = "global"
+						var_pool[iden]["SurvivalRange"] = "global"
 				continue
 			# self.CheckVarDeclaration(node)
 		for node in varDec_list:
 			root_node.children.remove(node)
+		return var_pool
 
 	def CheckFunction(self,root_node):
 		for node in root_node.children:
@@ -71,14 +73,15 @@ class Check(object):
 						func_args[arg_name]["arg_type"] = arg_node.children[0].key
 						func_args[arg_name]["arg_symbol"] = arg_node.children[1].key
 				# 将函数加入函数池
-				self.fun_pool[func_name] = {"type":func_type,"args":func_args}
+				self.fun_pool[func_name] = {"type":func_type,"args":func_args,"node":node}
 				if len(node.children[3].children):
-					self.CheckVarDeclaration(node.children[3],func_name)
+					fun_var_pool = self.CheckVarDeclaration(node.children[3],func_name)
+					self.fun_pool[func_name]["var_pool"] = fun_var_pool
 
 	def main(self):
 		# for node in self.parse.grammar_tree.children:
 		# 首先检查全局变量
-		self.CheckVarDeclaration(self.parse.grammar_tree,"root")
+		self.var_pool = self.CheckVarDeclaration(self.parse.grammar_tree,"root")
 		# self.Print(self.parse.grammar_tree)
 		self.CheckFunction(self.parse.grammar_tree)
 		print(self.var_pool)
