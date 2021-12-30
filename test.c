@@ -20,7 +20,7 @@ int func(int a,int b,int c){
 	sum = sum + a;
 	sum = sum -b;
 	sum = sum/c;
-	return sum;
+	return sum+2*5-4;
 }
 int funs(int h,char j){
 	k = h + j;

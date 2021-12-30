@@ -37,8 +37,7 @@ class Tree(object):
 		self.children = []
 		self.father = None
 		# self.dot = None
-		if self.key == 'Statement':
-			self.type = None
+		self.type = None
 
 	def add_child(self,node):
 		self.children.append(node)
@@ -207,6 +206,8 @@ class Parse(object):
 				stmts_tree.dot_num = self.dot_num
 				self.dot_num += 1
 				stmt_list_tree.append(stmts_tree)
+				if self.tokens[index_tmp].type == 'T_identifier':
+					stmts_tree.type = 'identifier'
 				index_tmp += 1
 		while len(stmt_list_tree)>2:
 			max_op = -2
@@ -231,6 +232,7 @@ class Parse(object):
 		iden_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		iden_tree.token = self.tokens[index]
+		iden_tree.type = "identifier"
 		gram_root.add_child(iden_tree)
 		index += 1
 		return index
@@ -241,9 +243,23 @@ class Parse(object):
 		constant_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		constant_tree.token = self.tokens[index]
+		constant_tree.type = "constant"
 		gram_root.add_child(constant_tree)
 		index += 1
 		return index
+
+	# Return 语句
+	def Return(self,index,gram_root):
+		ret_node = Tree(self.tokens[index].value)
+		ret_node.dot_num = self.dot_num
+		self.dot_num += 1
+		gram_root.add_child(ret_node)
+		index_tmp = index + 1
+		# while self.tokens[index_tmp].type != 'T_semicolon':
+		
+		index = self.parse(index_tmp,ret_node)
+		print(self.tokens[index].value)
+		return index + 1
 
 	# Break
 	def Break(self,index,gram_root):
@@ -267,6 +283,7 @@ class Parse(object):
 		iden_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		iden_tree.token = self.tokens[index]
+		iden_tree.type = "identifier"
 		index += 1
 		# '='节点
 		assign_char_tree = Tree(self.tokens[index].value)
@@ -534,6 +551,8 @@ class Parse(object):
 		# for
 		elif self.tokens[index].type == 'T_for':
 			return 'For'
+		elif self.tokens[index].type == 'T_return':
+			return 'Return'
 
 	def parse(self,index_init,gram_root):
 		index = index_init
@@ -570,6 +589,8 @@ class Parse(object):
 			index = self.Break(index,gram_root)
 		elif self.retTokenType(index) == 'For':
 			index = self.For(index,gram_root)
+		elif self.retTokenType(index) == 'Return':
+			index = self.Return(index,gram_root)
 		else:
 			index += 1
 		return index

@@ -14,7 +14,7 @@ class Check(object):
 	def __init__(self, parse):
 		super(Check, self).__init__()
 		self.parse = parse
-		self.var_pool = {}
+		self.global_var_pool = {}
 		self.fun_pool = {}
 
 	def Print(self,root_node):
@@ -81,8 +81,8 @@ class Check(object):
 	def main(self):
 		# for node in self.parse.grammar_tree.children:
 		# 首先检查全局变量
-		self.var_pool = self.CheckVarDeclaration(self.parse.grammar_tree,"root")
+		self.global_var_pool = self.CheckVarDeclaration(self.parse.grammar_tree,"root")
 		# self.Print(self.parse.grammar_tree)
 		self.CheckFunction(self.parse.grammar_tree)
-		print(self.var_pool)
+		print(self.global_var_pool)
 		print(self.fun_pool)
