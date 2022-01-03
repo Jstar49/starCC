@@ -12,19 +12,33 @@
 //}
 //    k=0;
 //}
-int temp = 8,k,j=9;
-short a = 5;
+// k = y & 7;
+// printf("%d\n", k);
+// if (k && y){
+// 	k = 4;
+// }else if(k || y) {
+// 	k=5;
+// }else{
+// 	k=6;
+// }
+// int temp = 8,k,j=9;
+// short a = 5;
 int func(int a,int b,int c){
-	// char[] sh = "fg";
 	int sum = 5;
 	sum = sum + a;
-	sum = sum -b;
-	sum = sum/c;
-	return sum+2*5-4;
+	sum = sum -b*4+3;
+	if (a > 5 && sum){
+		sum = sum - 4;
+		if(sum > 0){
+			sum = sum -1;
+		}
+	}
+	return sum+2;
 }
-int funs(int h,char j){
-	k = h + j;
-}
+// int funs(int h,char j){
+// 	k = h + j;
+// 	return k;
+// }
 // sum = j+7*i-i/5+4;
 // if(j==0){
 //     k=i;

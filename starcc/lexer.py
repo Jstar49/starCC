@@ -33,6 +33,8 @@ keyWords_Token = {
 	'=':'T_assign',
 	'&':'T_and',
 	'|':'T_or',
+	'&&':'T_andand',
+	'||':'T_oror',
 	'>':'T_gt',
 	'<':'T_lt',
 	'>=':'T_ge',
@@ -193,6 +195,13 @@ class Lexer(object):
 				# != | ==
 				elif (self.source_stream[word_num] == '!' or self.source_stream[word_num] == '=') and \
 					self.source_stream[word_num+1] == '=':
+					tk_str += self.source_stream[word_num]
+					tk_str += self.source_stream[word_num+1]
+					word_num += 2
+					self.tokens.append(Token(tk_str,tk_str))
+				# && | ||
+				elif (self.source_stream[word_num] == '&' or self.source_stream[word_num] == '|') and \
+					self.source_stream[word_num] == self.source_stream[word_num+1]:
 					tk_str += self.source_stream[word_num]
 					tk_str += self.source_stream[word_num+1]
 					word_num += 2

@@ -7,11 +7,15 @@ import os
 dot = graphviz.Digraph(comment='root',format='png')
 
 operator_priority = {
+	'&&':7,
+	'||':7,
 	'>':8,
 	'>=':8,
 	'<':8,
 	'<=':8,
 	'=':9,
+	'&':10,
+	'|':10,
 	'+':10,
 	'-':10,
 	'*':20,
@@ -38,6 +42,7 @@ class Tree(object):
 		self.father = None
 		# self.dot = None
 		self.type = None
+		self.trans_flag = 0
 
 	def add_child(self,node):
 		self.children.append(node)
@@ -248,6 +253,24 @@ class Parse(object):
 		index += 1
 		return index
 
+	# 字符串
+	def IsString(self,index,gram_root):
+		# string_node = Tree()
+		print("string")
+		string_value = self.tokens[index].value
+		index += 1
+		string_value += self.tokens[index].value
+		index += 1
+		string_value += self.tokens[index].value
+		# print(string_value)
+		string_node = Tree(string_value)
+		string_node.dot_num = self.dot_num
+		string_node.type = "string"
+		self.dot_num += 1
+		gram_root.add_child(string_node)
+		index += 1
+		return index
+
 	# Return 语句
 	def Return(self,index,gram_root):
 		ret_node = Tree(self.tokens[index].value)
@@ -255,10 +278,7 @@ class Parse(object):
 		self.dot_num += 1
 		gram_root.add_child(ret_node)
 		index_tmp = index + 1
-		# while self.tokens[index_tmp].type != 'T_semicolon':
-		
 		index = self.parse(index_tmp,ret_node)
-		print(self.tokens[index].value)
 		return index + 1
 
 	# Break
@@ -324,7 +344,7 @@ class Parse(object):
 				if len(fun_braket) == 0:
 					index += 1
 					break
-			if self.tokens[index].type == 'T_identifier':
+			if self.tokens[index].type != 'T_comma':
 				index = self.parse(index,func_arg_tree)
 			else:
 				index += 1
@@ -553,6 +573,8 @@ class Parse(object):
 			return 'For'
 		elif self.tokens[index].type == 'T_return':
 			return 'Return'
+		elif self.tokens[index].type == 'T_quote':
+			return 'String'
 
 	def parse(self,index_init,gram_root):
 		index = index_init
@@ -591,6 +613,8 @@ class Parse(object):
 			index = self.For(index,gram_root)
 		elif self.retTokenType(index) == 'Return':
 			index = self.Return(index,gram_root)
+		elif self.retTokenType(index) == 'String':
+			index = self.IsString(index,gram_root)
 		else:
 			index += 1
 		return index
