@@ -29,9 +29,13 @@ int func(int a,int b,int c){
 	sum = sum -b*4+3;
 	if (a > 5 && sum){
 		sum = sum - 4;
-		if(sum > 0){
-			sum = sum -1;
-		}
+	}else if(sum>0){
+		sum = sum -3;
+	}
+	else if(sum>1){
+		sum = sum -4;
+	}else{
+		sum = sum -2;
 	}
 	return sum+2;
 }

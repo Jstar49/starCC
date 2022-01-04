@@ -183,22 +183,28 @@ class Passes(object):
 				ret_insn = Insn(insn_temp)
 				self.fun_insn_stream.append(ret_insn)
 				node.trans_flag = 1
-			elif node.key == 'if':
+			elif node.key in ['if']:
 				if_condi = self.Condi_Node(node.children[0].children[0])
 				func_code_block_index = self.Block_index()
 				has_else = False
+				has_else_if = False
 				node_index = root_node.children.index(node)
 				else_block = None
 				# 存在 else 分支
 				# print(root_node.key,len(root_node.children),node_index)
 				if len(root_node.children) > node_index+1:
-					if root_node.children[node_index + 1].key == "False":
+					if root_node.children[node_index + 1].key in ["False"]:
 						has_else = True
+						else_block = self.Block_index()
+				# 存在 if-else 分支
+				if len(root_node.children) > node_index+1:
+					if root_node.children[node_index + 1].key in ["Else_if"]:
+						has_else_if = True
 						else_block = self.Block_index()
 				if node.children[-1].key == "True":
 					# func_code_block_index = self.Block_index()
 					insn_temp = ["beqz",if_condi,func_code_block_index]
-					if has_else:
+					if has_else or has_else_if:
 						insn_temp[2] = else_block
 					j_insn_temp = Insn(insn_temp)
 					j_insn_temp.insn_type = "condi_jump"
@@ -209,6 +215,47 @@ class Passes(object):
 					j_to_out_insn_temp = Insn(j_to_out)
 					self.fun_insn_stream.append(j_to_out_insn_temp)
 				node.trans_flag = 1
+				while has_else_if:
+					has_else_if = False
+					node = root_node.children[node_index + 1]
+					node_index += 1 
+					
+					code_bb = [else_block + ":"]
+					code_bb_insn_temp = Insn(code_bb) 
+					code_bb_insn_temp.insn_type = "code_block"
+					self.fun_insn_stream.append(code_bb_insn_temp)
+					# 存在 else 分支
+					if len(root_node.children) > node_index+1:
+						if root_node.children[node_index + 1].key in ["False"]:
+							has_else = True
+							else_block = self.Block_index()
+					# 存在 if-else 分支
+					if len(root_node.children) > node_index+1:
+						if root_node.children[node_index + 1].key in ["Else_if"]:
+							has_else_if = True
+							else_block = self.Block_index()
+
+					if_condi = self.Condi_Node(node.children[0].children[0])
+					insn_temp = ["beqz",if_condi,func_code_block_index]
+					if has_else or has_else_if:
+						insn_temp[2] = else_block
+					j_insn_temp = Insn(insn_temp)
+					j_insn_temp.insn_type = "condi_jump"
+					self.fun_insn_stream.append(j_insn_temp)
+					self.Node_2_IR(node.children[-1])
+					j_to_out = ["b",func_code_block_index]
+					j_to_out_insn_temp = Insn(j_to_out)
+					self.fun_insn_stream.append(j_to_out_insn_temp)
+
+					
+					# print(len(root_node.children),node_index,root_node.children[node_index + 1].key)
+					# if len(root_node.children) > node_index+1:
+					# 	if root_node.children[node_index + 1].key in ["Else_if"]:
+					# 		has_else_if = True
+					# 		print("True")
+					# 		node = root_node.children[node_index + 1]
+					# 		node_index += 1
+
 				if has_else:
 					code_bb = [else_block + ":"]
 					code_bb_insn_temp = Insn(code_bb) 
