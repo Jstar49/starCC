@@ -77,104 +77,52 @@ digraph {
 	34 -> 35
 	37 [label=3]
 	36 -> 37
-	38 [label=if]
+	38 [label=while]
 	14 -> 38
 	39 [label=Condition]
 	38 -> 39
-	43 [label="&&"]
-	39 -> 43
 	41 [label=">"]
-	43 -> 41
-	40 [label=a]
+	39 -> 41
+	40 [label=sum]
 	41 -> 40
-	42 [label=5]
+	42 [label=8]
 	41 -> 42
-	44 [label=sum]
+	43 [label=True]
+	38 -> 43
+	44 [label=Assign]
 	43 -> 44
-	45 [label=True]
-	38 -> 45
-	46 [label=Assign]
-	45 -> 46
-	48 [label="="]
+	46 [label="="]
+	44 -> 46
+	45 [label=sum]
+	46 -> 45
+	48 [label="-"]
 	46 -> 48
 	47 [label=sum]
 	48 -> 47
-	50 [label="-"]
-	48 -> 50
-	49 [label=sum]
-	50 -> 49
-	51 [label=4]
+	49 [label=1]
+	48 -> 49
+	50 [label=if]
+	43 -> 50
+	51 [label=Condition]
 	50 -> 51
-	52 [label=Else_if]
-	14 -> 52
-	53 [label=Condition]
-	52 -> 53
-	55 [label=">"]
-	53 -> 55
-	54 [label=sum]
-	55 -> 54
-	56 [label=0]
+	53 [label="=="]
+	51 -> 53
+	52 [label=sum]
+	53 -> 52
+	54 [label=10]
+	53 -> 54
+	55 [label=True]
+	50 -> 55
+	56 [label=break]
 	55 -> 56
-	57 [label=True]
-	52 -> 57
-	58 [label=Assign]
-	57 -> 58
-	60 [label="="]
-	58 -> 60
-	59 [label=sum]
-	60 -> 59
-	62 [label="-"]
-	60 -> 62
-	61 [label=sum]
-	62 -> 61
-	63 [label=3]
-	62 -> 63
-	64 [label=Else_if]
-	14 -> 64
-	65 [label=Condition]
-	64 -> 65
-	67 [label=">"]
-	65 -> 67
-	66 [label=sum]
-	67 -> 66
-	68 [label=1]
-	67 -> 68
-	69 [label=True]
-	64 -> 69
-	70 [label=Assign]
-	69 -> 70
-	72 [label="="]
-	70 -> 72
-	71 [label=sum]
-	72 -> 71
-	74 [label="-"]
-	72 -> 74
-	73 [label=sum]
-	74 -> 73
-	75 [label=4]
-	74 -> 75
-	76 [label=False]
-	14 -> 76
-	77 [label=Assign]
-	76 -> 77
-	79 [label="="]
-	77 -> 79
-	78 [label=sum]
-	79 -> 78
-	81 [label="-"]
-	79 -> 81
-	80 [label=sum]
-	81 -> 80
-	82 [label=2]
-	81 -> 82
-	83 [label=return]
-	14 -> 83
-	85 [label="+"]
-	83 -> 85
-	84 [label=sum]
-	85 -> 84
-	86 [label=2]
-	85 -> 86
+	57 [label=return]
+	14 -> 57
+	59 [label="+"]
+	57 -> 59
+	58 [label=sum]
+	59 -> 58
+	60 [label=2]
+	59 -> 60
 	None [label=root]
 	0 [label=FuncDeclaration]
 	None -> 0
@@ -238,104 +186,52 @@ digraph {
 	34 -> 35
 	37 [label=3]
 	36 -> 37
-	38 [label=if]
+	38 [label=while]
 	14 -> 38
 	39 [label=Condition]
 	38 -> 39
-	43 [label="&&"]
-	39 -> 43
 	41 [label=">"]
-	43 -> 41
-	40 [label=a]
+	39 -> 41
+	40 [label=sum]
 	41 -> 40
-	42 [label=5]
+	42 [label=8]
 	41 -> 42
-	44 [label=sum]
+	43 [label=True]
+	38 -> 43
+	44 [label=Assign]
 	43 -> 44
-	45 [label=True]
-	38 -> 45
-	46 [label=Assign]
-	45 -> 46
-	48 [label="="]
+	46 [label="="]
+	44 -> 46
+	45 [label=sum]
+	46 -> 45
+	48 [label="-"]
 	46 -> 48
 	47 [label=sum]
 	48 -> 47
-	50 [label="-"]
-	48 -> 50
-	49 [label=sum]
-	50 -> 49
-	51 [label=4]
+	49 [label=1]
+	48 -> 49
+	50 [label=if]
+	43 -> 50
+	51 [label=Condition]
 	50 -> 51
-	52 [label=Else_if]
-	14 -> 52
-	53 [label=Condition]
-	52 -> 53
-	55 [label=">"]
-	53 -> 55
-	54 [label=sum]
-	55 -> 54
-	56 [label=0]
+	53 [label="=="]
+	51 -> 53
+	52 [label=sum]
+	53 -> 52
+	54 [label=10]
+	53 -> 54
+	55 [label=True]
+	50 -> 55
+	56 [label=break]
 	55 -> 56
-	57 [label=True]
-	52 -> 57
-	58 [label=Assign]
-	57 -> 58
-	60 [label="="]
-	58 -> 60
-	59 [label=sum]
-	60 -> 59
-	62 [label="-"]
-	60 -> 62
-	61 [label=sum]
-	62 -> 61
-	63 [label=3]
-	62 -> 63
-	64 [label=Else_if]
-	14 -> 64
-	65 [label=Condition]
-	64 -> 65
-	67 [label=">"]
-	65 -> 67
-	66 [label=sum]
-	67 -> 66
-	68 [label=1]
-	67 -> 68
-	69 [label=True]
-	64 -> 69
-	70 [label=Assign]
-	69 -> 70
-	72 [label="="]
-	70 -> 72
-	71 [label=sum]
-	72 -> 71
-	74 [label="-"]
-	72 -> 74
-	73 [label=sum]
-	74 -> 73
-	75 [label=4]
-	74 -> 75
-	76 [label=False]
-	14 -> 76
-	77 [label=Assign]
-	76 -> 77
-	79 [label="="]
-	77 -> 79
-	78 [label=sum]
-	79 -> 78
-	81 [label="-"]
-	79 -> 81
-	80 [label=sum]
-	81 -> 80
-	82 [label=2]
-	81 -> 82
-	83 [label=return]
-	14 -> 83
-	85 [label="+"]
-	83 -> 85
-	84 [label=sum]
-	85 -> 84
-	86 [label=2]
-	85 -> 86
+	57 [label=return]
+	14 -> 57
+	59 [label="+"]
+	57 -> 59
+	58 [label=sum]
+	59 -> 58
+	60 [label=2]
+	59 -> 60
 	None [label=root]
 	0 [label=FuncDeclaration]
 	None -> 0
@@ -383,66 +279,34 @@ digraph {
 	30 -> 29
 	32 [label=sum_5]
 	30 -> 32
-	38 [label=if]
+	38 [label=while]
 	14 -> 38
 	39 [label=Condition]
 	38 -> 39
-	43 [label="if condi_2"]
-	39 -> 43
-	45 [label=True]
-	38 -> 45
-	46 [label=Assign]
-	45 -> 46
-	48 [label="="]
+	41 [label="if condi_1"]
+	39 -> 41
+	43 [label=True]
+	38 -> 43
+	44 [label=Assign]
+	43 -> 44
+	46 [label="="]
+	44 -> 46
+	45 [label=sum]
+	46 -> 45
+	48 [label=sum_7]
 	46 -> 48
-	47 [label=sum]
-	48 -> 47
-	50 [label=sum_7]
-	48 -> 50
-	52 [label=Else_if]
-	14 -> 52
-	53 [label=Condition]
-	52 -> 53
-	55 [label="if condi_3"]
-	53 -> 55
-	57 [label=True]
-	52 -> 57
-	58 [label=Assign]
-	57 -> 58
-	60 [label="="]
-	58 -> 60
-	59 [label=sum]
-	60 -> 59
-	62 [label=sum_9]
-	60 -> 62
-	64 [label=Else_if]
-	14 -> 64
-	65 [label=Condition]
-	64 -> 65
-	67 [label="if condi_4"]
-	65 -> 67
-	69 [label=True]
-	64 -> 69
-	70 [label=Assign]
-	69 -> 70
-	72 [label="="]
-	70 -> 72
-	71 [label=sum]
-	72 -> 71
-	74 [label=sum_11]
-	72 -> 74
-	76 [label=False]
-	14 -> 76
-	77 [label=Assign]
-	76 -> 77
-	79 [label="="]
-	77 -> 79
-	78 [label=sum]
-	79 -> 78
-	81 [label=sum_13]
-	79 -> 81
-	83 [label=return]
-	14 -> 83
-	85 [label="func ret_1"]
-	83 -> 85
+	50 [label=if]
+	43 -> 50
+	51 [label=Condition]
+	50 -> 51
+	53 [label="if condi_2"]
+	51 -> 53
+	55 [label=True]
+	50 -> 55
+	56 [label=break]
+	55 -> 56
+	57 [label=return]
+	14 -> 57
+	59 [label="func ret_1"]
+	57 -> 59
 }

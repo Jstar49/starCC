@@ -7,6 +7,8 @@ import os
 dot = graphviz.Digraph(comment='root',format='png')
 
 operator_priority = {
+	'==':6,
+	'!=':6,
 	'&&':7,
 	'||':7,
 	'>':8,
@@ -292,7 +294,6 @@ class Parse(object):
 
 	# 赋值语句
 	def Assign(self,index,gram_root):
-		# print('debug line 279',self.tokens[index].value,gram_root.key)
 		# 赋值语句根节点
 		assign_tree = Tree("Assign")
 		assign_tree.dot_num = self.dot_num
@@ -553,7 +554,7 @@ class Parse(object):
 			elif self.tokens[index+1].type == 'T_comma' or self.tokens[index+1].type == 'T_r1_bracket':
 				retType = 'Identifier'
 			# 'iden = *',赋值语句
-			elif self.tokens[index+1].type in ['T_assign','T_add_assign','T_sub_assign','T_mul_assign','T_div_assign','T_notequal','T_equal']:
+			elif self.tokens[index+1].type in ['T_assign','T_add_assign','T_sub_assign','T_mul_assign','T_div_assign']:
 				retType = 'Assign'
 			return retType
 		# 常数

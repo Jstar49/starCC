@@ -9,7 +9,7 @@ operatorList = ['+','-','*','/','=','&','|','>','<','>=','<=','++','--','!=','==
 specialChar = [	'(',')','[',']','{','}',',',';','\"']
 # 关键字
 keyWords = [
-	'int','short','double','float','char','void','for','while','if','else','do','return','include'
+	'int','short','double','float','char','void','for','while','if','else','do','return','include','break'
 ]
 
 # 关键字,操作符 Token
@@ -84,6 +84,8 @@ class Lexer(object):
 
 	# 跳过一些不需要分析的词法，比如空白字符 & /**/注释
 	def If_skip_word(self,index):
+		if index >= len(self.source_stream):
+			return index
 		# 空白字符
 		if self.source_stream[index] == '\n' or self.source_stream[index] == '\t' or \
 			self.source_stream[index] == ' ' or self.source_stream[index] == '\r':
