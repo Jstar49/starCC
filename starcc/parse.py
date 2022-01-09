@@ -484,34 +484,26 @@ class Parse(object):
 		for_init_node.dot_num = self.dot_num
 		self.dot_num += 1
 		for_node.add_child(for_init_node)
-		if self.tokens[index].type =='T_semicolon':
-			index +=1
-		else:
-			while(self.tokens[index].type !='T_semicolon'):
-				index = self.parse(index,for_init_node)
+		while(self.tokens[index].type !='T_semicolon'):
+			index = self.parse(index,for_init_node)
 		index += 1
 		# for 节点的条件Node
 		condition_node = Tree("Condition")
 		condition_node.dot_num = self.dot_num
 		self.dot_num += 1
 		for_node.add_child(condition_node)
-		if self.tokens[index].type =='T_semicolon':
-			index +=1
-		else:
-			while(self.tokens[index].type !='T_semicolon'):
-				index = self.parse(index,condition_node)
+		while(self.tokens[index].type !='T_semicolon'):
+			index = self.parse(index,condition_node)
 		index += 1
 		# for增量Node
 		add_node = Tree("For_add")
 		add_node.dot_num = self.dot_num
 		self.dot_num += 1
 		for_node.add_child(add_node)
-		if self.tokens[index].type =='T_r1_bracket':
-			index +=1
-		else:
-			while(self.tokens[index].type !='T_r1_bracket'):
-				index = self.parse(index,add_node)
+		while(self.tokens[index].type !='T_r1_bracket'):
+			index = self.parse(index,add_node)
 		index += 1
+		# for 行为node
 		stmt_node = Tree("Stmt")
 		stmt_node.dot_num = self.dot_num
 		self.dot_num += 1
@@ -520,6 +512,7 @@ class Parse(object):
 			return index+1
 		for_braket = []
 		for_braket.append(self.tokens[index])
+		index += 1
 		while index <len(self.tokens):
 			if self.tokens[index].type == 'T_l3_braket':
 				for_braket.append(self.tokens[index])

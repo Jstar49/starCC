@@ -151,14 +151,55 @@ class Passes(object):
 			return symbol
 
 
+	# 赋值节点
+	def Deal_Assign_node(self,node):
+		pass
+
 
 	# 处理 条件 节点
 	def Condi_Node(self,node):
 		if 'if condi' not in self.fun_symbol_dict:
 			self.fun_symbol_dict["if condi"] = {"symbol":"if condi","type":'T_int',"index":0}
 		condi_sym = self.OpNode(node,None,"if condi")
-		# print(condi_sym)
 		return condi_sym
+
+	# For 节点
+	def Deal_For(self, node):
+		# for 代码块开始
+		# for 的初始化处理
+		self.Node_2_IR(node.children[0])
+		# for 代码块
+		for_block_index = self.Block_index()
+		code_bb = [for_block_index + ":"]
+		code_bb_insn_temp = Insn(code_bb) 
+		code_bb_insn_temp.insn_type = "code_block"
+		self.fun_insn_stream.append(code_bb_insn_temp)
+		# 条件
+		for_condi = self.Condi_Node(node.children[1].children[0])
+		func_code_block_index = self.Block_index()
+		# 添加循环出口代码块
+		self.breakto.append(func_code_block_index)
+		if len(node.children[3].children):
+			insn_temp = ["beqz",for_condi,func_code_block_index]
+			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.insn_type = "condi_jump"
+			self.fun_insn_stream.append(j_insn_temp)
+			# for 的行为语句
+			self.Node_2_IR(node.children[-1])
+			# for 的自增节点
+			self.Node_2_IR(node.children[2])
+			# for 代码块结束，跳至for代码块开头
+			j_to_out = ["b",for_block_index]
+			j_to_out_insn_temp = Insn(j_to_out)
+			j_to_out_insn_temp.insn_type = "jump"
+			self.fun_insn_stream.append(j_to_out_insn_temp)
+		# 下一个代码块
+		if func_code_block_index in self.breakto:
+			self.breakto.remove(func_code_block_index)
+		code_bb = [func_code_block_index + ":"]
+		code_bb_insn_temp = Insn(code_bb) 
+		code_bb_insn_temp.insn_type = "code_block"
+		self.fun_insn_stream.append(code_bb_insn_temp)
 
 	# while节点
 	def Deal_while(self,node):
@@ -185,6 +226,8 @@ class Passes(object):
 			j_to_out_insn_temp.insn_type = "jump"
 			self.fun_insn_stream.append(j_to_out_insn_temp)
 		# 下一个代码块
+		if func_code_block_index in self.breakto:
+			self.breakto.remove(func_code_block_index)
 		code_bb = [func_code_block_index + ":"]
 		code_bb_insn_temp = Insn(code_bb) 
 		code_bb_insn_temp.insn_type = "code_block"
@@ -307,7 +350,7 @@ class Passes(object):
 			elif node.key == 'while':
 				self.Deal_while(node)
 			# 遇到break
-			elif node.key == "break":
+			elif node.key == "break": 
 				if len(self.breakto):
 					breakout = self.breakto.pop()
 					j_to_out = ["b",breakout]
@@ -316,6 +359,9 @@ class Passes(object):
 					self.fun_insn_stream.append(j_to_out_insn_temp)
 				else:
 					exit("'break' jump error!")
+			# for 节点
+			elif node.key == "For":
+				self.Deal_For(node)
 				
 
 	def FunIteration(self):
