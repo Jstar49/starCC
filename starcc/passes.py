@@ -56,6 +56,8 @@ class Passes(object):
 			if node.key not in self.fun_symbol_dict:
 				if node.key not in self.global_var_dict:
 					exit("Symbol "+node.key+" Undefined!")
+		if node.type == 'FunctionCall':
+			print(node.type)
 
 	# 检查未定义的symbol
 	def UnDifinedSymbol(self,func_d):
@@ -153,7 +155,22 @@ class Passes(object):
 
 	# 赋值节点
 	def Deal_Assign_node(self,node):
-		pass
+		Assign_insn = None
+		symbol = node.children[0].children[0].key
+		op_node = node.children[0].children[1]
+		# print(node.children[0].key,node.children[0].type)
+
+		right = self.OpNode(op_node,Assign_insn,symbol)
+		symbol_1 = self.SymbolNow(symbol)
+		symbol = self.Symbol(symbol)
+		insn_temp = []
+		if node.children[0].type  != '=':
+			insn_temp = [node.children[0].type,symbol,symbol_1,right]
+		else:
+			insn_temp = ["=",symbol,right]
+		assign_insn = Insn(insn_temp)
+		self.fun_insn_stream.append(assign_insn)
+		node.trans_flag = 1
 
 
 	# 处理 条件 节点
@@ -241,18 +258,7 @@ class Passes(object):
 				continue
 			# 赋值节点
 			if node.key == "Assign":
-				# Assign_insn = Insn()
-				Assign_insn = None
-				symbol = node.children[0].children[0].key
-				op_node = node.children[0].children[1]
-				right = self.OpNode(op_node,Assign_insn,symbol)
-				# self.Assign(node)
-				symbol = self.Symbol(symbol)
-				insn_temp = ["=",symbol,right]
-				assign_insn = Insn(insn_temp)
-				self.fun_insn_stream.append(assign_insn)
-				# print(insn_temp)
-				node.trans_flag = 1
+				self.Deal_Assign_node(node)
 			# 遇到return节点
 			elif node.key == 'return':
 				ret_node = node.children[0]
@@ -371,10 +377,13 @@ class Passes(object):
 			self.FunSymbolInit(self.fun_pool[func])
 			print(self.fun_symbol_dict)
 			# 检查函数是否用到了未定义的符号
-			self.UnDifinedSymbol(self.fun_pool[func])
+			print(self.fun_pool[func]["node"].children[-1].key)
+			if self.fun_pool[func]["node"].children[-1].key == 'Stmt':
+				self.UnDifinedSymbol(self.fun_pool[func])
 			# 一些初始化
 			self.FunInit(func)
-			self.Node_2_IR(self.fun_pool[func]["node"].children[3])
+			if self.fun_pool[func]["node"].children[-1].key == 'Stmt':
+				self.Node_2_IR(self.fun_pool[func]["node"].children[3])
 			self.Fun_insn_print()
 			print("Func exit")
 

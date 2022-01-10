@@ -7,7 +7,7 @@ digraph {
 	0 -> 1
 	2 [label=Identifier]
 	0 -> 2
-	3 [label=func]
+	3 [label=foo]
 	2 -> 3
 	4 [label=Args]
 	0 -> 4
@@ -17,50 +17,66 @@ digraph {
 	5 -> 6
 	7 [label=a]
 	5 -> 7
-	8 [label=arg]
-	4 -> 8
+	8 [label=FuncDeclaration]
+	None -> 8
 	9 [label=T_int]
 	8 -> 9
-	10 [label=b]
+	10 [label=Identifier]
 	8 -> 10
-	11 [label=arg]
-	4 -> 11
-	12 [label=T_int]
-	11 -> 12
-	13 [label=c]
-	11 -> 13
-	14 [label=Stmt]
-	0 -> 14
-	15 [label=VarDeclaration]
-	14 -> 15
-	16 [label=T_int]
-	15 -> 16
-	17 [label=Identifier]
-	15 -> 17
-	18 [label=Assign]
-	17 -> 18
-	20 [label="="]
-	18 -> 20
-	19 [label=sum]
-	20 -> 19
-	21 [label=5]
-	20 -> 21
-	22 [label=j]
-	17 -> 22
-	23 [label=i]
-	17 -> 23
-	24 [label=Assign]
-	14 -> 24
-	26 [label="+="]
-	24 -> 26
-	25 [label=sum]
-	26 -> 25
-	27 [label=4]
-	26 -> 27
-	28 [label=return]
-	14 -> 28
-	29 [label=sum]
+	11 [label=func]
+	10 -> 11
+	12 [label=Args]
+	8 -> 12
+	13 [label=arg]
+	12 -> 13
+	14 [label=T_int]
+	13 -> 14
+	15 [label=a]
+	13 -> 15
+	16 [label=arg]
+	12 -> 16
+	17 [label=T_int]
+	16 -> 17
+	18 [label=b]
+	16 -> 18
+	19 [label=arg]
+	12 -> 19
+	20 [label=T_int]
+	19 -> 20
+	21 [label=c]
+	19 -> 21
+	22 [label=Stmt]
+	8 -> 22
+	23 [label=VarDeclaration]
+	22 -> 23
+	24 [label=T_int]
+	23 -> 24
+	25 [label=Identifier]
+	23 -> 25
+	26 [label=Assign]
+	25 -> 26
+	28 [label="="]
+	26 -> 28
+	27 [label=sum]
+	28 -> 27
+	29 [label=5]
 	28 -> 29
+	30 [label=j]
+	25 -> 30
+	31 [label=i]
+	25 -> 31
+	32 [label=Assign]
+	22 -> 32
+	34 [label="="]
+	32 -> 34
+	33 [label=sum]
+	34 -> 33
+	35 [label=4]
+	34 -> 35
+	36 [label=return]
+	22 -> 36
+	37 [label=sum]
+	36 -> 37
 	None [label=root]
 	0 [label=FuncDeclaration]
 	None -> 0
@@ -68,7 +84,7 @@ digraph {
 	0 -> 1
 	2 [label=Identifier]
 	0 -> 2
-	3 [label=func]
+	3 [label=foo]
 	2 -> 3
 	4 [label=Args]
 	0 -> 4
@@ -78,32 +94,48 @@ digraph {
 	5 -> 6
 	7 [label=a]
 	5 -> 7
-	8 [label=arg]
-	4 -> 8
+	8 [label=FuncDeclaration]
+	None -> 8
 	9 [label=T_int]
 	8 -> 9
-	10 [label=b]
+	10 [label=Identifier]
 	8 -> 10
-	11 [label=arg]
-	4 -> 11
-	12 [label=T_int]
-	11 -> 12
-	13 [label=c]
-	11 -> 13
-	14 [label=Stmt]
-	0 -> 14
-	24 [label=Assign]
-	14 -> 24
-	26 [label="+="]
-	24 -> 26
-	25 [label=sum]
-	26 -> 25
-	27 [label=4]
-	26 -> 27
-	28 [label=return]
-	14 -> 28
-	29 [label=sum]
-	28 -> 29
+	11 [label=func]
+	10 -> 11
+	12 [label=Args]
+	8 -> 12
+	13 [label=arg]
+	12 -> 13
+	14 [label=T_int]
+	13 -> 14
+	15 [label=a]
+	13 -> 15
+	16 [label=arg]
+	12 -> 16
+	17 [label=T_int]
+	16 -> 17
+	18 [label=b]
+	16 -> 18
+	19 [label=arg]
+	12 -> 19
+	20 [label=T_int]
+	19 -> 20
+	21 [label=c]
+	19 -> 21
+	22 [label=Stmt]
+	8 -> 22
+	32 [label=Assign]
+	22 -> 32
+	34 [label="="]
+	32 -> 34
+	33 [label=sum]
+	34 -> 33
+	35 [label=4]
+	34 -> 35
+	36 [label=return]
+	22 -> 36
+	37 [label=sum]
+	36 -> 37
 	None [label=root]
 	0 [label=FuncDeclaration]
 	None -> 0
@@ -111,7 +143,7 @@ digraph {
 	0 -> 1
 	2 [label=Identifier]
 	0 -> 2
-	3 [label=func]
+	3 [label=foo]
 	2 -> 3
 	4 [label=Args]
 	0 -> 4
@@ -121,30 +153,46 @@ digraph {
 	5 -> 6
 	7 [label=a]
 	5 -> 7
-	8 [label=arg]
-	4 -> 8
+	8 [label=FuncDeclaration]
+	None -> 8
 	9 [label=T_int]
 	8 -> 9
-	10 [label=b]
+	10 [label=Identifier]
 	8 -> 10
-	11 [label=arg]
-	4 -> 11
-	12 [label=T_int]
-	11 -> 12
-	13 [label=c]
-	11 -> 13
-	14 [label=Stmt]
-	0 -> 14
-	24 [label=Assign]
-	14 -> 24
-	26 [label="+="]
-	24 -> 26
-	25 [label=sum]
-	26 -> 25
-	27 [label=4]
-	26 -> 27
-	28 [label=return]
-	14 -> 28
-	29 [label=sum]
-	28 -> 29
+	11 [label=func]
+	10 -> 11
+	12 [label=Args]
+	8 -> 12
+	13 [label=arg]
+	12 -> 13
+	14 [label=T_int]
+	13 -> 14
+	15 [label=a]
+	13 -> 15
+	16 [label=arg]
+	12 -> 16
+	17 [label=T_int]
+	16 -> 17
+	18 [label=b]
+	16 -> 18
+	19 [label=arg]
+	12 -> 19
+	20 [label=T_int]
+	19 -> 20
+	21 [label=c]
+	19 -> 21
+	22 [label=Stmt]
+	8 -> 22
+	32 [label=Assign]
+	22 -> 32
+	34 [label="="]
+	32 -> 34
+	33 [label=sum]
+	34 -> 33
+	35 [label=4]
+	34 -> 35
+	36 [label=return]
+	22 -> 36
+	37 [label=sum]
+	36 -> 37
 }

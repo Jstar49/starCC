@@ -309,6 +309,8 @@ class Parse(object):
 		# '='节点
 		assign_char_tree = Tree(self.tokens[index].value)
 		assign_char_tree.dot_num = self.dot_num
+		assign_char_tree.type = {'T_add_assign':'+','T_sub_assign':'-',\
+		'T_mul_assign':'*','T_div_assign':'/','T_assign':'='}[self.tokens[index].type]
 		self.dot_num += 1
 		assign_tree.add_child(assign_char_tree)
 		assign_char_tree.add_child(iden_tree)
@@ -322,6 +324,7 @@ class Parse(object):
 		# 函数调用节点
 		funcall_tree = Tree("FunctionCall")
 		funcall_tree.dot_num = self.dot_num
+		funcall_tree.type = 'FunctionCall'
 		self.dot_num += 1
 		# 被调用的函数节点
 		func_name_tree = Tree(self.tokens[index].value)
