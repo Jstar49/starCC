@@ -49,15 +49,14 @@ class Passes(object):
 	# 检查未定义的symbol
 	def CheckNode(self,node):
 		for cnode in node.children:
-			# print(cnode.key)
 			self.CheckNode(cnode)
 		if node.type == "identifier":
-			# print(node.key)
 			if node.key not in self.fun_symbol_dict:
 				if node.key not in self.global_var_dict:
 					exit("Symbol "+node.key+" Undefined!")
 		if node.type == 'FunctionCall':
-			print(node.type)
+			if(node.children[0].key not in self.fun_pool):
+				exit("Function "+node.children[0].key+" Undefined!")
 
 	# 检查未定义的symbol
 	def UnDifinedSymbol(self,func_d):
@@ -77,6 +76,9 @@ class Passes(object):
 		if func_type == "T_void":
 			return
 		func_ret_symbol = "func ret"
+		self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":func_type,"index":0}
+		# 添加 temp符号
+		func_ret_symbol = "op temp"
 		self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":func_type,"index":0}
 		# 添加函数头
 		func_head = [func + ":"]
@@ -112,10 +114,8 @@ class Passes(object):
 	# 返回符合 index
 	def SymbolNow(self,symbol):
 		if symbol in self.fun_symbol_dict:
-			# self.fun_symbol_dict[symbol]["index"] += 1
 			return symbol+"_" + str(self.fun_symbol_dict[symbol]["index"])
 		elif symbol in self.global_var_dict:
-			# self.global_var_dict[symbol]["index"] += 1
 			return symbol+"_" + str(self.global_var_dict[symbol]["index"])
 		elif symbol.isdigit():
 			return symbol
@@ -250,6 +250,31 @@ class Passes(object):
 		code_bb_insn_temp.insn_type = "code_block"
 		self.fun_insn_stream.append(code_bb_insn_temp)
 
+
+	# 函数调用
+	def Deal_functionCall(self,node):
+		# 先验证参数个数
+		if len(node.children[1].children) != len(self.fun_pool[node.children[0].key]['args']):
+			exit("Wrong number of function parameters")
+		funars = []
+		for args_node in node.children[1].children:
+			print(args_node.key)
+			args_symbol_temp =self.OpNode(args_node,None,"op temp")
+			print(args_symbol_temp)
+			args_symbol = self.Symbol("op temp")
+			funars.append(args_symbol)
+			insn_temp = ["=",args_symbol,args_symbol_temp]
+			ret_insn_temp = Insn(insn_temp)
+			self.fun_insn_stream.append(ret_insn_temp)
+		for args_temp in funars:
+			insn_temp = ["=","args temp_"+str(funars.index(args_temp)),args_temp]
+			insn_temp = Insn(insn_temp)
+			self.fun_insn_stream.append(insn_temp)
+		func_call = ["call",node.children[0].key]
+		func_call_temp = Insn(func_call)
+		func_call_temp.insn_type = "FunctionCall"
+		self.fun_insn_stream.append(func_call_temp)
+
 	def Node_2_IR(self,root_node):
 		for node in root_node.children:
 			# print(node.key)
@@ -264,7 +289,6 @@ class Passes(object):
 				ret_node = node.children[0]
 				ret_symbol_temp = self.OpNode(ret_node,None,"func ret")
 				ret_symbol = self.Symbol("func ret")
-				# print(ret_symbol)
 				insn_temp = ["=",ret_symbol,ret_symbol_temp]
 				ret_insn_temp = Insn(insn_temp)
 				self.fun_insn_stream.append(ret_insn_temp)
@@ -368,6 +392,8 @@ class Passes(object):
 			# for 节点
 			elif node.key == "For":
 				self.Deal_For(node)
+			elif node.key == "FunctionCall":
+				self.Deal_functionCall(node)
 				
 
 	def FunIteration(self):
@@ -377,7 +403,7 @@ class Passes(object):
 			self.FunSymbolInit(self.fun_pool[func])
 			print(self.fun_symbol_dict)
 			# 检查函数是否用到了未定义的符号
-			print(self.fun_pool[func]["node"].children[-1].key)
+			# print(self.fun_pool[func]["node"].children[-1].key)
 			if self.fun_pool[func]["node"].children[-1].key == 'Stmt':
 				self.UnDifinedSymbol(self.fun_pool[func])
 			# 一些初始化
