@@ -133,7 +133,9 @@ class Passes(object):
 		# root_symbol：所属符号
 		"""
 		# print(node.key)
-		if len(node.children):
+		if node.key == "FunctionCall":
+			return self.Deal_functionCall(node)
+		elif len(node.children):
 			left = self.OpNode(node.children[0],insn,root_symbol)
 			# if len(node.children[1].children):
 			# print(node.key)
@@ -254,13 +256,14 @@ class Passes(object):
 	# 函数调用
 	def Deal_functionCall(self,node):
 		# 先验证参数个数
-		if len(node.children[1].children) != len(self.fun_pool[node.children[0].key]['args']):
+		func_name = node.children[0].key
+		if len(node.children[1].children) != len(self.fun_pool[func_name]['args']):
 			exit("Wrong number of function parameters")
 		funars = []
 		for args_node in node.children[1].children:
-			print(args_node.key)
+			# print(args_node.key)
 			args_symbol_temp =self.OpNode(args_node,None,"op temp")
-			print(args_symbol_temp)
+			# print(args_symbol_temp)
 			args_symbol = self.Symbol("op temp")
 			funars.append(args_symbol)
 			insn_temp = ["=",args_symbol,args_symbol_temp]
@@ -270,10 +273,13 @@ class Passes(object):
 			insn_temp = ["=","args temp_"+str(funars.index(args_temp)),args_temp]
 			insn_temp = Insn(insn_temp)
 			self.fun_insn_stream.append(insn_temp)
-		func_call = ["call",node.children[0].key]
+		func_call = ["call",func_name]
 		func_call_temp = Insn(func_call)
 		func_call_temp.insn_type = "FunctionCall"
 		self.fun_insn_stream.append(func_call_temp)
+		if self.fun_pool[func_name]['type'] != 'T_void':
+			# print("debug 279",self.fun_pool[func_name]['type'])
+			return func_name+" ret"
 
 	def Node_2_IR(self,root_node):
 		for node in root_node.children:
@@ -401,7 +407,7 @@ class Passes(object):
 			print(func)
 			# 函数符号初始化
 			self.FunSymbolInit(self.fun_pool[func])
-			print(self.fun_symbol_dict)
+			print(self.fun_pool[func])
 			# 检查函数是否用到了未定义的符号
 			# print(self.fun_pool[func]["node"].children[-1].key)
 			if self.fun_pool[func]["node"].children[-1].key == 'Stmt':
@@ -411,7 +417,9 @@ class Passes(object):
 			if self.fun_pool[func]["node"].children[-1].key == 'Stmt':
 				self.Node_2_IR(self.fun_pool[func]["node"].children[3])
 			self.Fun_insn_print()
+			self.fun_pool[func]["insn"] = self.fun_insn_stream           
 			print("Func exit")
+			print(self.fun_pool[func])
 
 	# 主函数
 	def main(self):
