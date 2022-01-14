@@ -252,6 +252,86 @@ class Passes(object):
 		code_bb_insn_temp.insn_type = "code_block"
 		self.fun_insn_stream.append(code_bb_insn_temp)
 
+	# if节点
+	def Deal_if(self,node):
+		if_condi = self.Condi_Node(node.children[0].children[0])
+		func_code_block_index = self.Block_index()
+		has_else = False
+		has_else_if = False
+		node_index = root_node.children.index(node)
+		else_block = None
+		# 存在 else 分支
+		# print(root_node.key,len(root_node.children),node_index)
+		if len(root_node.children) > node_index+1:
+			if root_node.children[node_index + 1].key in ["False"]:
+				has_else = True
+				else_block = self.Block_index()
+		# 存在 if-else 分支
+		if len(root_node.children) > node_index+1:
+			if root_node.children[node_index + 1].key in ["Else_if"]:
+				has_else_if = True
+				else_block = self.Block_index()
+		if node.children[-1].key == "True":
+			# func_code_block_index = self.Block_index()
+			insn_temp = ["beqz",if_condi,func_code_block_index]
+			if has_else or has_else_if:
+				insn_temp[2] = else_block
+			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.insn_type = "condi_jump"
+			self.fun_insn_stream.append(j_insn_temp)
+			self.Node_2_IR(node.children[-1])
+			# True 分支最后跳至if后的节点
+			j_to_out = ["b",func_code_block_index]
+			j_to_out_insn_temp = Insn(j_to_out)
+			j_to_out_insn_temp.insn_type = "jump"
+			self.fun_insn_stream.append(j_to_out_insn_temp)
+		node.trans_flag = 1
+		while has_else_if:
+			has_else_if = False
+			node = root_node.children[node_index + 1]
+			node_index += 1 
+			# 代码块标号
+			code_bb = [else_block + ":"]
+			code_bb_insn_temp = Insn(code_bb) 
+			code_bb_insn_temp.insn_type = "code_block"
+			self.fun_insn_stream.append(code_bb_insn_temp)
+			# 存在 else 分支
+			if len(root_node.children) > node_index+1:
+				if root_node.children[node_index + 1].key in ["False"]:
+					has_else = True
+					else_block = self.Block_index()
+			# 存在 if-else 分支
+			if len(root_node.children) > node_index+1:
+				if root_node.children[node_index + 1].key in ["Else_if"]:
+					has_else_if = True
+					else_block = self.Block_index()
+			# 条件节点
+			if_condi = self.Condi_Node(node.children[0].children[0])
+			insn_temp = ["beqz",if_condi,func_code_block_index]
+			# 是否存在 else / else-if
+			if has_else or has_else_if:
+				insn_temp[2] = else_block
+			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.insn_type = "condi_jump"
+			self.fun_insn_stream.append(j_insn_temp)
+			# 解析当前节点的语句
+			self.Node_2_IR(node.children[-1])
+			j_to_out = ["b",func_code_block_index]
+			j_to_out_insn_temp = Insn(j_to_out)
+			j_to_out_insn_temp.insn_type = "jump"
+			self.fun_insn_stream.append(j_to_out_insn_temp)
+		# 存在 else 吗？
+		if has_else:
+			code_bb = [else_block + ":"]
+			code_bb_insn_temp = Insn(code_bb) 
+			code_bb_insn_temp.insn_type = "code_block"
+			self.fun_insn_stream.append(code_bb_insn_temp)
+			node = root_node.children[node_index + 1]
+			self.Node_2_IR(node)
+		code_bb = [func_code_block_index + ":"]
+		code_bb_insn_temp = Insn(code_bb) 
+		code_bb_insn_temp.insn_type = "code_block"
+		self.fun_insn_stream.append(code_bb_insn_temp)
 
 	# 函数调用
 	def Deal_functionCall(self,node):
@@ -304,84 +384,7 @@ class Passes(object):
 				node.trans_flag = 1
 			# 遇到if节点
 			elif node.key in ['if']:
-				if_condi = self.Condi_Node(node.children[0].children[0])
-				func_code_block_index = self.Block_index()
-				has_else = False
-				has_else_if = False
-				node_index = root_node.children.index(node)
-				else_block = None
-				# 存在 else 分支
-				# print(root_node.key,len(root_node.children),node_index)
-				if len(root_node.children) > node_index+1:
-					if root_node.children[node_index + 1].key in ["False"]:
-						has_else = True
-						else_block = self.Block_index()
-				# 存在 if-else 分支
-				if len(root_node.children) > node_index+1:
-					if root_node.children[node_index + 1].key in ["Else_if"]:
-						has_else_if = True
-						else_block = self.Block_index()
-				if node.children[-1].key == "True":
-					# func_code_block_index = self.Block_index()
-					insn_temp = ["beqz",if_condi,func_code_block_index]
-					if has_else or has_else_if:
-						insn_temp[2] = else_block
-					j_insn_temp = Insn(insn_temp)
-					j_insn_temp.insn_type = "condi_jump"
-					self.fun_insn_stream.append(j_insn_temp)
-					self.Node_2_IR(node.children[-1])
-					# True 分支最后跳至if后的节点
-					j_to_out = ["b",func_code_block_index]
-					j_to_out_insn_temp = Insn(j_to_out)
-					j_to_out_insn_temp.insn_type = "jump"
-					self.fun_insn_stream.append(j_to_out_insn_temp)
-				node.trans_flag = 1
-				while has_else_if:
-					has_else_if = False
-					node = root_node.children[node_index + 1]
-					node_index += 1 
-					# 代码块标号
-					code_bb = [else_block + ":"]
-					code_bb_insn_temp = Insn(code_bb) 
-					code_bb_insn_temp.insn_type = "code_block"
-					self.fun_insn_stream.append(code_bb_insn_temp)
-					# 存在 else 分支
-					if len(root_node.children) > node_index+1:
-						if root_node.children[node_index + 1].key in ["False"]:
-							has_else = True
-							else_block = self.Block_index()
-					# 存在 if-else 分支
-					if len(root_node.children) > node_index+1:
-						if root_node.children[node_index + 1].key in ["Else_if"]:
-							has_else_if = True
-							else_block = self.Block_index()
-					# 条件节点
-					if_condi = self.Condi_Node(node.children[0].children[0])
-					insn_temp = ["beqz",if_condi,func_code_block_index]
-					# 是否存在 else / else-if
-					if has_else or has_else_if:
-						insn_temp[2] = else_block
-					j_insn_temp = Insn(insn_temp)
-					j_insn_temp.insn_type = "condi_jump"
-					self.fun_insn_stream.append(j_insn_temp)
-					# 解析当前节点的语句
-					self.Node_2_IR(node.children[-1])
-					j_to_out = ["b",func_code_block_index]
-					j_to_out_insn_temp = Insn(j_to_out)
-					j_to_out_insn_temp.insn_type = "jump"
-					self.fun_insn_stream.append(j_to_out_insn_temp)
-				# 存在 else 吗？
-				if has_else:
-					code_bb = [else_block + ":"]
-					code_bb_insn_temp = Insn(code_bb) 
-					code_bb_insn_temp.insn_type = "code_block"
-					self.fun_insn_stream.append(code_bb_insn_temp)
-					node = root_node.children[node_index + 1]
-					self.Node_2_IR(node)
-				code_bb = [func_code_block_index + ":"]
-				code_bb_insn_temp = Insn(code_bb) 
-				code_bb_insn_temp.insn_type = "code_block"
-				self.fun_insn_stream.append(code_bb_insn_temp)
+				self.Deal_if(node)
 			# 遇到while节点
 			elif node.key == 'while':
 				self.Deal_while(node)
