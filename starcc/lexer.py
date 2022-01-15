@@ -9,7 +9,7 @@ operatorList = ['+','-','*','/','=','&','|','>','<','>=','<=','++','--','!=','==
 specialChar = [	'(',')','[',']','{','}',',',';','\"']
 # 关键字
 keyWords = [
-	'int','short','double','float','char','void','for','while','if','else','do','return','include'
+	'int','short','double','float','char','void','for','while','if','else','do','return','include','break'
 ]
 
 # 关键字,操作符 Token
@@ -33,6 +33,8 @@ keyWords_Token = {
 	'=':'T_assign',
 	'&':'T_and',
 	'|':'T_or',
+	'&&':'T_andand',
+	'||':'T_oror',
 	'>':'T_gt',
 	'<':'T_lt',
 	'>=':'T_ge',
@@ -82,6 +84,8 @@ class Lexer(object):
 
 	# 跳过一些不需要分析的词法，比如空白字符 & /**/注释
 	def If_skip_word(self,index):
+		if index >= len(self.source_stream):
+			return index
 		# 空白字符
 		if self.source_stream[index] == '\n' or self.source_stream[index] == '\t' or \
 			self.source_stream[index] == ' ' or self.source_stream[index] == '\r':
@@ -193,6 +197,13 @@ class Lexer(object):
 				# != | ==
 				elif (self.source_stream[word_num] == '!' or self.source_stream[word_num] == '=') and \
 					self.source_stream[word_num+1] == '=':
+					tk_str += self.source_stream[word_num]
+					tk_str += self.source_stream[word_num+1]
+					word_num += 2
+					self.tokens.append(Token(tk_str,tk_str))
+				# && | ||
+				elif (self.source_stream[word_num] == '&' or self.source_stream[word_num] == '|') and \
+					self.source_stream[word_num] == self.source_stream[word_num+1]:
 					tk_str += self.source_stream[word_num]
 					tk_str += self.source_stream[word_num+1]
 					word_num += 2

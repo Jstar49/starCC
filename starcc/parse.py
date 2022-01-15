@@ -7,11 +7,17 @@ import os
 dot = graphviz.Digraph(comment='root',format='png')
 
 operator_priority = {
+	'==':6,
+	'!=':6,
+	'&&':7,
+	'||':7,
 	'>':8,
 	'>=':8,
 	'<':8,
 	'<=':8,
 	'=':9,
+	'&':10,
+	'|':10,
 	'+':10,
 	'-':10,
 	'*':20,
@@ -37,8 +43,8 @@ class Tree(object):
 		self.children = []
 		self.father = None
 		# self.dot = None
-		if self.key == 'Statement':
-			self.type = None
+		self.type = None
+		self.trans_flag = 0
 
 	def add_child(self,node):
 		self.children.append(node)
@@ -207,6 +213,8 @@ class Parse(object):
 				stmts_tree.dot_num = self.dot_num
 				self.dot_num += 1
 				stmt_list_tree.append(stmts_tree)
+				if self.tokens[index_tmp].type == 'T_identifier':
+					stmts_tree.type = 'identifier'
 				index_tmp += 1
 		while len(stmt_list_tree)>2:
 			max_op = -2
@@ -231,6 +239,7 @@ class Parse(object):
 		iden_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		iden_tree.token = self.tokens[index]
+		iden_tree.type = "identifier"
 		gram_root.add_child(iden_tree)
 		index += 1
 		return index
@@ -241,9 +250,38 @@ class Parse(object):
 		constant_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		constant_tree.token = self.tokens[index]
+		constant_tree.type = "constant"
 		gram_root.add_child(constant_tree)
 		index += 1
 		return index
+
+	# 字符串
+	def IsString(self,index,gram_root):
+		# string_node = Tree()
+		print("string")
+		string_value = self.tokens[index].value
+		index += 1
+		string_value += self.tokens[index].value
+		index += 1
+		string_value += self.tokens[index].value
+		# print(string_value)
+		string_node = Tree(string_value)
+		string_node.dot_num = self.dot_num
+		string_node.type = "string"
+		self.dot_num += 1
+		gram_root.add_child(string_node)
+		index += 1
+		return index
+
+	# Return 语句
+	def Return(self,index,gram_root):
+		ret_node = Tree(self.tokens[index].value)
+		ret_node.dot_num = self.dot_num
+		self.dot_num += 1
+		gram_root.add_child(ret_node)
+		index_tmp = index + 1
+		index = self.parse(index_tmp,ret_node)
+		return index + 1
 
 	# Break
 	def Break(self,index,gram_root):
@@ -256,7 +294,6 @@ class Parse(object):
 
 	# 赋值语句
 	def Assign(self,index,gram_root):
-		# print('debug line 279',self.tokens[index].value,gram_root.key)
 		# 赋值语句根节点
 		assign_tree = Tree("Assign")
 		assign_tree.dot_num = self.dot_num
@@ -267,10 +304,13 @@ class Parse(object):
 		iden_tree.dot_num = self.dot_num
 		self.dot_num += 1
 		iden_tree.token = self.tokens[index]
+		iden_tree.type = "identifier"
 		index += 1
 		# '='节点
 		assign_char_tree = Tree(self.tokens[index].value)
 		assign_char_tree.dot_num = self.dot_num
+		assign_char_tree.type = {'T_add_assign':'+','T_sub_assign':'-',\
+		'T_mul_assign':'*','T_div_assign':'/','T_assign':'='}[self.tokens[index].type]
 		self.dot_num += 1
 		assign_tree.add_child(assign_char_tree)
 		assign_char_tree.add_child(iden_tree)
@@ -284,6 +324,7 @@ class Parse(object):
 		# 函数调用节点
 		funcall_tree = Tree("FunctionCall")
 		funcall_tree.dot_num = self.dot_num
+		funcall_tree.type = 'FunctionCall'
 		self.dot_num += 1
 		# 被调用的函数节点
 		func_name_tree = Tree(self.tokens[index].value)
@@ -307,7 +348,7 @@ class Parse(object):
 				if len(fun_braket) == 0:
 					index += 1
 					break
-			if self.tokens[index].type == 'T_identifier':
+			if self.tokens[index].type != 'T_comma':
 				index = self.parse(index,func_arg_tree)
 			else:
 				index += 1
@@ -446,34 +487,26 @@ class Parse(object):
 		for_init_node.dot_num = self.dot_num
 		self.dot_num += 1
 		for_node.add_child(for_init_node)
-		if self.tokens[index].type =='T_semicolon':
-			index +=1
-		else:
-			while(self.tokens[index].type !='T_semicolon'):
-				index = self.parse(index,for_init_node)
+		while(self.tokens[index].type !='T_semicolon'):
+			index = self.parse(index,for_init_node)
 		index += 1
 		# for 节点的条件Node
 		condition_node = Tree("Condition")
 		condition_node.dot_num = self.dot_num
 		self.dot_num += 1
 		for_node.add_child(condition_node)
-		if self.tokens[index].type =='T_semicolon':
-			index +=1
-		else:
-			while(self.tokens[index].type !='T_semicolon'):
-				index = self.parse(index,condition_node)
+		while(self.tokens[index].type !='T_semicolon'):
+			index = self.parse(index,condition_node)
 		index += 1
 		# for增量Node
 		add_node = Tree("For_add")
 		add_node.dot_num = self.dot_num
 		self.dot_num += 1
 		for_node.add_child(add_node)
-		if self.tokens[index].type =='T_r1_bracket':
-			index +=1
-		else:
-			while(self.tokens[index].type !='T_r1_bracket'):
-				index = self.parse(index,add_node)
+		while(self.tokens[index].type !='T_r1_bracket'):
+			index = self.parse(index,add_node)
 		index += 1
+		# for 行为node
 		stmt_node = Tree("Stmt")
 		stmt_node.dot_num = self.dot_num
 		self.dot_num += 1
@@ -482,6 +515,7 @@ class Parse(object):
 			return index+1
 		for_braket = []
 		for_braket.append(self.tokens[index])
+		index += 1
 		while index <len(self.tokens):
 			if self.tokens[index].type == 'T_l3_braket':
 				for_braket.append(self.tokens[index])
@@ -516,7 +550,7 @@ class Parse(object):
 			elif self.tokens[index+1].type == 'T_comma' or self.tokens[index+1].type == 'T_r1_bracket':
 				retType = 'Identifier'
 			# 'iden = *',赋值语句
-			elif self.tokens[index+1].type in ['T_assign','T_add_assign','T_sub_assign','T_mul_assign','T_div_assign','T_notequal','T_equal']:
+			elif self.tokens[index+1].type in ['T_assign','T_add_assign','T_sub_assign','T_mul_assign','T_div_assign']:
 				retType = 'Assign'
 			return retType
 		# 常数
@@ -534,6 +568,10 @@ class Parse(object):
 		# for
 		elif self.tokens[index].type == 'T_for':
 			return 'For'
+		elif self.tokens[index].type == 'T_return':
+			return 'Return'
+		elif self.tokens[index].type == 'T_quote':
+			return 'String'
 
 	def parse(self,index_init,gram_root):
 		index = index_init
@@ -570,6 +608,10 @@ class Parse(object):
 			index = self.Break(index,gram_root)
 		elif self.retTokenType(index) == 'For':
 			index = self.For(index,gram_root)
+		elif self.retTokenType(index) == 'Return':
+			index = self.Return(index,gram_root)
+		elif self.retTokenType(index) == 'String':
+			index = self.IsString(index,gram_root)
 		else:
 			index += 1
 		return index

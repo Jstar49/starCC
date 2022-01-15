@@ -1,64 +1,12 @@
-// for(i=g,j=9;s>0;i=i+1);
-//for(i=g,j=9;s>0;i=i+1){
-//	a = s;
-//	if(j==0){
-//    k=i;
-//}else if(f){
-//    k=9;
-//}else if(g==0){
-//    k=i;
-//}else{
-//	h=i;
-//}
-//    k=0;
-//}
-int temp = 8,k,j=9;
-short a = 5;
+int star = 0;
+int foo(int a,int b){
+	return a + star + b;
+}
+
 int func(int a,int b,int c){
-	// char[] sh = "fg";
-	int sum = 5;
-	sum = sum + a;
-	sum = sum -b;
-	sum = sum/c;
+	int sum = 5,j,i;
+	sum = 4;
+	foo(sum+b,a);
+	sum += foo(sum,b);
 	return sum;
 }
-int funs(int h,char j){
-	k = h + j;
-}
-// sum = j+7*i-i/5+4;
-// if(j==0){
-//     k=i;
-// }else if(f){
-//     k=9;
-// }else if(g==0){
-//     k=i;
-// }else{
-// 	h=i;
-// }
-
-/* 你好 */
-//int i = x+19;
-//j = 5-8*a-9/n-8;
-//int func(int b,char c){
-   // if(a+5>5){
-   //     j = k+3;
-   // }
-   
-   // if(s);
-//}
-//while(a){
-//    x = k+3;
-//        if(a+5>5){
-//        j = k+3;
-//    }
-//    else{
-//        j = 000+y;
-//        if(ig){
-//        i = s;
-//        break;
-//        }
-//    }
-//    while(g+hb){
-//        g =g+sd;
-//    }
-//}

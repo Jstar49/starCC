@@ -11,255 +11,243 @@ digraph {
 	2 -> 3
 	5 [label="="]
 	3 -> 5
-	4 [label=temp]
+	4 [label=star]
 	5 -> 4
-	6 [label=8]
+	6 [label=0]
 	5 -> 6
-	7 [label=k]
-	2 -> 7
-	8 [label=Assign]
-	2 -> 8
-	10 [label="="]
-	8 -> 10
-	9 [label=j]
-	10 -> 9
-	11 [label=9]
-	10 -> 11
-	12 [label=VarDeclaration]
-	None -> 12
-	13 [label=T_short]
+	7 [label=FuncDeclaration]
+	None -> 7
+	8 [label=T_int]
+	7 -> 8
+	9 [label=Identifier]
+	7 -> 9
+	10 [label=foo]
+	9 -> 10
+	11 [label=Args]
+	7 -> 11
+	12 [label=arg]
+	11 -> 12
+	13 [label=T_int]
 	12 -> 13
-	14 [label=Identifier]
+	14 [label=a]
 	12 -> 14
-	15 [label=Assign]
-	14 -> 15
-	17 [label="="]
+	15 [label=arg]
+	11 -> 15
+	16 [label=T_int]
+	15 -> 16
+	17 [label=b]
 	15 -> 17
-	16 [label=a]
-	17 -> 16
-	18 [label=5]
-	17 -> 18
-	19 [label=FuncDeclaration]
-	None -> 19
-	20 [label=T_int]
-	19 -> 20
-	21 [label=Identifier]
+	18 [label=Stmt]
+	7 -> 18
+	19 [label=return]
+	18 -> 19
+	21 [label="+"]
 	19 -> 21
-	22 [label=func]
-	21 -> 22
-	23 [label=Args]
-	19 -> 23
-	24 [label=arg]
+	20 [label=a]
+	21 -> 20
+	23 [label="+"]
+	21 -> 23
+	22 [label=star]
+	23 -> 22
+	24 [label=b]
 	23 -> 24
-	25 [label=T_int]
-	24 -> 25
-	26 [label=a]
-	24 -> 26
-	27 [label=arg]
-	23 -> 27
-	28 [label=T_int]
+	25 [label=FuncDeclaration]
+	None -> 25
+	26 [label=T_int]
+	25 -> 26
+	27 [label=Identifier]
+	25 -> 27
+	28 [label=func]
 	27 -> 28
-	29 [label=b]
-	27 -> 29
+	29 [label=Args]
+	25 -> 29
 	30 [label=arg]
-	23 -> 30
+	29 -> 30
 	31 [label=T_int]
 	30 -> 31
-	32 [label=c]
+	32 [label=a]
 	30 -> 32
-	33 [label=Stmt]
-	19 -> 33
-	34 [label=VarDeclaration]
+	33 [label=arg]
+	29 -> 33
+	34 [label=T_int]
 	33 -> 34
-	35 [label=T_int]
-	34 -> 35
-	36 [label=Identifier]
-	34 -> 36
-	37 [label=Assign]
+	35 [label=b]
+	33 -> 35
+	36 [label=arg]
+	29 -> 36
+	37 [label=T_int]
 	36 -> 37
-	39 [label="="]
-	37 -> 39
-	38 [label=sum]
-	39 -> 38
-	40 [label=5]
+	38 [label=c]
+	36 -> 38
+	39 [label=Stmt]
+	25 -> 39
+	40 [label=VarDeclaration]
 	39 -> 40
-	41 [label=Assign]
-	33 -> 41
-	43 [label="="]
-	41 -> 43
-	42 [label=sum]
-	43 -> 42
-	45 [label="+"]
+	41 [label=T_int]
+	40 -> 41
+	42 [label=Identifier]
+	40 -> 42
+	43 [label=Assign]
+	42 -> 43
+	45 [label="="]
 	43 -> 45
 	44 [label=sum]
 	45 -> 44
-	46 [label=a]
+	46 [label=5]
 	45 -> 46
-	47 [label=Assign]
-	33 -> 47
-	49 [label="="]
-	47 -> 49
-	48 [label=sum]
-	49 -> 48
-	51 [label="-"]
+	47 [label=j]
+	42 -> 47
+	48 [label=i]
+	42 -> 48
+	49 [label=Assign]
+	39 -> 49
+	51 [label="="]
 	49 -> 51
 	50 [label=sum]
 	51 -> 50
-	52 [label=b]
+	52 [label=4]
 	51 -> 52
-	53 [label=Assign]
-	33 -> 53
-	55 [label="="]
+	53 [label=FunctionCall]
+	39 -> 53
+	54 [label=foo]
+	53 -> 54
+	55 [label=fun_call_arg]
 	53 -> 55
-	54 [label=sum]
-	55 -> 54
-	57 [label="/"]
+	57 [label="+"]
 	55 -> 57
 	56 [label=sum]
 	57 -> 56
-	58 [label=c]
+	58 [label=b]
 	57 -> 58
-	59 [label=sum]
-	33 -> 59
-	60 [label=FuncDeclaration]
-	None -> 60
-	61 [label=T_int]
-	60 -> 61
-	62 [label=Identifier]
+	59 [label=a]
+	55 -> 59
+	60 [label=Assign]
+	39 -> 60
+	62 [label="+="]
 	60 -> 62
-	63 [label=funs]
+	61 [label=sum]
+	62 -> 61
+	63 [label=FunctionCall]
 	62 -> 63
-	64 [label=Args]
-	60 -> 64
-	65 [label=arg]
-	64 -> 65
-	66 [label=T_int]
+	64 [label=foo]
+	63 -> 64
+	65 [label=fun_call_arg]
+	63 -> 65
+	66 [label=sum]
 	65 -> 66
-	67 [label=h]
+	67 [label=b]
 	65 -> 67
-	68 [label=arg]
-	64 -> 68
-	69 [label=T_char]
+	68 [label=return]
+	39 -> 68
+	69 [label=sum]
 	68 -> 69
-	70 [label=j]
-	68 -> 70
-	71 [label=Stmt]
-	60 -> 71
-	72 [label=Assign]
-	71 -> 72
-	74 [label="="]
-	72 -> 74
-	73 [label=k]
-	74 -> 73
-	76 [label="+"]
-	74 -> 76
-	75 [label=h]
-	76 -> 75
-	77 [label=j]
-	76 -> 77
 	None [label=root]
-	19 [label=FuncDeclaration]
-	None -> 19
-	20 [label=T_int]
-	19 -> 20
-	21 [label=Identifier]
+	7 [label=FuncDeclaration]
+	None -> 7
+	8 [label=T_int]
+	7 -> 8
+	9 [label=Identifier]
+	7 -> 9
+	10 [label=foo]
+	9 -> 10
+	11 [label=Args]
+	7 -> 11
+	12 [label=arg]
+	11 -> 12
+	13 [label=T_int]
+	12 -> 13
+	14 [label=a]
+	12 -> 14
+	15 [label=arg]
+	11 -> 15
+	16 [label=T_int]
+	15 -> 16
+	17 [label=b]
+	15 -> 17
+	18 [label=Stmt]
+	7 -> 18
+	19 [label=return]
+	18 -> 19
+	21 [label="+"]
 	19 -> 21
-	22 [label=func]
-	21 -> 22
-	23 [label=Args]
-	19 -> 23
-	24 [label=arg]
+	20 [label=a]
+	21 -> 20
+	23 [label="+"]
+	21 -> 23
+	22 [label=star]
+	23 -> 22
+	24 [label=b]
 	23 -> 24
-	25 [label=T_int]
-	24 -> 25
-	26 [label=a]
-	24 -> 26
-	27 [label=arg]
-	23 -> 27
-	28 [label=T_int]
+	25 [label=FuncDeclaration]
+	None -> 25
+	26 [label=T_int]
+	25 -> 26
+	27 [label=Identifier]
+	25 -> 27
+	28 [label=func]
 	27 -> 28
-	29 [label=b]
-	27 -> 29
+	29 [label=Args]
+	25 -> 29
 	30 [label=arg]
-	23 -> 30
+	29 -> 30
 	31 [label=T_int]
 	30 -> 31
-	32 [label=c]
+	32 [label=a]
 	30 -> 32
-	33 [label=Stmt]
-	19 -> 33
-	41 [label=Assign]
-	33 -> 41
-	43 [label="="]
-	41 -> 43
-	42 [label=sum]
-	43 -> 42
-	45 [label="+"]
-	43 -> 45
-	44 [label=sum]
-	45 -> 44
-	46 [label=a]
-	45 -> 46
-	47 [label=Assign]
-	33 -> 47
-	49 [label="="]
-	47 -> 49
-	48 [label=sum]
-	49 -> 48
-	51 [label="-"]
+	33 [label=arg]
+	29 -> 33
+	34 [label=T_int]
+	33 -> 34
+	35 [label=b]
+	33 -> 35
+	36 [label=arg]
+	29 -> 36
+	37 [label=T_int]
+	36 -> 37
+	38 [label=c]
+	36 -> 38
+	39 [label=Stmt]
+	25 -> 39
+	49 [label=Assign]
+	39 -> 49
+	51 [label="="]
 	49 -> 51
 	50 [label=sum]
 	51 -> 50
-	52 [label=b]
+	52 [label=4]
 	51 -> 52
-	53 [label=Assign]
-	33 -> 53
-	55 [label="="]
+	53 [label=FunctionCall]
+	39 -> 53
+	54 [label=foo]
+	53 -> 54
+	55 [label=fun_call_arg]
 	53 -> 55
-	54 [label=sum]
-	55 -> 54
-	57 [label="/"]
+	57 [label="+"]
 	55 -> 57
 	56 [label=sum]
 	57 -> 56
-	58 [label=c]
+	58 [label=b]
 	57 -> 58
-	59 [label=sum]
-	33 -> 59
-	60 [label=FuncDeclaration]
-	None -> 60
-	61 [label=T_int]
-	60 -> 61
-	62 [label=Identifier]
+	59 [label=a]
+	55 -> 59
+	60 [label=Assign]
+	39 -> 60
+	62 [label="+="]
 	60 -> 62
-	63 [label=funs]
+	61 [label=sum]
+	62 -> 61
+	63 [label=FunctionCall]
 	62 -> 63
-	64 [label=Args]
-	60 -> 64
-	65 [label=arg]
-	64 -> 65
-	66 [label=T_int]
+	64 [label=foo]
+	63 -> 64
+	65 [label=fun_call_arg]
+	63 -> 65
+	66 [label=sum]
 	65 -> 66
-	67 [label=h]
+	67 [label=b]
 	65 -> 67
-	68 [label=arg]
-	64 -> 68
-	69 [label=T_char]
+	68 [label=return]
+	39 -> 68
+	69 [label=sum]
 	68 -> 69
-	70 [label=j]
-	68 -> 70
-	71 [label=Stmt]
-	60 -> 71
-	72 [label=Assign]
-	71 -> 72
-	74 [label="="]
-	72 -> 74
-	73 [label=k]
-	74 -> 73
-	76 [label="+"]
-	74 -> 76
-	75 [label=h]
-	76 -> 75
-	77 [label=j]
-	76 -> 77
 }
