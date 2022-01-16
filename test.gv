@@ -39,108 +39,46 @@ digraph {
 	15 -> 17
 	18 [label=Stmt]
 	7 -> 18
-	19 [label=return]
+	19 [label=VarDeclaration]
 	18 -> 19
-	21 [label="+"]
+	20 [label=T_int]
+	19 -> 20
+	21 [label=Identifier]
 	19 -> 21
-	20 [label=a]
-	21 -> 20
-	23 [label="+"]
-	21 -> 23
-	22 [label=star]
-	23 -> 22
-	24 [label=b]
-	23 -> 24
-	25 [label=FuncDeclaration]
-	None -> 25
-	26 [label=T_int]
-	25 -> 26
-	27 [label=Identifier]
-	25 -> 27
-	28 [label=func]
-	27 -> 28
-	29 [label=Args]
-	25 -> 29
-	30 [label=arg]
-	29 -> 30
-	31 [label=T_int]
-	30 -> 31
+	22 [label=Assign]
+	21 -> 22
+	24 [label="="]
+	22 -> 24
+	23 [label=c]
+	24 -> 23
+	25 [label=4]
+	24 -> 25
+	26 [label=d]
+	21 -> 26
+	27 [label=Assign]
+	18 -> 27
+	29 [label="="]
+	27 -> 29
+	28 [label=d]
+	29 -> 28
+	31 [label="+"]
+	29 -> 31
+	30 [label=star]
+	31 -> 30
+	33 [label="+"]
+	31 -> 33
 	32 [label=a]
-	30 -> 32
-	33 [label=arg]
-	29 -> 33
-	34 [label=T_int]
+	33 -> 32
+	34 [label=c]
 	33 -> 34
-	35 [label=b]
-	33 -> 35
-	36 [label=arg]
-	29 -> 36
-	37 [label=T_int]
-	36 -> 37
-	38 [label=c]
-	36 -> 38
-	39 [label=Stmt]
-	25 -> 39
-	40 [label=VarDeclaration]
-	39 -> 40
-	41 [label=T_int]
-	40 -> 41
-	42 [label=Identifier]
-	40 -> 42
-	43 [label=Assign]
-	42 -> 43
-	45 [label="="]
-	43 -> 45
-	44 [label=sum]
-	45 -> 44
-	46 [label=5]
-	45 -> 46
-	47 [label=j]
-	42 -> 47
-	48 [label=i]
-	42 -> 48
-	49 [label=Assign]
-	39 -> 49
-	51 [label="="]
-	49 -> 51
-	50 [label=sum]
-	51 -> 50
-	52 [label=4]
-	51 -> 52
-	53 [label=FunctionCall]
-	39 -> 53
-	54 [label=foo]
-	53 -> 54
-	55 [label=fun_call_arg]
-	53 -> 55
-	57 [label="+"]
-	55 -> 57
-	56 [label=sum]
-	57 -> 56
-	58 [label=b]
-	57 -> 58
-	59 [label=a]
-	55 -> 59
-	60 [label=Assign]
-	39 -> 60
-	62 [label="+="]
-	60 -> 62
-	61 [label=sum]
-	62 -> 61
-	63 [label=FunctionCall]
-	62 -> 63
-	64 [label=foo]
-	63 -> 64
-	65 [label=fun_call_arg]
-	63 -> 65
-	66 [label=sum]
-	65 -> 66
-	67 [label=b]
-	65 -> 67
-	68 [label=return]
-	39 -> 68
-	69 [label=sum]
-	68 -> 69
+	35 [label=return]
+	18 -> 35
+	37 [label="+"]
+	35 -> 37
+	36 [label=d]
+	37 -> 36
+	38 [label=b]
+	37 -> 38
 	None [label=root]
 	7 [label=FuncDeclaration]
 	None -> 7
@@ -166,88 +104,28 @@ digraph {
 	15 -> 17
 	18 [label=Stmt]
 	7 -> 18
-	19 [label=return]
-	18 -> 19
-	21 [label="+"]
-	19 -> 21
-	20 [label=a]
-	21 -> 20
-	23 [label="+"]
-	21 -> 23
-	22 [label=star]
-	23 -> 22
-	24 [label=b]
-	23 -> 24
-	25 [label=FuncDeclaration]
-	None -> 25
-	26 [label=T_int]
-	25 -> 26
-	27 [label=Identifier]
-	25 -> 27
-	28 [label=func]
-	27 -> 28
-	29 [label=Args]
-	25 -> 29
-	30 [label=arg]
-	29 -> 30
-	31 [label=T_int]
-	30 -> 31
+	27 [label=Assign]
+	18 -> 27
+	29 [label="="]
+	27 -> 29
+	28 [label=d]
+	29 -> 28
+	31 [label="+"]
+	29 -> 31
+	30 [label=star]
+	31 -> 30
+	33 [label="+"]
+	31 -> 33
 	32 [label=a]
-	30 -> 32
-	33 [label=arg]
-	29 -> 33
-	34 [label=T_int]
+	33 -> 32
+	34 [label=c]
 	33 -> 34
-	35 [label=b]
-	33 -> 35
-	36 [label=arg]
-	29 -> 36
-	37 [label=T_int]
-	36 -> 37
-	38 [label=c]
-	36 -> 38
-	39 [label=Stmt]
-	25 -> 39
-	49 [label=Assign]
-	39 -> 49
-	51 [label="="]
-	49 -> 51
-	50 [label=sum]
-	51 -> 50
-	52 [label=4]
-	51 -> 52
-	53 [label=FunctionCall]
-	39 -> 53
-	54 [label=foo]
-	53 -> 54
-	55 [label=fun_call_arg]
-	53 -> 55
-	57 [label="+"]
-	55 -> 57
-	56 [label=sum]
-	57 -> 56
-	58 [label=b]
-	57 -> 58
-	59 [label=a]
-	55 -> 59
-	60 [label=Assign]
-	39 -> 60
-	62 [label="+="]
-	60 -> 62
-	61 [label=sum]
-	62 -> 61
-	63 [label=FunctionCall]
-	62 -> 63
-	64 [label=foo]
-	63 -> 64
-	65 [label=fun_call_arg]
-	63 -> 65
-	66 [label=sum]
-	65 -> 66
-	67 [label=b]
-	65 -> 67
-	68 [label=return]
-	39 -> 68
-	69 [label=sum]
-	68 -> 69
+	35 [label=return]
+	18 -> 35
+	37 [label="+"]
+	35 -> 37
+	36 [label=d]
+	37 -> 36
+	38 [label=b]
+	37 -> 38
 }

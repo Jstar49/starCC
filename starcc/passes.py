@@ -40,11 +40,15 @@ class Passes(object):
 			func_sym = func_d["args"][sym]["arg_symbol"]
 			func_sym_type = func_d["args"][sym]["arg_type"]
 			self.fun_symbol_dict[func_sym] = {"symbol":func_sym,"type":func_sym_type,"index":0}
+			self.fun_symbol_dict[func_sym]['sym_type'] = 'fun_args'
 		for sym in func_d["var_pool"]:
+			# print("debug Passes 45",func_d["var_pool"][sym])
 			func_sym = sym
 			func_sym_type = func_d["var_pool"][sym]["type"]
 			self.fun_symbol_dict[func_sym] = {"symbol":func_sym,"type":func_sym_type,"index":0}
-		# print("fun_symbol_dict",self.fun_symbol_dict)
+			self.fun_symbol_dict[func_sym]['sym_type'] = 'fun_var'
+			if 'init_value' in func_d["var_pool"][sym]:
+				self.fun_symbol_dict[func_sym]['init_value'] = func_d["var_pool"][sym]["init_value"]
 
 	# 检查未定义的symbol
 	def CheckNode(self,node):
@@ -132,19 +136,20 @@ class Passes(object):
 		# insn：父insn
 		# root_symbol：所属符号
 		"""
-		# print(node.key)
 		if node.key == "FunctionCall":
 			return self.Deal_functionCall(node)
 		elif len(node.children):
 			left = self.OpNode(node.children[0],insn,root_symbol)
-			# if len(node.children[1].children):
-			# print(node.key)
 			right = self.OpNode(node.children[1],insn,root_symbol)
 			op_type = node.key
 			symbol = self.Symbol(root_symbol)
 			insn_temp = [op_type,symbol,left,right]
-			# print(insn_temp)
 			Op_insn = Insn(insn_temp)
+			Op_insn.insn_type = 'Operation'
+			Op_insn.op0 = root_symbol
+			Op_insn.op1 = left
+			Op_insn.op2 = right
+
 			self.fun_insn_stream.append(Op_insn)
 			node.children = []
 			node.key = symbol
@@ -377,6 +382,7 @@ class Passes(object):
 				ret_symbol = self.Symbol("func ret")
 				insn_temp = ["=",ret_symbol,ret_symbol_temp]
 				ret_insn_temp = Insn(insn_temp)
+				ret_insn_temp.insn_type = "return"
 				self.fun_insn_stream.append(ret_insn_temp)
 				insn_temp = ["return",ret_symbol]
 				ret_insn = Insn(insn_temp)
@@ -410,6 +416,7 @@ class Passes(object):
 			print(func)
 			# 函数符号初始化
 			self.FunSymbolInit(self.fun_pool[func])
+			self.fun_pool[func]['fun_symbol_dict'] = self.fun_symbol_dict
 			print(self.fun_pool[func])
 			# 检查函数是否用到了未定义的符号
 			# print(self.fun_pool[func]["node"].children[-1].key)
@@ -422,7 +429,7 @@ class Passes(object):
 			self.Fun_insn_print()
 			self.fun_pool[func]["insn"] = self.fun_insn_stream           
 			print("Func exit")
-			print(self.fun_pool[func])
+			# print(self.fun_pool[func])
 
 	# 主函数
 	def main(self):

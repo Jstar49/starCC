@@ -47,7 +47,7 @@ def passes():
 	# 中间代码生成
 	passes = Passes(check)
 	passes.main()
-	parse.drawTree(passes.parse_tree)
+	# parse.drawTree(passes.parse_tree)
 
 def assembly():
 	# 词法分析
