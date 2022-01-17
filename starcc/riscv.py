@@ -10,6 +10,10 @@ class Riscv(object):
 	def __init__(self, passes):
 		self.fun_pool = passes.fun_pool
 		self.outputAss = []
+		# 全局变量
+		self.global_var_dict = passes.global_var_dict
+		# 局部变量表
+		self.fun_symbol_dict = None
 		self.register = None
 		self.a_register = None
 		self.var_register = None
@@ -19,11 +23,15 @@ class Riscv(object):
 	# 主函数
 	def main(self):
 		for func in self.fun_pool:
+			# 函数局部变量
+			self.fun_symbol_dict = self.fun_pool[func]['fun_symbol_dict']
+			func_assembly = []
 			# 初始的寄存器分配, 返回sp的偏移量
 			sp_off = self.Reg_init(func)
+			
 			# 根据IR生成汇编代码
-			ass = self.IR2Assemble(self.fun_pool[func]['insn'],sp_off)
-			self.PrintAssemble(ass)
+			self.IR2Assemble(self.fun_pool[func]['insn'],func_assembly,sp_off)
+			self.PrintAssemble(func_assembly)
 
 	# 函数寄存器分配--初始化
 	def Reg_init(self,func):
@@ -58,9 +66,9 @@ class Riscv(object):
 			print(code)
 
 
-	def IR2Assemble(self, insn_stream, sp_off):
-		func_assembly = []
+	def IR2Assemble(self, insn_stream, func_assembly,sp_off):
 		for insn in insn_stream:
+			# 遇到函数头
 			if insn.insn_type == 'func_head':
 				func_assembly.append(insn.insn[0])
 				# sp,s0寄存器初始化
@@ -69,17 +77,46 @@ class Riscv(object):
 				self.Ret_insn(insn, func_assembly)
 			elif insn.insn_type == 'Operation':
 				self.Op_insn(insn, func_assembly)
-		return func_assembly
 
 	# 函数sp寄存器初始化
 	def Fun_sp_init(self,ass_list,sp_off):
 		ass_list.append("\taddi\tsp,sp,-"+str(sp_off))
 		ass_list.append("\tsw\ts0,"+str(sp_off-4)+"(sp)")
 		ass_list.append("\taddi\ts0,sp,"+str(sp_off))
+		print("debug riscv 84",self.fun_symbol_dict)
+		# 保存参数
+		for fun_sym in self.fun_symbol_dict:
+			# 函数参数
+			if "sym_type" in self.fun_symbol_dict[fun_sym] and \
+					self.fun_symbol_dict[fun_sym]['sym_type'] == 'fun_args':
+				ass_code = "\tsw\t"+self.var_register[fun_sym]+","
+				off_ = sp_off - self.var_in_sp_off[fun_sym]
+				ass_code += str(-off_)+"(s0)"
+				ass_list.append(ass_code)
+				reg = self.var_register[fun_sym]
+				self.register_var[reg] = None
+				self.var_register[fun_sym] = None
+				self.a_register.append(reg)
+			# 函数内有初始化的变量
+			if "sym_type" in self.fun_symbol_dict[fun_sym] and \
+					self.fun_symbol_dict[fun_sym]['sym_type'] == 'fun_var' and \
+				'init_value' in self.fun_symbol_dict[fun_sym]:
+				ass_code = "\tli\t"
+				reg = self.a_register.pop()
+				ass_code += reg + ","+self.fun_symbol_dict[fun_sym]['init_value']
+				ass_list.append(ass_code)
+				ass_code = "\tsw\t"+reg+","
+				off_ = sp_off - self.var_in_sp_off[fun_sym]
+				ass_code += str(-off_)+"(s0)"
+				ass_list.append(ass_code)
+		print("debug riscv 103", self.a_register)
+
+
 
 	def Ret_insn(self, insn,ass_list):
 		ass_list.append("\tret")
 
 	def Op_insn(self, insn, ass_list):
-		print(insn.insn)
-		print(insn.op0,insn.op1,insn.op2)
+		pass
+		# print(insn.insn)
+		# print(insn.op0,insn.op1,insn.op2)

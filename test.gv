@@ -69,16 +69,20 @@ digraph {
 	31 -> 33
 	32 [label=a]
 	33 -> 32
+	35 [label="+"]
+	33 -> 35
 	34 [label=c]
-	33 -> 34
-	35 [label=return]
-	18 -> 35
-	37 [label="+"]
-	35 -> 37
+	35 -> 34
 	36 [label=d]
-	37 -> 36
-	38 [label=b]
-	37 -> 38
+	35 -> 36
+	37 [label=return]
+	18 -> 37
+	39 [label="+"]
+	37 -> 39
+	38 [label=d]
+	39 -> 38
+	40 [label=b]
+	39 -> 40
 	None [label=root]
 	7 [label=FuncDeclaration]
 	None -> 7
@@ -118,14 +122,18 @@ digraph {
 	31 -> 33
 	32 [label=a]
 	33 -> 32
+	35 [label="+"]
+	33 -> 35
 	34 [label=c]
-	33 -> 34
-	35 [label=return]
-	18 -> 35
-	37 [label="+"]
-	35 -> 37
+	35 -> 34
 	36 [label=d]
-	37 -> 36
-	38 [label=b]
-	37 -> 38
+	35 -> 36
+	37 [label=return]
+	18 -> 37
+	39 [label="+"]
+	37 -> 39
+	38 [label=d]
+	39 -> 38
+	40 [label=b]
+	39 -> 40
 }
