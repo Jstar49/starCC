@@ -147,8 +147,8 @@ class Passes(object):
 			Op_insn = Insn(insn_temp)
 			Op_insn.insn_type = 'Operation'
 			Op_insn.op0 = root_symbol
-			Op_insn.op1 = left
-			Op_insn.op2 = right
+			Op_insn.op1 = left.split("_")[0]
+			Op_insn.op2 = right.split("_")[0]
 
 			self.fun_insn_stream.append(Op_insn)
 			node.children = []
