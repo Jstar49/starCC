@@ -6,6 +6,7 @@ import copy
 # A_RRGISTER = ['a7','a6','a5','a4','a3','a2','a1','a0']
 A_RRGISTER = ['a4','a3','a2','a1','a0']
 
+
 class Riscv(object):
 	"""docstring for Assembly"""
 	def __init__(self, passes):
@@ -73,6 +74,8 @@ class Riscv(object):
 			# 函数内局部变量
 			elif 'sym_type' in fun_sym[sym] and fun_sym[sym]['sym_type'] == 'fun_var':
 				self.var_register[sym] = None
+			else:
+				self.var_register[sym] = None
 
 		print("debug riscv 51", sp_off)
 		print("debug riscv 51", self.var_in_sp_off)
@@ -111,6 +114,7 @@ class Riscv(object):
 				ass_code = "\tsw\t"+self.var_register[fun_sym]+","
 				off_ = sp_off - self.var_in_sp_off[fun_sym]
 				ass_code += str(-off_)+"(s0)"
+				ass_code += "\t\t #"+fun_sym
 				ass_list.append(ass_code)
 				# reg = self.var_register[fun_sym]
 				# self.register_var[reg] = None
@@ -129,6 +133,7 @@ class Riscv(object):
 				ass_code = "\tsw\t"+reg+","
 				off_ = sp_off - self.var_in_sp_off[fun_sym]
 				ass_code += str(-off_)+"(s0)"
+				ass_code += "\t\t #"+fun_sym
 				ass_list.append(ass_code)
 		print("debug riscv 103", self.a_register)
 
@@ -138,11 +143,12 @@ class Riscv(object):
 		ass_code = "\tsw\t"+reg_num+","
 		off_ = self.sp_off - self.var_in_sp_off[ori_sym]
 		ass_code += str(-off_)+"(s0)"
+		ass_code += "\t\t #"+ori_sym
 		self.func_assembly.append(ass_code)
 
 	# 根据符号取出可用的寄存器
 	def Ret_reg_by_sym(self,symbol):
-		print("debug riscv 137", symbol,self.var_register[symbol])
+		# print("debug riscv 137", symbol,self.var_register[symbol])
 		# 是否在var_register中 
 		if symbol in self.var_register:
 			# 暂时没有映射关系
@@ -156,9 +162,6 @@ class Riscv(object):
 					reg = self.reg_used.pop(0)
 					# 保存原来寄存器中の值
 					self.Save_reg(reg)
-					# self.var_register[symbol] = reg
-					# self.register_var[reg] = symbol
-					# exit(0)
 				self.var_register[symbol] = reg
 				self.register_var[reg] = symbol
 				self.reg_used.append(reg)
@@ -167,7 +170,7 @@ class Riscv(object):
 			# 已存在映射关系
 			else:
 				# reg重新上色
-				print("debug riscv 144",self.reg_used,self.var_register[symbol])
+				print("debug riscv 167",self.reg_used,self.var_register[symbol])
 				self.reg_used.remove(self.var_register[symbol])
 				self.reg_used.append(self.var_register[symbol])
 				return self.var_register[symbol]
@@ -178,9 +181,21 @@ class Riscv(object):
 	def Ret_insn(self, insn,ass_list):
 		ass_list.append("\tret")
 
+
+
+	# 操作指令
 	def Op_insn(self, insn, ass_list):
+		OPERATOR = {'+':'add','-':'sub','*':'mul','/':'div'}
 		# print("debug riscv 124", self.a_register)
 		# print("debug riscv 125", self.var_register)
-		print("debug riscv 144", insn.insn, insn.op0, insn.op1, insn.op2)
-		self.Ret_reg_by_sym(insn.op1)
+		print("debug riscv 181", insn.insn, insn.op0, insn.op1, insn.op2)
+		op1_reg = self.Ret_reg_by_sym(insn.op1)
+		op2_reg = self.Ret_reg_by_sym(insn.op2)
+		op0_reg = self.Ret_reg_by_sym(insn.op0)
+		print("debug riscv 185", op1_reg, op2_reg, op0_reg)
+		ass_code = "\t"
+		op = OPERATOR[insn.insn[0]]
+		ass_code += op +"\t"+op0_reg+","+op1_reg+","+op2_reg
+		ass_code += "\t\t #"+ str(insn.insn)
+		ass_list.append(ass_code)
 		# print(insn.op0,insn.op1,insn.op2)

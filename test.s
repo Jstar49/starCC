@@ -1,23 +1,8 @@
 foo:
-	addi	sp,sp,-48
-	sw	s0,44(sp)
-	addi	s0,sp,48
-	sw	a0,-48(s0)
-	sw	a1,-44(s0)
-	li	a2,4
-	sw	a2,-40(s0)
-	li	a3,1
-	sw	a3,-32(s0)
-	li	a4,1
-	sw	a4,-28(s0)
-	sw	a0,-48(s0)
-	li	a0,1
-	sw	a0,-24(s0)
-	sw	a1,-44(s0)
-	li	a1,1
-	sw	a1,-20(s0)
-	sw	a2,-40(s0)
-	li	a2,2
-	sw	a2,-16(s0)
-	sw	a3,-32(s0)
+	addi	sp,sp,-20
+	sw	s0,16(sp)
+	addi	s0,sp,20
+	sw	a0,-20(s0)		 #a
+	sw	a1,-16(s0)		 #b
+	mul	a2,a0,a1		 #['*', 'func ret_1', 'a_0', 'b_0']
 	ret
