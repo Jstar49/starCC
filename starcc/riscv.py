@@ -99,6 +99,8 @@ class Riscv(object):
 				self.Ret_insn(insn, func_assembly)
 			elif insn.insn_type == 'Operation':
 				self.Op_insn(insn, func_assembly)
+			elif insn.insn_type == 'assign':
+				self.Assign(insn)
 
 	# 函数sp寄存器初始化
 	def Fun_sp_init(self,ass_list,sp_off):
@@ -116,10 +118,6 @@ class Riscv(object):
 				ass_code += str(-off_)+"(s0)"
 				ass_code += "\t\t #"+fun_sym
 				ass_list.append(ass_code)
-				# reg = self.var_register[fun_sym]
-				# self.register_var[reg] = None
-				# self.var_register[fun_sym] = None
-				# self.a_register.append(reg)
 			# 函数内有初始化的变量
 			if "sym_type" in self.fun_symbol_dict[fun_sym] and \
 					self.fun_symbol_dict[fun_sym]['sym_type'] == 'fun_var' and \
@@ -178,7 +176,18 @@ class Riscv(object):
 		else:
 			pass
 
+	# 重置寄存器
+	def Reset_reg(self,reg):
+		symbol = self.register_var[reg]
+		# 如果reg已被使用
+		if symbol:
+			self.Save_reg(reg)
+
+	# 返回语句
 	def Ret_insn(self, insn,ass_list):
+		self.Reset_reg('a0')
+		# func ret 位置
+
 		ass_list.append("\tret")
 
 
@@ -186,12 +195,17 @@ class Riscv(object):
 	# 操作指令
 	def Op_insn(self, insn, ass_list):
 		OPERATOR = {'+':'add','-':'sub','*':'mul','/':'div'}
-		# print("debug riscv 124", self.a_register)
-		# print("debug riscv 125", self.var_register)
 		print("debug riscv 181", insn.insn, insn.op0, insn.op1, insn.op2)
 		op1_reg = self.Ret_reg_by_sym(insn.op1)
 		op2_reg = self.Ret_reg_by_sym(insn.op2)
 		op0_reg = self.Ret_reg_by_sym(insn.op0)
+		if insn.op1.isdigit():
+			op1_reg = op2_reg
+			op2_reg = insn.op1
+			if insn.op2.isdigit():
+				op1_reg = insn.op1 + insn.op2
+				
+		
 		print("debug riscv 185", op1_reg, op2_reg, op0_reg)
 		ass_code = "\t"
 		op = OPERATOR[insn.insn[0]]
@@ -199,3 +213,12 @@ class Riscv(object):
 		ass_code += "\t\t #"+ str(insn.insn)
 		ass_list.append(ass_code)
 		# print(insn.op0,insn.op1,insn.op2)
+
+	# 赋值处理
+	def Assign(self,insn):
+		print("debug riscv 213", insn.insn,insn.op1,insn.op0)
+		op1 = insn.op1
+		op0 = insn.op0
+		if op1 == op2:
+			print("op0 == op1")
+			return

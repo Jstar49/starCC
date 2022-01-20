@@ -171,11 +171,22 @@ class Passes(object):
 		symbol_1 = self.SymbolNow(symbol)
 		symbol = self.Symbol(symbol)
 		insn_temp = []
+		assign_insn = None
 		if node.children[0].type  != '=':
 			insn_temp = [node.children[0].type,symbol,symbol_1,right]
+			assign_insn = Insn(insn_temp)
+			assign_insn.insn_type = "Operation"
+			assign_insn.op1 = symbol_1.split("_")[0]
+			assign_insn.op2 = right.split("_")[0]
+			# print("Passes debug 181",insn_temp)
 		else:
 			insn_temp = ["=",symbol,right]
-		assign_insn = Insn(insn_temp)
+			assign_insn = Insn(insn_temp)
+			assign_insn.insn_type = "assign"
+			assign_insn.op1 = right.split("_")[0]
+		# assign_insn = Insn(insn_temp)
+		assign_insn.op0 = symbol
+
 		self.fun_insn_stream.append(assign_insn)
 		node.trans_flag = 1
 
@@ -353,10 +364,12 @@ class Passes(object):
 			funars.append(args_symbol)
 			insn_temp = ["=",args_symbol,args_symbol_temp]
 			ret_insn_temp = Insn(insn_temp)
+			ret_insn_temp.insn_type = "assign"
 			self.fun_insn_stream.append(ret_insn_temp)
 		for args_temp in funars:
 			insn_temp = ["=","args temp_"+str(funars.index(args_temp)),args_temp]
 			insn_temp = Insn(insn_temp)
+			insn_temp.insn_type = "assign"
 			self.fun_insn_stream.append(insn_temp)
 		func_call = ["call",func_name]
 		func_call_temp = Insn(func_call)
@@ -382,10 +395,11 @@ class Passes(object):
 				ret_symbol = self.Symbol("func ret")
 				insn_temp = ["=",ret_symbol,ret_symbol_temp]
 				ret_insn_temp = Insn(insn_temp)
-				ret_insn_temp.insn_type = "return"
+				ret_insn_temp.insn_type = "assign"
 				self.fun_insn_stream.append(ret_insn_temp)
 				insn_temp = ["return",ret_symbol]
 				ret_insn = Insn(insn_temp)
+				ret_insn.insn_type = "return"
 				self.fun_insn_stream.append(ret_insn)
 				node.trans_flag = 1
 			# 遇到if节点

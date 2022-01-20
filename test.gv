@@ -25,45 +25,54 @@ digraph {
 	8 -> 10
 	11 [label=Stmt]
 	0 -> 11
-	12 [label=return]
+	12 [label=VarDeclaration]
 	11 -> 12
-	14 [label="*"]
+	13 [label=T_int]
+	12 -> 13
+	14 [label=Identifier]
 	12 -> 14
-	13 [label=a]
-	14 -> 13
-	15 [label=b]
+	15 [label=Assign]
 	14 -> 15
-	None [label=root]
-	0 [label=FuncDeclaration]
-	None -> 0
-	1 [label=T_int]
-	0 -> 1
-	2 [label=Identifier]
-	0 -> 2
-	3 [label=foo]
-	2 -> 3
-	4 [label=Args]
-	0 -> 4
-	5 [label=arg]
-	4 -> 5
-	6 [label=T_int]
-	5 -> 6
-	7 [label=a]
-	5 -> 7
-	8 [label=arg]
-	4 -> 8
-	9 [label=T_int]
-	8 -> 9
-	10 [label=b]
-	8 -> 10
-	11 [label=Stmt]
-	0 -> 11
-	12 [label=return]
-	11 -> 12
-	14 [label="*"]
-	12 -> 14
-	13 [label=a]
-	14 -> 13
-	15 [label=b]
-	14 -> 15
+	17 [label="="]
+	15 -> 17
+	16 [label=d]
+	17 -> 16
+	18 [label=5]
+	17 -> 18
+	19 [label=Assign]
+	11 -> 19
+	21 [label="="]
+	19 -> 21
+	20 [label=d]
+	21 -> 20
+	23 [label="+"]
+	21 -> 23
+	22 [label=1]
+	23 -> 22
+	24 [label=2]
+	23 -> 24
+	25 [label=Assign]
+	11 -> 25
+	27 [label="-="]
+	25 -> 27
+	26 [label=d]
+	27 -> 26
+	28 [label=2]
+	27 -> 28
+	29 [label=Assign]
+	11 -> 29
+	31 [label="="]
+	29 -> 31
+	30 [label=d]
+	31 -> 30
+	33 [label="*"]
+	31 -> 33
+	32 [label=a]
+	33 -> 32
+	34 [label=b]
+	33 -> 34
+	35 [label=return]
+	11 -> 35
+	36 [label=d]
+	35 -> 36
 }
