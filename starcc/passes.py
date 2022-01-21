@@ -178,14 +178,14 @@ class Passes(object):
 			assign_insn.insn_type = "Operation"
 			assign_insn.op1 = symbol_1.split("_")[0]
 			assign_insn.op2 = right.split("_")[0]
-			# print("Passes debug 181",insn_temp)
+			# print("Passes debug 181",insn_temp,node.children[0].children[0].key)
 		else:
 			insn_temp = ["=",symbol,right]
 			assign_insn = Insn(insn_temp)
 			assign_insn.insn_type = "assign"
 			assign_insn.op1 = right.split("_")[0]
 		# assign_insn = Insn(insn_temp)
-		assign_insn.op0 = symbol
+		assign_insn.op0 = node.children[0].children[0].key
 
 		self.fun_insn_stream.append(assign_insn)
 		node.trans_flag = 1
@@ -395,6 +395,8 @@ class Passes(object):
 				ret_symbol = self.Symbol("func ret")
 				insn_temp = ["=",ret_symbol,ret_symbol_temp]
 				ret_insn_temp = Insn(insn_temp)
+				ret_insn_temp.op0 = "func ret"
+				ret_insn_temp.op1 = ret_symbol_temp.split("_")[0]
 				ret_insn_temp.insn_type = "assign"
 				self.fun_insn_stream.append(ret_insn_temp)
 				insn_temp = ["return",ret_symbol]

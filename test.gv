@@ -53,26 +53,38 @@ digraph {
 	23 -> 24
 	25 [label=Assign]
 	11 -> 25
-	27 [label="-="]
+	27 [label="="]
 	25 -> 27
 	26 [label=d]
 	27 -> 26
-	28 [label=2]
-	27 -> 28
-	29 [label=Assign]
-	11 -> 29
-	31 [label="="]
-	29 -> 31
-	30 [label=d]
-	31 -> 30
-	33 [label="*"]
+	29 [label="+"]
+	27 -> 29
+	28 [label=d]
+	29 -> 28
+	30 [label=2]
+	29 -> 30
+	31 [label=Assign]
+	11 -> 31
+	33 [label="-="]
 	31 -> 33
-	32 [label=a]
+	32 [label=d]
 	33 -> 32
-	34 [label=b]
+	34 [label=2]
 	33 -> 34
-	35 [label=return]
+	35 [label=Assign]
 	11 -> 35
+	37 [label="="]
+	35 -> 37
 	36 [label=d]
-	35 -> 36
+	37 -> 36
+	39 [label="*"]
+	37 -> 39
+	38 [label=a]
+	39 -> 38
+	40 [label=b]
+	39 -> 40
+	41 [label=return]
+	11 -> 41
+	42 [label=d]
+	41 -> 42
 }

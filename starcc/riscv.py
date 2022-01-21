@@ -168,7 +168,7 @@ class Riscv(object):
 			# 已存在映射关系
 			else:
 				# reg重新上色
-				print("debug riscv 167",self.reg_used,self.var_register[symbol])
+				# print("debug riscv 167",self.reg_used,self.var_register[symbol])
 				self.reg_used.remove(self.var_register[symbol])
 				self.reg_used.append(self.var_register[symbol])
 				return self.var_register[symbol]
@@ -199,26 +199,33 @@ class Riscv(object):
 		op1_reg = self.Ret_reg_by_sym(insn.op1)
 		op2_reg = self.Ret_reg_by_sym(insn.op2)
 		op0_reg = self.Ret_reg_by_sym(insn.op0)
-		if insn.op1.isdigit():
-			op1_reg = op2_reg
-			op2_reg = insn.op1
-			if insn.op2.isdigit():
-				op1_reg = insn.op1 + insn.op2
-				
-		
-		print("debug riscv 185", op1_reg, op2_reg, op0_reg)
+		print("debug riscv 202", op0_reg, op1_reg, op2_reg, )
 		ass_code = "\t"
 		op = OPERATOR[insn.insn[0]]
-		ass_code += op +"\t"+op0_reg+","+op1_reg+","+op2_reg
+		# 常数赋值
+		if insn.insn[2].isdigit() and insn.insn[3].isdigit():
+			op1_reg = insn.insn[2] + insn.insn[3]
+			ass_code += "li" +"\t"+op0_reg+","+op1_reg
+		elif insn.insn[2].isdigit() or insn.insn[3].isdigit():
+			if insn.insn[2].isdigit():
+				op2_reg = insn.insn[2]
+				op1_reg = insn.op2
+			else:
+				op2_reg = insn.insn[3]
+			print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
+			ass_code += "addi" +"\t"+op0_reg+","+op1_reg+","+op2_reg
+		else:
+			ass_code += op +"\t"+op0_reg+","+op1_reg+","+op2_reg
 		ass_code += "\t\t #"+ str(insn.insn)
 		ass_list.append(ass_code)
 		# print(insn.op0,insn.op1,insn.op2)
 
 	# 赋值处理
 	def Assign(self,insn):
-		print("debug riscv 213", insn.insn,insn.op1,insn.op0)
+		print("debug riscv 213", insn.insn)
+		print(insn.op1,insn.op0)
 		op1 = insn.op1
 		op0 = insn.op0
-		if op1 == op2:
+		if op1 == op0:
 			print("op0 == op1")
 			return
