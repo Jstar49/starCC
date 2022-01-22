@@ -5,6 +5,7 @@
 import copy
 # A_RRGISTER = ['a7','a6','a5','a4','a3','a2','a1','a0']
 A_RRGISTER = ['a4','a3','a2','a1','a0']
+ops = {"+": (lambda x,y: x+y), "-": (lambda x,y: x-y),"/": (lambda x,y: x/y), "*": (lambda x,y: x*y)}
 
 
 class Riscv(object):
@@ -100,7 +101,7 @@ class Riscv(object):
 			elif insn.insn_type == 'Operation':
 				self.Op_insn(insn, func_assembly)
 			elif insn.insn_type == 'assign':
-				self.Assign(insn)
+				self.Assign(insn, func_assembly)
 
 	# 函数sp寄存器初始化
 	def Fun_sp_init(self,ass_list,sp_off):
@@ -146,12 +147,10 @@ class Riscv(object):
 
 	# 根据符号取出可用的寄存器
 	def Ret_reg_by_sym(self,symbol):
-		# print("debug riscv 137", symbol,self.var_register[symbol])
 		# 是否在var_register中 
 		if symbol in self.var_register:
 			# 暂时没有映射关系
 			if self.var_register[symbol] == None:
-				# print("debug riscv 144", symbol)
 				reg = None
 				if len(self.a_register):
 					reg = self.a_register.pop()
@@ -163,12 +162,10 @@ class Riscv(object):
 				self.var_register[symbol] = reg
 				self.register_var[reg] = symbol
 				self.reg_used.append(reg)
-				# exit(0)
 				return reg
 			# 已存在映射关系
 			else:
 				# reg重新上色
-				# print("debug riscv 167",self.reg_used,self.var_register[symbol])
 				self.reg_used.remove(self.var_register[symbol])
 				self.reg_used.append(self.var_register[symbol])
 				return self.var_register[symbol]
@@ -187,10 +184,10 @@ class Riscv(object):
 	def Ret_insn(self, insn,ass_list):
 		self.Reset_reg('a0')
 		# func ret 位置
-
+		fun_ret_reg = self.var_register['func ret']
+		ass_code = "\tmv\ta0,"+fun_ret_reg
+		ass_list.append(ass_code)
 		ass_list.append("\tret")
-
-
 
 	# 操作指令
 	def Op_insn(self, insn, ass_list):
@@ -205,7 +202,8 @@ class Riscv(object):
 		# 常数赋值
 		if insn.insn[2].isdigit() and insn.insn[3].isdigit():
 			op1_reg = insn.insn[2] + insn.insn[3]
-			ass_code += "li" +"\t"+op0_reg+","+op1_reg
+			op1_reg = ops[insn.insn[0]](int(insn.insn[2]), int(insn.insn[3]))
+			ass_code += "li" +"\t"+op0_reg+","+str(op1_reg)
 		elif insn.insn[2].isdigit() or insn.insn[3].isdigit():
 			if insn.insn[2].isdigit():
 				op2_reg = insn.insn[2]
@@ -221,11 +219,22 @@ class Riscv(object):
 		# print(insn.op0,insn.op1,insn.op2)
 
 	# 赋值处理
-	def Assign(self,insn):
-		print("debug riscv 213", insn.insn)
-		print(insn.op1,insn.op0)
+	def Assign(self,insn,ass_list):
+		print("debug riscv 213", insn.insn, insn.op0, insn.op1)
+		# print(insn.op1,insn.op0)
 		op1 = insn.op1
 		op0 = insn.op0
 		if op1 == op0:
-			print("op0 == op1")
 			return
+		# 赋值的是数字
+		if insn.insn[2].isdigit():
+			op1_reg = insn.insn[2]
+			op0_reg = self.Ret_reg_by_sym(insn.op0)
+			ass_code = "\tli\t"+op0_reg+","+op1_reg
+		else:
+			op1_reg = self.Ret_reg_by_sym(insn.op1)
+			op0_reg = self.Ret_reg_by_sym(insn.op0)
+			ass_code = "\tmv\t"+op0_reg+","+op1_reg
+		ass_code += "\t\t #"+str(insn.insn)
+		ass_list.append(ass_code)
+
