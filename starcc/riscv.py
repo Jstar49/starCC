@@ -180,6 +180,13 @@ class Riscv(object):
 		if symbol:
 			self.Save_reg(reg)
 
+	# 取出一个可用的寄存器
+	def Get_alive_reg(self):
+		reg = self.reg_used.pop(0)
+		self.Save_reg(reg)
+		self.reg_used.append(reg)
+		return reg
+
 	# 返回语句
 	def Ret_insn(self, insn,ass_list):
 		self.Reset_reg('a0')
@@ -196,7 +203,7 @@ class Riscv(object):
 		op1_reg = self.Ret_reg_by_sym(insn.op1)
 		op2_reg = self.Ret_reg_by_sym(insn.op2)
 		op0_reg = self.Ret_reg_by_sym(insn.op0)
-		print("debug riscv 202", op0_reg, op1_reg, op2_reg, )
+		print("debug riscv 202", op0_reg, op1_reg, op2_reg )
 		ass_code = "\t"
 		op = OPERATOR[insn.insn[0]]
 		# 常数赋值
@@ -211,6 +218,7 @@ class Riscv(object):
 			else:
 				op2_reg = insn.insn[3]
 			print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
+
 			ass_code += "addi" +"\t"+op0_reg+","+op1_reg+","+op2_reg
 		else:
 			ass_code += op +"\t"+op0_reg+","+op1_reg+","+op2_reg
