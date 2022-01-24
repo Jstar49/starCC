@@ -269,7 +269,7 @@ class Passes(object):
 		self.fun_insn_stream.append(code_bb_insn_temp)
 
 	# if节点
-	def Deal_if(self,node):
+	def Deal_if(self,node,root_node):
 		if_condi = self.Condi_Node(node.children[0].children[0])
 		func_code_block_index = self.Block_index()
 		has_else = False
@@ -406,7 +406,7 @@ class Passes(object):
 				node.trans_flag = 1
 			# 遇到if节点
 			elif node.key in ['if']:
-				self.Deal_if(node)
+				self.Deal_if(node,root_node)
 			# 遇到while节点
 			elif node.key == 'while':
 				self.Deal_while(node)

@@ -6,7 +6,8 @@ import copy
 # A_RRGISTER = ['a7','a6','a5','a4','a3','a2','a1','a0']
 A_RRGISTER = ['a4','a3','a2','a1','a0']
 ops = {"+": (lambda x,y: x+y), "-": (lambda x,y: x-y),"/": (lambda x,y: x/y), "*": (lambda x,y: x*y)}
-
+OPERATOR = {'+':'add','-':'sub','*':'mul','/':'div',
+			'>':"sgt",'>=':'sge','<':'slt','<=':'sle'}
 
 class Riscv(object):
 	"""docstring for Assembly"""
@@ -198,7 +199,6 @@ class Riscv(object):
 
 	# 操作指令
 	def Op_insn(self, insn, ass_list):
-		OPERATOR = {'+':'add','-':'sub','*':'mul','/':'div'}
 		print("debug riscv 181", insn.insn, insn.op0, insn.op1, insn.op2)
 		op1_reg = self.Ret_reg_by_sym(insn.op1)
 		op2_reg = self.Ret_reg_by_sym(insn.op2)
@@ -218,8 +218,9 @@ class Riscv(object):
 			else:
 				op2_reg = insn.insn[3]
 			print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
-
-			ass_code += "addi" +"\t"+op0_reg+","+op1_reg+","+op2_reg
+			constant_reg = self.Get_alive_reg()
+			ass_code += "li\t"+constant_reg+","+insn.op2+"\n"
+			ass_code += "\t"+op +"\t"+op0_reg+","+op1_reg+","+constant_reg
 		else:
 			ass_code += op +"\t"+op0_reg+","+op1_reg+","+op2_reg
 		ass_code += "\t\t #"+ str(insn.insn)
