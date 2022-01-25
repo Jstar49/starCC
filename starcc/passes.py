@@ -217,6 +217,7 @@ class Passes(object):
 		if len(node.children[3].children):
 			insn_temp = ["beqz",for_condi,func_code_block_index]
 			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.op0 = for_condi.split("_")[0]
 			j_insn_temp.insn_type = "condi_jump"
 			self.fun_insn_stream.append(j_insn_temp)
 			# for 的行为语句
@@ -252,6 +253,7 @@ class Passes(object):
 		if node.children[-1].key == "True":
 			insn_temp = ["beqz",while_condi,func_code_block_index]
 			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.op0 = while_condi.split("_")[0]
 			j_insn_temp.insn_type = "condi_jump"
 			self.fun_insn_stream.append(j_insn_temp)
 			self.Node_2_IR(node.children[-1])
@@ -293,6 +295,7 @@ class Passes(object):
 			if has_else or has_else_if:
 				insn_temp[2] = else_block
 			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.op0 = if_condi.split("_")[0]
 			j_insn_temp.insn_type = "condi_jump"
 			self.fun_insn_stream.append(j_insn_temp)
 			self.Node_2_IR(node.children[-1])
@@ -328,6 +331,7 @@ class Passes(object):
 			if has_else or has_else_if:
 				insn_temp[2] = else_block
 			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.op0 = if_condi.split("_")[0]
 			j_insn_temp.insn_type = "condi_jump"
 			self.fun_insn_stream.append(j_insn_temp)
 			# 解析当前节点的语句

@@ -6,8 +6,8 @@ import copy
 # A_RRGISTER = ['a7','a6','a5','a4','a3','a2','a1','a0']
 A_RRGISTER = ['a4','a3','a2','a1','a0']
 ops = {"+": (lambda x,y: x+y), "-": (lambda x,y: x-y),"/": (lambda x,y: x/y), "*": (lambda x,y: x*y)}
-OPERATOR = {'+':'add','-':'sub','*':'mul','/':'div',
-			'>':"sgt",'>=':'sge','<':'slt','<=':'sle'}
+OPERATOR = {'+':'add','-':'sub','*':'mul','/':'div'}
+COMP = ['>','>=','<','<=','==','!=']
 
 class Riscv(object):
 	"""docstring for Assembly"""
@@ -97,12 +97,18 @@ class Riscv(object):
 				func_assembly.append(insn.insn[0])
 				# sp,s0寄存器初始化
 				self.Fun_sp_init(func_assembly,sp_off)
+			elif insn.insn_type == 'code_block':
+				self.Code_block(insn, func_assembly)
 			elif insn.insn_type == 'return':
 				self.Ret_insn(insn, func_assembly)
 			elif insn.insn_type == 'Operation':
 				self.Op_insn(insn, func_assembly)
 			elif insn.insn_type == 'assign':
 				self.Assign(insn, func_assembly)
+			elif insn.insn_type == 'condi_jump':
+				self.Condi_jump(insn, func_assembly)
+			elif insn.insn_type == 'jump':
+				self.NoCondi_jump(insn, func_assembly)
 
 	# 函数sp寄存器初始化
 	def Fun_sp_init(self,ass_list,sp_off):
@@ -188,6 +194,33 @@ class Riscv(object):
 		self.reg_used.append(reg)
 		return reg
 
+	# 代码块
+	def Code_block(self, insn, ass_list):
+		print("debug riscv 196", insn.insn,)
+		code_block = insn.insn[0].split("func block ")[-1].split(":")[0]
+		ass_code = ".L"+code_block
+		ass_list.append(ass_code)
+
+	# 无条件跳转
+	def NoCondi_jump(self,insn, ass_list):
+		print("debug riscv 205", insn.insn,)
+		# condi_reg = self.Ret_reg_by_sym(insn.op0)
+		ass_code = "\tj\t"
+		code_block = insn.insn[1].split("func block ")[-1]
+		ass_code += ".L"+code_block
+		# ass_code += "\t\t #"+ str(insn.insn)
+		ass_list.append(ass_code)
+
+	# 有条件跳转
+	def Condi_jump(self,insn, ass_list):
+		print("debug riscv 195", insn.insn, insn.op0)
+		condi_reg = self.Ret_reg_by_sym(insn.op0)
+		ass_code = "\tbeqz\t"+condi_reg+","
+		code_block = insn.insn[2].split("func block ")[-1]
+		ass_code += ".L"+code_block
+		ass_code += "\t\t #"+ str(insn.insn)
+		ass_list.append(ass_code)
+
 	# 返回语句
 	def Ret_insn(self, insn,ass_list):
 		self.Reset_reg('a0')
@@ -205,27 +238,63 @@ class Riscv(object):
 		op0_reg = self.Ret_reg_by_sym(insn.op0)
 		print("debug riscv 202", op0_reg, op1_reg, op2_reg )
 		ass_code = "\t"
-		op = OPERATOR[insn.insn[0]]
-		# 常数赋值
-		if insn.insn[2].isdigit() and insn.insn[3].isdigit():
-			op1_reg = insn.insn[2] + insn.insn[3]
-			op1_reg = ops[insn.insn[0]](int(insn.insn[2]), int(insn.insn[3]))
-			ass_code += "li" +"\t"+op0_reg+","+str(op1_reg)
-		elif insn.insn[2].isdigit() or insn.insn[3].isdigit():
-			if insn.insn[2].isdigit():
-				op2_reg = insn.insn[2]
-				op1_reg = insn.op2
+		if insn.insn[0] in OPERATOR:
+			op = OPERATOR[insn.insn[0]]
+			# 常数赋值
+			if insn.insn[2].isdigit() and insn.insn[3].isdigit():
+				op1_reg = insn.insn[2] + insn.insn[3]
+				op1_reg = ops[insn.insn[0]](int(insn.insn[2]), int(insn.insn[3]))
+				ass_code += "li" +"\t"+op0_reg+","+str(op1_reg)
+			elif insn.insn[2].isdigit() or insn.insn[3].isdigit():
+				if insn.insn[2].isdigit():
+					op2_reg = insn.insn[2]
+					op1_reg = insn.op2
+				else:
+					op2_reg = insn.insn[3]
+				# print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
+				constant_reg = self.Get_alive_reg()
+				ass_code += "li\t"+constant_reg+","+insn.op2+"\n"
+				ass_code += "\t"+op +"\t"+op0_reg+","+op1_reg+","+constant_reg
 			else:
-				op2_reg = insn.insn[3]
-			print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
-			constant_reg = self.Get_alive_reg()
-			ass_code += "li\t"+constant_reg+","+insn.op2+"\n"
-			ass_code += "\t"+op +"\t"+op0_reg+","+op1_reg+","+constant_reg
-		else:
-			ass_code += op +"\t"+op0_reg+","+op1_reg+","+op2_reg
-		ass_code += "\t\t #"+ str(insn.insn)
-		ass_list.append(ass_code)
-		# print(insn.op0,insn.op1,insn.op2)
+				ass_code += op +"\t"+op0_reg+","+op1_reg+","+op2_reg
+			ass_code += "\t\t #"+ str(insn.insn)
+			ass_list.append(ass_code)
+			# print(insn.op0,insn.op1,insn.op2)
+		elif insn.insn[0] in COMP:
+			print("debug riscv 231", insn.insn, insn.op0, insn.op1, insn.op2)
+			op = insn.insn[0]
+			if insn.insn[2].isdigit() or insn.insn[3].isdigit():
+				if insn.insn[2].isdigit():
+					op2_reg = insn.insn[2]
+					op1_reg = insn.op2
+				else:
+					op2_reg = insn.insn[3]
+				# print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
+				op2_reg = self.Get_alive_reg()
+				ass_code += "li\t"+op2_reg+","+insn.op2+"\n\t"
+			# 	ass_code += "\t"+op +"\t"+op0_reg+","+op1_reg+","+constant_reg
+			# else:
+			if op == '<':
+				ass_code += "slt\t"+op0_reg+","+op1_reg+","+op2_reg+"\n"
+			elif op == '<=':
+				ass_code += "sgt\t"+op0_reg+","+op1_reg+","+op2_reg+"\n"
+				ass_code += "\txori\t"+op0_reg + ","+op0_reg+",1"+"\n"
+			elif op == '>':
+				ass_code += "sgt\t"+op0_reg+","+op1_reg+","+op2_reg+"\n"
+			elif op == '>=':
+				ass_code += "slt\t"+op0_reg+","+op1_reg+","+op2_reg+"\n"
+				ass_code += "\txori\t"+op0_reg + ","+op0_reg+",1"+"\n"
+			elif op == '!=':
+				ass_code += "sub\t"+op0_reg+","+op1_reg+","+op2_reg+"\n"
+				ass_code += "\tsnez\t"+op0_reg + ","+op0_reg+"\n"
+			elif op == '==':
+				ass_code += "sub\t"+op0_reg+","+op1_reg+","+op2_reg+"\n"
+				ass_code += "\tseqz\t"+op0_reg + ","+op0_reg+"\n"
+			# ass_code += op +"\t"+op0_reg+","+op1_reg+","+op2_reg
+			ass_code += "\tandi\t"+op0_reg+","+op0_reg+",0xff"
+			ass_code += "\t\t #"+ str(insn.insn)
+			ass_list.append(ass_code)
+			# print(insn.op0,insn.op1,insn.op2)
 
 	# 赋值处理
 	def Assign(self,insn,ass_list):

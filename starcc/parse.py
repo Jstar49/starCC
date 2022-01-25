@@ -378,6 +378,7 @@ class Parse(object):
 		if_true_node.dot_num = self.dot_num
 		self.dot_num += 1
 		if_tree.add_child(if_true_node)
+		# print("debug parse 381",self.tokens[index].value)
 		while index <len(self.tokens):
 			if self.tokens[index].type == 'T_l3_braket':
 				if_braket.append(self.tokens[index])
@@ -387,6 +388,7 @@ class Parse(object):
 					index += 1
 					break
 			index = self.parse(index,if_true_node)
+		# print(self.tokens[index])
 		if self.tokens[index].type == 'T_else' and self.tokens[index+1].type == 'T_if':
 			while self.tokens[index].type == 'T_else' and self.tokens[index+1].type == 'T_if':
 				else_if_node = Tree("Else_if")

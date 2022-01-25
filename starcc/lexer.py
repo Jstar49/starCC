@@ -4,7 +4,7 @@ file_name = ""
 # self.source_stream = ""
 
 # 操作符
-operatorList = ['+','-','*','/','=','&','|','>','<','>=','<=','++','--','!=','==']
+operatorList = ['+','-','*','/','=','!','&','|','>','<','>=','<=','++','--','!=','==']
 # 特殊符号
 specialChar = [	'(',')','[',']','{','}',',',';','\"']
 # 关键字
@@ -115,6 +115,7 @@ class Lexer(object):
 		word_num = 0
 		while word_num < len(self.source_stream):
 			# 判断是否为注释或者不需要分析的词法
+			# print(self.source_stream[word_num])
 			word_num = self.If_skip_word(word_num)
 			if word_num >= len(self.source_stream):
 				break;
@@ -197,6 +198,7 @@ class Lexer(object):
 				# != | ==
 				elif (self.source_stream[word_num] == '!' or self.source_stream[word_num] == '=') and \
 					self.source_stream[word_num+1] == '=':
+					# print("123")
 					tk_str += self.source_stream[word_num]
 					tk_str += self.source_stream[word_num+1]
 					word_num += 2
