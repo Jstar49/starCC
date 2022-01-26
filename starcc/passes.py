@@ -74,7 +74,7 @@ class Passes(object):
 		# 函数 insn 流清零
 		self.fun_insn_stream = []
 		# 函数代码块清零
-		self.func_code_block_index = 1
+		self.func_code_block_index = 1 if self.func_code_block_index==0 else self.func_code_block_index+1
 		# print(self.fun_pool[func]["type"])
 		func_type = self.fun_pool[func]["type"]
 		if func_type == "T_void":
