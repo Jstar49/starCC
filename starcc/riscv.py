@@ -33,20 +33,30 @@ class Riscv(object):
 	# 主函数
 	def main(self):
 		# 输出文件
-		self.outFile = open("test.s","w")
+		ass_file_name = "test"
+		self.outFile = open(ass_file_name+".s","w")
+		# 汇编文件头
+		self.Assembly_head(ass_file_name)
 		for func in self.fun_pool:
 			# 函数局部变量
 			self.fun_symbol_dict = self.fun_pool[func]['fun_symbol_dict']
 			# func_assembly = []
 			# 初始的寄存器分配, 返回sp的偏移量
 			self.sp_off = self.Reg_init(func)
-			
+			# 函数头调试信息
+			self.Func_head_debug(func)
 			# 根据IR生成汇编代码
 			self.IR2Assemble(self.fun_pool[func]['insn'],self.func_assembly,self.sp_off)
-		
+			self.Func_tail_debug(func)
 		self.PrintAssemble(self.func_assembly)
 		# 关闭文件
 		self.outFile.close()
+
+	# 汇编文件头
+	def Assembly_head(self,file_name):
+		self.func_assembly.append("\t.file\t\""+file_name+".c\"")
+		self.func_assembly.append("\t.option\tnopic")
+		self.func_assembly.append("\t.text")
 
 	# 函数寄存器分配--初始化
 	def Reg_init(self,func):
@@ -109,6 +119,16 @@ class Riscv(object):
 				self.Condi_jump(insn, func_assembly)
 			elif insn.insn_type == 'jump':
 				self.NoCondi_jump(insn, func_assembly)
+
+	# 函数头调试信息
+	def Func_head_debug(self,func_name):
+		self.func_assembly.append("\t.align\t1")
+		self.func_assembly.append("\t.global\t"+func_name+"")
+		self.func_assembly.append("\t.type\t"+func_name+", @function")
+
+	# 函数尾调试信息
+	def Func_tail_debug(self,func_name):
+		self.func_assembly.append("\t.size\t"+func_name+", .-"+func_name)
 
 	# 函数sp寄存器初始化
 	def Fun_sp_init(self,ass_list,sp_off):
@@ -198,7 +218,7 @@ class Riscv(object):
 	def Code_block(self, insn, ass_list):
 		print("debug riscv 196", insn.insn,)
 		code_block = insn.insn[0].split("func block ")[-1].split(":")[0]
-		ass_code = ".L"+code_block
+		ass_code = ".L"+code_block + ":"
 		ass_list.append(ass_code)
 
 	# 无条件跳转

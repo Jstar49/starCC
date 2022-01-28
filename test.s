@@ -1,3 +1,9 @@
+	.file	"test.c"
+	.option	nopic
+	.text
+	.align	1
+	.global	foo
+	.type	foo, @function
 foo:
 	addi	sp,sp,-28
 	sw	s0,24(sp)
@@ -6,8 +12,8 @@ foo:
 	sw	a1,-24(s0)		 #b
 	li	a2,0
 	sw	a2,-20(s0)		 #d
-.L1
-.L2
+.L1:
+.L2:
 	sw	a1,-24(s0)		 #b
 	li	a1,10
 	sgt	a3,a0,a1
@@ -18,11 +24,15 @@ foo:
 	li	a2,1
 	sub	a0,a0,a2		 #['-', 'a_1', 'a_0', '1']
 	j	.L2
-.L3
+.L3:
 	mv	a4,a2		 #['=', 'func ret_1', 'd_0']
 	sw	a0,-28(s0)		 #a
 	mv	a0,a4
 	ret
+	.size	foo, .-foo
+	.align	1
+	.global	boo
+	.type	boo, @function
 boo:
 	addi	sp,sp,-20
 	sw	s0,16(sp)
@@ -31,8 +41,9 @@ boo:
 	sw	a0,-20(s0)		 #a
 	li	a1,20
 	sw	a1,-16(s0)		 #c
-.L4
+.L4:
 	add	a2,a0,a1		 #['+', 'func ret_1', 'a_0', 'c_0']
 	sw	a0,-20(s0)		 #a
 	mv	a0,a2
 	ret
+	.size	boo, .-boo
