@@ -43,7 +43,7 @@ def passes():
 	# 符号检查
 	check = Check(parse)
 	check.main()
-	parse.drawTree(check.parse.grammar_tree)
+	# parse.drawTree(check.parse.grammar_tree)
 	# 中间代码生成
 	passes = Passes(check)
 	passes.main()

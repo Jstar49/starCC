@@ -1,13 +1,14 @@
-// int star = 0;
-int foo(int a,int b){
-	int d = 0;
-	while (a<=10){
-		a = a -1;
-	}
-	return d;
+
+int jiet(int c){
+	int a = 7;
+	return a;
 }
-int boo(){
-	int a = 10;
-	int c = 20;
-	return a+ c;
+
+int foo(int a,int b){
+	int s = 9;
+	s = (5-b);
+	s = jiet(b-5);
+	s = jiet(5-b);
+	s = s+a;
+	return s;
 }

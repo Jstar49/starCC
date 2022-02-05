@@ -19,7 +19,7 @@ class Check(object):
 
 	def Print(self,root_node):
 		for node in root_node.children:
-			print(node.key)
+			# print(node.key)
 			self.Print(node)
 
 	def CheckVarDeclaration(self,root_node,root_key):
@@ -80,5 +80,5 @@ class Check(object):
 		# 首先检查全局变量
 		self.global_var_pool = self.CheckVarDeclaration(self.parse.grammar_tree,"root")
 		self.CheckFunction(self.parse.grammar_tree)
-		print(self.global_var_pool)
-		print(self.fun_pool)
+		# print("debug check 83",self.global_var_pool)
+		# print("debug check 84",self.fun_pool)

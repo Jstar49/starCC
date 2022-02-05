@@ -235,6 +235,7 @@ class Parse(object):
 	
 	# 标识符
 	def Identifier(self,index,gram_root):
+		print("debug parse 238", gram_root.key)
 		iden_tree = Tree(self.tokens[index].value)
 		iden_tree.dot_num = self.dot_num
 		self.dot_num += 1
@@ -246,6 +247,7 @@ class Parse(object):
 
 	# 常数
 	def Constant(self,index,gram_root):
+		print("debug parse 250", gram_root.key)
 		constant_tree = Tree(self.tokens[index].value)
 		constant_tree.dot_num = self.dot_num
 		self.dot_num += 1
@@ -258,7 +260,7 @@ class Parse(object):
 	# 字符串
 	def IsString(self,index,gram_root):
 		# string_node = Tree()
-		print("string")
+		# print("string")
 		string_value = self.tokens[index].value
 		index += 1
 		string_value += self.tokens[index].value
@@ -341,6 +343,7 @@ class Parse(object):
 		fun_braket.append(self.tokens[index])
 		index += 1
 		while index < len(self.tokens):
+			# print("debug parse 344", self.tokens[index].value)
 			if self.tokens[index].type == 'T_l1_bracket':
 				fun_braket.append(self.tokens[index])
 			elif self.tokens[index].type == 'T_r1_bracket':
@@ -349,6 +352,7 @@ class Parse(object):
 					index += 1
 					break
 			if self.tokens[index].type != 'T_comma':
+				# print("debug parse 355 not T_comma", self.tokens[index].value,self.retTokenType(index))
 				index = self.parse(index,func_arg_tree)
 			else:
 				index += 1
@@ -557,6 +561,8 @@ class Parse(object):
 			return retType
 		# 常数
 		elif self.tokens[index].type == 'T_constant':
+			if self.tokens[index+1].value in operator_priority:
+				return 'Stmt'
 			return 'Constant'
 		# if
 		elif self.tokens[index].type == 'T_if':
@@ -595,9 +601,11 @@ class Parse(object):
 			gram_root.add_child(funcall_tree)
 		# 一个简单的修饰符罢了
 		elif self.retTokenType(index) == 'Identifier':
+			# print("debug parse 601 Identifier",self.tokens[index].value)
 			index = self.Identifier(index,gram_root)
 		# 常数
 		elif self.retTokenType(index) == 'Constant':
+			# print("debug parse 605 Constant",self.tokens[index].value)
 			index = self.Constant(index,gram_root)
 		# 赋值语句
 		elif self.retTokenType(index) == 'Assign':

@@ -2,48 +2,63 @@
 	.option	nopic
 	.text
 	.align	1
-	.global	foo
-	.type	foo, @function
-foo:
-	addi	sp,sp,-28
-	sw	s0,24(sp)
-	addi	s0,sp,28
-	sw	a0,-28(s0)		 #a
-	sw	a1,-24(s0)		 #b
-	li	a2,0
-	sw	a2,-20(s0)		 #d
-.L1:
-.L2:
-	sw	a1,-24(s0)		 #b
-	li	a1,10
-	sgt	a3,a0,a1
-	xori	a3,a3,1
-	andi	a3,a3,0xff		 #['<=', 'if condi_1', 'a_0', '10']
-	beqz	a3,.L3		 #['beqz', 'if condi_1', 'func block 3']
-	sw	a2,-20(s0)		 #d
-	li	a2,1
-	sub	a0,a0,a2		 #['-', 'a_1', 'a_0', '1']
-	j	.L2
-.L3:
-	mv	a4,a2		 #['=', 'func ret_1', 'd_0']
-	sw	a0,-28(s0)		 #a
-	mv	a0,a4
-	ret
-	.size	foo, .-foo
-	.align	1
-	.global	boo
-	.type	boo, @function
-boo:
+	.global	jiet
+	.type	jiet, @function
+jiet:
 	addi	sp,sp,-20
 	sw	s0,16(sp)
 	addi	s0,sp,20
-	li	a0,10
-	sw	a0,-20(s0)		 #a
-	li	a1,20
-	sw	a1,-16(s0)		 #c
-.L4:
-	add	a2,a0,a1		 #['+', 'func ret_1', 'a_0', 'c_0']
-	sw	a0,-20(s0)		 #a
+	sw	a0,-20(s0)		 #c
+	lw	a1,-16(s0)		 #a
+	li	a1,7
+	sw	a1,-16(s0)		 #a
+.L1:
+	lw	a2,-12(s0)		 #func ret
+	mv	a2,a1		 #['=', 'func ret_1', 'a_0']
+	sw	a0,-20(s0)		 #c
+	lw	s0,16(sp)
+	addi	sp,sp,20
 	mv	a0,a2
 	ret
-	.size	boo, .-boo
+	.size	jiet, .-jiet
+	.align	1
+	.global	foo
+	.type	foo, @function
+foo:
+	addi	sp,sp,-32
+	sw	s0,28(sp)
+	addi	s0,sp,32
+	sw	a0,-32(s0)		 #a
+	sw	a1,-28(s0)		 #b
+	lw	a2,-24(s0)		 #s
+	li	a2,9
+	sw	a2,-24(s0)		 #s
+.L2:
+	lui	a3,%hi(5)
+	lw	a3,%lo(5)(a3)
+	li	a4,b
+	sub	a2,b,a4		 #['-', 's_1', '5', 'b_0']
+	lw	a5,-16(s0)		 #op temp
+	li	a6,5
+	sub	a5,a1,a6		 #['-', 'op temp_1', 'b_0', '5']
+	lw	a7,-8(s0)		 #args temp
+	mv	a7,a5		 #['=', 'args temp_0', 'op temp_2']
+	sw	a0,-32(s0)		 #a
+	call	jiet
+	mv	a2,a0		 #['=', 's_3', 'fun ret']
+	sw	a0,-12(s0)		 #fun ret
+	li	a0,b
+	sub	a5,b,a0		 #['-', 'op temp_3', '5', 'b_0']
+	mv	a7,a5		 #['=', 'args temp_0', 'op temp_4']
+	call	jiet
+	mv	a2,a0		 #['=', 's_4', 'fun ret']
+	lw	a4,-32(s0)		 #a
+	add	a2,a2,a4		 #['+', 's_5', 's_4', 'a_0']
+	lw	a6,-20(s0)		 #func ret
+	mv	a6,a2		 #['=', 'func ret_1', 's_6']
+	sw	a0,-12(s0)		 #fun ret
+	lw	s0,28(sp)
+	addi	sp,sp,32
+	mv	a0,a6
+	ret
+	.size	foo, .-foo
