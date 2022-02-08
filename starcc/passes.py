@@ -387,9 +387,11 @@ class Passes(object):
 			insn_temp = ["=","args temp_"+str(funars.index(args_temp)),args_temp]
 			insn_temp = Insn(insn_temp)
 			insn_temp.insn_type = "assign"
-			insn_temp.op0 = "args temp"
+			insn_temp.op0 = "args temp"+str(funars.index(args_temp))
 			insn_temp.op1 = args_temp.split("_")[0]
 			self.fun_insn_stream.append(insn_temp)
+			func_ret_symbol = "args temp"+str(funars.index(args_temp))
+			self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":self.fun_pool[func_name]['type'],"index":0}
 		func_call = ["call",func_name]
 		func_call_temp = Insn(func_call)
 		func_call_temp.insn_type = "FunctionCall"

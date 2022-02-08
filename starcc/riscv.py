@@ -189,6 +189,8 @@ class Riscv(object):
 	def Save_reg(self,reg_num):
 		if reg_num not in self.register_var:
 			return
+		if self.register_var[reg_num] == None:
+			return
 		ori_sym = self.register_var[reg_num]
 		self.var_register[ori_sym] = None
 		self.register_var[reg_num] = None
@@ -212,6 +214,7 @@ class Riscv(object):
 					print("debug riscv 210",self.reg_used)
 					print("debug riscv 211",self.register_var)
 					reg = self.reg_used.pop(0)
+					print("debug riscv 215",reg)
 					# 保存原来寄存器中の值
 					self.Save_reg(reg)
 				self.var_register[symbol] = reg
@@ -272,7 +275,15 @@ class Riscv(object):
 	# call 语句
 	def Call_func(self, insn, ass_list):
 		# print("debug riscv 261",insn.insn)
+		func_name = insn.insn[-1]
+		print("debug riscv 276", self.fun_pool,)
 		self.Reset_reg('a0')
+		for i in range(len(self.fun_pool[func_name]['args'])):
+			print(i)
+			self.Reset_reg('a'+str(i))
+			reg = self.Ret_reg_by_sym("args temp"+str(i))
+			ass_code = "\tmv\ta"+str(i)+","+reg
+			ass_list.append(ass_code)
 		ass_code = "\tcall\t"+insn.insn[-1]
 		ass_list.append(ass_code)
 
@@ -339,8 +350,10 @@ class Riscv(object):
 	# 操作指令
 	def Op_insn(self, insn, ass_list):
 		print("debug riscv 338", insn.insn, insn.op0, insn.op1, insn.op2)
-		op1_reg = self.Ret_reg_by_sym(insn.op1)
-		op2_reg = self.Ret_reg_by_sym(insn.op2)
+		# op1_reg = self.Ret_reg_by_sym(insn.op1)
+		# op2_reg = self.Ret_reg_by_sym(insn.op2)
+		op1_reg = None
+		op2_reg = None
 		op0_reg = self.Ret_reg_by_sym(insn.op0)
 		print("debug riscv 342", op0_reg, op1_reg, op2_reg )
 		ass_code = "\t"
@@ -354,14 +367,19 @@ class Riscv(object):
 			elif insn.insn[2].isdigit() or insn.insn[3].isdigit():
 				if insn.insn[2].isdigit():
 					op2_reg = insn.insn[2]
-					op1_reg = insn.op2
+					# op1_reg = insn.op2
+					op1_reg = self.Ret_reg_by_sym(insn.op2)
 				else:
 					op2_reg = insn.insn[3]
+					op1_reg = self.Ret_reg_by_sym(insn.op1)
 				# print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
 				constant_reg = self.Get_alive_reg()
-				ass_code += "li\t"+constant_reg+","+insn.op2+"\n"
+				ass_code += "li\t"+constant_reg+","+op2_reg+"\n"
 				ass_code += "\t"+op +"\t"+op0_reg+","+op1_reg+","+constant_reg
+				print("debug riscv 374", ass_code )
 			else:
+				op1_reg = self.Ret_reg_by_sym(insn.op1)
+				op2_reg = self.Ret_reg_by_sym(insn.op2)
 				ass_code += op +"\t"+op0_reg+","+op1_reg+","+op2_reg
 			ass_code += "\t\t #"+ str(insn.insn)
 			ass_list.append(ass_code)
@@ -372,12 +390,14 @@ class Riscv(object):
 			if insn.insn[2].isdigit() or insn.insn[3].isdigit():
 				if insn.insn[2].isdigit():
 					op2_reg = insn.insn[2]
-					op1_reg = insn.op2
+					# op1_reg = insn.op2
+					op1_reg = self.Ret_reg_by_sym(insn.op2)
 				else:
 					op2_reg = insn.insn[3]
+					op1_reg = self.Ret_reg_by_sym(insn.op1)
 				# print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
 				op2_reg = self.Get_alive_reg()
-				ass_code += "li\t"+op2_reg+","+insn.op2+"\n\t"
+				ass_code += "li\t"+op2_reg+","+op2_reg+"\n\t"
 			# 	ass_code += "\t"+op +"\t"+op0_reg+","+op1_reg+","+constant_reg
 			# else:
 			if op == '<':
@@ -414,7 +434,7 @@ class Riscv(object):
 			return
 		# 函数返回值
 		if insn.op1 == "fun ret":
-			
+			print("debug riscv 425", insn.op0)
 			op0_reg = self.Ret_reg_by_sym(insn.op0)
 			ass_code = ass_code = "\tmv\t"+op0_reg+",a0"
 			self.var_register['fun ret'] = 'a0'
@@ -427,6 +447,7 @@ class Riscv(object):
 			op0_reg = self.Ret_reg_by_sym(insn.op0)
 			ass_code = "\tli\t"+op0_reg+","+op1_reg
 		else:
+			print("debug riscv 447", insn.op0)
 			op1_reg = self.Ret_reg_by_sym(insn.op1)
 			op0_reg = self.Ret_reg_by_sym(insn.op0)
 			ass_code = "\tmv\t"+op0_reg+","+op1_reg
