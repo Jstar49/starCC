@@ -93,48 +93,14 @@ digraph {
 	43 -> 45
 	44 [label=s]
 	45 -> 44
-	47 [label="-"]
+	47 [label=">"]
 	45 -> 47
-	46 [label=5]
+	46 [label=s]
 	47 -> 46
 	48 [label=b]
 	47 -> 48
-	49 [label=Assign]
+	49 [label=return]
 	35 -> 49
-	51 [label="="]
-	49 -> 51
 	50 [label=s]
-	51 -> 50
-	52 [label=FunctionCall]
-	51 -> 52
-	53 [label=jiet]
-	52 -> 53
-	54 [label=fun_call_arg]
-	52 -> 54
-	56 [label="-"]
-	54 -> 56
-	55 [label=b]
-	56 -> 55
-	57 [label=5]
-	56 -> 57
-	58 [label=a]
-	54 -> 58
-	59 [label=b]
-	54 -> 59
-	60 [label=Assign]
-	35 -> 60
-	62 [label="="]
-	60 -> 62
-	61 [label=s]
-	62 -> 61
-	64 [label="+"]
-	62 -> 64
-	63 [label=s]
-	64 -> 63
-	65 [label=a]
-	64 -> 65
-	66 [label=return]
-	35 -> 66
-	67 [label=s]
-	66 -> 67
+	49 -> 50
 }

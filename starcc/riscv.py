@@ -366,16 +366,19 @@ class Riscv(object):
 				ass_code += "li" +"\t"+op0_reg+","+str(op1_reg)
 			elif insn.insn[2].isdigit() or insn.insn[3].isdigit():
 				if insn.insn[2].isdigit():
-					op2_reg = insn.insn[2]
-					# op1_reg = insn.op2
-					op1_reg = self.Ret_reg_by_sym(insn.op2)
+					op1_reg = insn.insn[2]
+					constant_reg = self.Get_alive_reg()
+					ass_code += "li\t"+constant_reg+","+op1_reg+"\n"
+					op1_reg = constant_reg
+					op2_reg = self.Ret_reg_by_sym(insn.op2)
 				else:
 					op2_reg = insn.insn[3]
+					constant_reg = self.Get_alive_reg()
+					ass_code += "li\t"+constant_reg+","+op2_reg+"\n"
+					op2_reg = constant_reg
 					op1_reg = self.Ret_reg_by_sym(insn.op1)
 				# print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
-				constant_reg = self.Get_alive_reg()
-				ass_code += "li\t"+constant_reg+","+op2_reg+"\n"
-				ass_code += "\t"+op +"\t"+op0_reg+","+op1_reg+","+constant_reg
+				ass_code += "\t"+op +"\t"+op0_reg+","+op1_reg+","+op2_reg
 				print("debug riscv 374", ass_code )
 			else:
 				op1_reg = self.Ret_reg_by_sym(insn.op1)
@@ -385,21 +388,26 @@ class Riscv(object):
 			ass_list.append(ass_code)
 			# print(insn.op0,insn.op1,insn.op2)
 		elif insn.insn[0] in COMP:
-			print("debug riscv 231", insn.insn, insn.op0, insn.op1, insn.op2)
+			print("debug riscv 391", insn.insn, insn.op0, insn.op1, insn.op2)
 			op = insn.insn[0]
 			if insn.insn[2].isdigit() or insn.insn[3].isdigit():
 				if insn.insn[2].isdigit():
-					op2_reg = insn.insn[2]
-					# op1_reg = insn.op2
-					op1_reg = self.Ret_reg_by_sym(insn.op2)
+					op1_reg = insn.insn[2]
+					constant_reg = self.Get_alive_reg()
+					ass_code += "li\t"+constant_reg+","+op1_reg+"\n\t"
+					op1_reg = constant_reg
+					op2_reg = self.Ret_reg_by_sym(insn.op2)
 				else:
 					op2_reg = insn.insn[3]
+					constant_reg = self.Get_alive_reg()
+					ass_code += "li\t"+constant_reg+","+op2_reg+"\n\t"
+					op2_reg = constant_reg
 					op1_reg = self.Ret_reg_by_sym(insn.op1)
-				# print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
-				op2_reg = self.Get_alive_reg()
-				ass_code += "li\t"+op2_reg+","+op2_reg+"\n\t"
-			# 	ass_code += "\t"+op +"\t"+op0_reg+","+op1_reg+","+constant_reg
-			# else:
+			else:
+				op1_reg = self.Ret_reg_by_sym(insn.op1)
+				op2_reg = self.Ret_reg_by_sym(insn.op2)
+				# op0_reg = self.Ret_reg_by_sym(insn.op0)
+			print("debug riscv 406", insn.insn, op0_reg, op1_reg, op2_reg)
 			if op == '<':
 				ass_code += "slt\t"+op0_reg+","+op1_reg+","+op2_reg+"\n"
 			elif op == '<=':
