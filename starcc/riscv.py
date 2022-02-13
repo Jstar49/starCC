@@ -16,7 +16,7 @@ class Riscv(object):
 		self.outputAss = []
 		# 全局变量
 		self.global_var_dict = passes.global_var_dict
-		print("debug riscv 19 global_var_dict",self.global_var_dict)
+		
 		# 局部变量表
 		self.fun_symbol_dict = None
 		self.register = None
@@ -59,7 +59,7 @@ class Riscv(object):
 	#global var
 	def Global_assembly(self):
 		for gvar in self.global_var_dict:
-			print("debug riscv 61", gvar,self.global_var_dict[gvar])
+			
 			if 'init_value' in self.global_var_dict[gvar]:
 				self.func_assembly.append("\t.global\t"+gvar)
 				self.func_assembly.append("\t.align\t2")
@@ -79,7 +79,7 @@ class Riscv(object):
 
 	# 函数寄存器分配--初始化
 	def Reg_init(self,func):
-		print("debug riscv 28", self.fun_pool[func]['fun_symbol_dict'])
+		
 		# 函数符号对象
 		fun_sym = self.fun_pool[func]['fun_symbol_dict']
 		# A系列寄存器备份
@@ -108,14 +108,14 @@ class Riscv(object):
 			else:
 				self.var_register[sym] = None
 
-		print("debug riscv 51", sp_off)
-		print("debug riscv 51", self.var_in_sp_off)
+		
+		
 		return sp_off + 4
 
 	# 输出
 	def PrintAssemble(self, ass_list):
 		for code in ass_list:
-			# print(code)
+			# 
 			self.outFile.write(code+"\n")
 
 
@@ -156,8 +156,8 @@ class Riscv(object):
 		ass_list.append("\taddi\tsp,sp,-"+str(sp_off))
 		ass_list.append("\tsw\ts0,"+str(sp_off-4)+"(sp)")
 		ass_list.append("\taddi\ts0,sp,"+str(sp_off))
-		print("debug riscv 84",self.fun_symbol_dict)
-		print("debug riscv 85",sp_off)
+		
+		
 		# 保存参数
 		for fun_sym in self.fun_symbol_dict:
 			# 函数参数
@@ -183,7 +183,7 @@ class Riscv(object):
 				ass_code += str(-off_)+"(s0)"
 				ass_code += "\t\t #"+fun_sym
 				ass_list.append(ass_code)
-		print("debug riscv 103", self.a_register)
+		
 
 	# 保存寄存器中的值
 	def Save_reg(self,reg_num):
@@ -202,24 +202,27 @@ class Riscv(object):
 
 	# 根据符号取出可用的寄存器
 	def Ret_reg_by_sym(self,symbol):
+		
 		# 是否在var_register中 
 		if symbol in self.var_register:
 			# 暂时没有映射关系
-			# print("debug riscv 203", self.var_register)
+			
 			if self.var_register[symbol] == None:
 				reg = None
 				if len(self.a_register):
 					reg = self.a_register.pop()
 				else:
-					print("debug riscv 210",self.reg_used)
-					print("debug riscv 211",self.register_var)
+					
+					
 					reg = self.reg_used.pop(0)
-					print("debug riscv 215",reg)
+					
 					# 保存原来寄存器中の值
 					self.Save_reg(reg)
 				self.var_register[symbol] = reg
 				self.register_var[reg] = symbol
 				self.reg_used.append(reg)
+				
+				
 				# 重新读取
 				ass_code = "\tlw\t"+reg+","
 				off_ = self.sp_off - self.var_in_sp_off[symbol]
@@ -235,12 +238,12 @@ class Riscv(object):
 				return self.var_register[symbol]
 		# 否则视为全局变量
 		else:
-			print("debug riscv 220", symbol)
+			
 			reg = None
 			if len(self.a_register):
 				reg = self.a_register.pop()
 			else:
-				# print("debug riscv 147")
+				# 
 				reg = self.reg_used.pop(0)
 				# 保存原来寄存器中の值
 				self.Save_reg(reg)
@@ -274,12 +277,12 @@ class Riscv(object):
 
 	# call 语句
 	def Call_func(self, insn, ass_list):
-		# print("debug riscv 261",insn.insn)
+		# 
 		func_name = insn.insn[-1]
-		print("debug riscv 276", self.fun_pool,)
+		
 		self.Reset_reg('a0')
 		for i in range(len(self.fun_pool[func_name]['args'])):
-			print(i)
+			
 			self.Reset_reg('a'+str(i))
 			reg = self.Ret_reg_by_sym("args temp"+str(i))
 			ass_code = "\tmv\ta"+str(i)+","+reg
@@ -289,14 +292,14 @@ class Riscv(object):
 
 	# 代码块
 	def Code_block(self, insn, ass_list):
-		print("debug riscv 196", insn.insn,)
+		
 		code_block = insn.insn[0].split("func block ")[-1].split(":")[0]
 		ass_code = ".L"+code_block + ":"
 		ass_list.append(ass_code)
 
 	# 无条件跳转
 	def NoCondi_jump(self,insn, ass_list):
-		print("debug riscv 205", insn.insn,)
+		
 		# condi_reg = self.Ret_reg_by_sym(insn.op0)
 		ass_code = "\tj\t"
 		code_block = insn.insn[1].split("func block ")[-1]
@@ -306,7 +309,7 @@ class Riscv(object):
 
 	# 有条件跳转
 	def Condi_jump(self,insn, ass_list):
-		print("debug riscv 195", insn.insn, insn.op0)
+		
 		condi_reg = self.Ret_reg_by_sym(insn.op0)
 		ass_code = "\tbeqz\t"+condi_reg+","
 		code_block = insn.insn[2].split("func block ")[-1]
@@ -318,7 +321,7 @@ class Riscv(object):
 	def Save_global_var(self):
 		for gvar in self.global_var_dict:
 			if "has_edit" in self.global_var_dict[gvar]:
-				print("debug riscv 284", gvar)
+				
 				reg = self.Ret_reg_by_sym(gvar)
 				hi_reg = self.Get_alive_reg()
 				ass_code = "\tlui\t"+hi_reg+",%hi("+gvar+")"
@@ -337,11 +340,13 @@ class Riscv(object):
 	def Ret_insn(self, insn,ass_list):
 		# Save global var
 		self.Save_global_var()
-		
+		if self.var_register['func ret'] == 'a0':
+			return
 		self.Reset_reg('a0')
 		# Save sp register
 		self.Save_sp()
 		# func ret 位置
+		
 		fun_ret_reg = self.var_register['func ret']
 		ass_code = "\tmv\ta0,"+fun_ret_reg
 		ass_list.append(ass_code)
@@ -349,13 +354,13 @@ class Riscv(object):
 
 	# 操作指令
 	def Op_insn(self, insn, ass_list):
-		print("debug riscv 338", insn.insn, insn.op0, insn.op1, insn.op2)
+		
 		# op1_reg = self.Ret_reg_by_sym(insn.op1)
 		# op2_reg = self.Ret_reg_by_sym(insn.op2)
 		op1_reg = None
 		op2_reg = None
 		op0_reg = self.Ret_reg_by_sym(insn.op0)
-		print("debug riscv 342", op0_reg, op1_reg, op2_reg )
+		
 		ass_code = "\t"
 		if insn.insn[0] in OPERATOR:
 			op = OPERATOR[insn.insn[0]]
@@ -377,18 +382,18 @@ class Riscv(object):
 					ass_code += "li\t"+constant_reg+","+op2_reg+"\n"
 					op2_reg = constant_reg
 					op1_reg = self.Ret_reg_by_sym(insn.op1)
-				# print("debug riscv 215", op0_reg, op1_reg, op2_reg, )
+				# 
 				ass_code += "\t"+op +"\t"+op0_reg+","+op1_reg+","+op2_reg
-				print("debug riscv 374", ass_code )
+				
 			else:
 				op1_reg = self.Ret_reg_by_sym(insn.op1)
 				op2_reg = self.Ret_reg_by_sym(insn.op2)
 				ass_code += op +"\t"+op0_reg+","+op1_reg+","+op2_reg
 			ass_code += "\t\t #"+ str(insn.insn)
 			ass_list.append(ass_code)
-			# print(insn.op0,insn.op1,insn.op2)
+			# 
 		elif insn.insn[0] in COMP:
-			print("debug riscv 391", insn.insn, insn.op0, insn.op1, insn.op2)
+			
 			op = insn.insn[0]
 			if insn.insn[2].isdigit() or insn.insn[3].isdigit():
 				if insn.insn[2].isdigit():
@@ -407,7 +412,7 @@ class Riscv(object):
 				op1_reg = self.Ret_reg_by_sym(insn.op1)
 				op2_reg = self.Ret_reg_by_sym(insn.op2)
 				# op0_reg = self.Ret_reg_by_sym(insn.op0)
-			print("debug riscv 406", insn.insn, op0_reg, op1_reg, op2_reg)
+			
 			if op == '<':
 				ass_code += "slt\t"+op0_reg+","+op1_reg+","+op2_reg+"\n"
 			elif op == '<=':
@@ -428,13 +433,13 @@ class Riscv(object):
 			ass_code += "\tandi\t"+op0_reg+","+op0_reg+",0xff"
 			ass_code += "\t\t #"+ str(insn.insn)
 			ass_list.append(ass_code)
-			# print(insn.op0,insn.op1,insn.op2)
+			# 
 
 	# 赋值处理
 	def Assign(self,insn,ass_list):
-		print("debug riscv 404", insn.insn)
-		print("debug riscv 405", insn.insn, insn.op0, insn.op1)
-		# print(insn.op1,insn.op0)
+		print("debug riscv 440",insn.insn)
+		print("debug riscv 440",insn.op0, insn.op1)
+		# 
 		op1 = insn.op1
 		op0 = insn.op0
 		# 操作数1和操作数2相同
@@ -442,25 +447,29 @@ class Riscv(object):
 			return
 		# 函数返回值
 		if insn.op1 == "fun ret":
-			print("debug riscv 425", insn.op0)
+			
 			op0_reg = self.Ret_reg_by_sym(insn.op0)
 			ass_code = ass_code = "\tmv\t"+op0_reg+",a0"
 			self.var_register['fun ret'] = 'a0'
 			self.register_var['a0'] = 'fun ret'
 		# elif insn.op0 == 'args temp':
-		# 	print("debug riscv 420", insn.op0)
+		# 	
 		# 赋值的是数字
 		elif insn.insn[2].isdigit():
 			op1_reg = insn.insn[2]
 			op0_reg = self.Ret_reg_by_sym(insn.op0)
 			ass_code = "\tli\t"+op0_reg+","+op1_reg
 		else:
-			print("debug riscv 447", insn.op0)
+			
 			op1_reg = self.Ret_reg_by_sym(insn.op1)
 			op0_reg = self.Ret_reg_by_sym(insn.op0)
 			ass_code = "\tmv\t"+op0_reg+","+op1_reg
+			
+			
+			
 		ass_code += "\t\t #"+str(insn.insn)
 		ass_list.append(ass_code)
+		# 被赋值的是全局变量
 		if op0 in self.global_var_dict:
 			self.global_var_dict[op0]['has_edit'] = True
 

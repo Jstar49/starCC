@@ -15,92 +15,80 @@ digraph {
 	4 -> 5
 	6 [label=T_int]
 	5 -> 6
-	7 [label=c]
+	7 [label=b]
 	5 -> 7
-	8 [label=arg]
-	4 -> 8
-	9 [label=T_int]
+	8 [label=Stmt]
+	0 -> 8
+	9 [label=VarDeclaration]
 	8 -> 9
-	10 [label=a]
-	8 -> 10
-	11 [label=arg]
-	4 -> 11
-	12 [label=T_int]
+	10 [label=T_int]
+	9 -> 10
+	11 [label=Identifier]
+	9 -> 11
+	12 [label=Assign]
 	11 -> 12
-	13 [label=b]
-	11 -> 13
-	14 [label=Stmt]
-	0 -> 14
-	15 [label=VarDeclaration]
-	14 -> 15
-	16 [label=T_int]
-	15 -> 16
-	17 [label=Identifier]
-	15 -> 17
-	18 [label=Assign]
-	17 -> 18
-	20 [label="="]
-	18 -> 20
+	14 [label="="]
+	12 -> 14
+	13 [label=a]
+	14 -> 13
+	16 [label="+"]
+	14 -> 16
+	15 [label=7]
+	16 -> 15
+	17 [label=b]
+	16 -> 17
+	18 [label=return]
+	8 -> 18
 	19 [label=a]
-	20 -> 19
-	21 [label=7]
+	18 -> 19
+	20 [label=FuncDeclaration]
+	None -> 20
+	21 [label=T_int]
 	20 -> 21
-	22 [label=return]
-	14 -> 22
-	23 [label=a]
+	22 [label=Identifier]
+	20 -> 22
+	23 [label=foo]
 	22 -> 23
-	24 [label=FuncDeclaration]
-	None -> 24
-	25 [label=T_int]
+	24 [label=Args]
+	20 -> 24
+	25 [label=arg]
 	24 -> 25
-	26 [label=Identifier]
-	24 -> 26
-	27 [label=foo]
-	26 -> 27
-	28 [label=Args]
-	24 -> 28
-	29 [label=arg]
+	26 [label=T_int]
+	25 -> 26
+	27 [label=a]
+	25 -> 27
+	28 [label=Stmt]
+	20 -> 28
+	29 [label=VarDeclaration]
 	28 -> 29
 	30 [label=T_int]
 	29 -> 30
-	31 [label=a]
+	31 [label=Identifier]
 	29 -> 31
-	32 [label=arg]
-	28 -> 32
-	33 [label=T_int]
-	32 -> 33
-	34 [label=b]
+	32 [label=Assign]
+	31 -> 32
+	34 [label="="]
 	32 -> 34
-	35 [label=Stmt]
-	24 -> 35
-	36 [label=VarDeclaration]
-	35 -> 36
-	37 [label=T_int]
-	36 -> 37
-	38 [label=Identifier]
+	33 [label=s]
+	34 -> 33
+	35 [label=9]
+	34 -> 35
+	36 [label=Assign]
+	28 -> 36
+	38 [label="="]
 	36 -> 38
-	39 [label=Assign]
+	37 [label=s]
+	38 -> 37
+	39 [label=FunctionCall]
 	38 -> 39
-	41 [label="="]
+	40 [label=jiet]
+	39 -> 40
+	41 [label=fun_call_arg]
 	39 -> 41
-	40 [label=s]
-	41 -> 40
-	42 [label=9]
+	42 [label=s]
 	41 -> 42
-	43 [label=Assign]
-	35 -> 43
-	45 [label="="]
-	43 -> 45
+	43 [label=return]
+	28 -> 43
 	44 [label=s]
-	45 -> 44
-	47 [label=">"]
-	45 -> 47
-	46 [label=s]
-	47 -> 46
-	48 [label=b]
-	47 -> 48
-	49 [label=return]
-	35 -> 49
-	50 [label=s]
-	49 -> 50
+	43 -> 44
 }

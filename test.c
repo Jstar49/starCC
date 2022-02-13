@@ -1,11 +1,11 @@
 
-int jiet(int c,int a,int b){
-	int a = 7;
+int jiet(int b){
+	int a = 7+b;
 	return a;
 }
 
-int foo(int a,int b){
+int foo(int a){
 	int s = 9;
-	s = (s>b);
+	s = jiet(s);
 	return s;
 }

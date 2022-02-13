@@ -373,25 +373,30 @@ class Passes(object):
 		funars = []
 		for args_node in node.children[1].children:
 			# print(args_node.key)
-			args_symbol_temp =self.OpNode(args_node,None,"op temp")
+			args_index = "args temp"+str(node.children[1].children.index(args_node))
+			if args_index not in self.fun_symbol_dict:
+				func_ret_symbol = args_index
+				self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":self.fun_pool[func_name]['type'],"index":0}
+			print("debug passes 377", args_node.key, args_index)
+			args_symbol_temp =self.OpNode(args_node,None,args_index)
 			# print(args_symbol_temp)
-			args_symbol = self.Symbol("op temp")
+			args_symbol = self.Symbol(args_index)
 			funars.append(args_symbol)
 			insn_temp = ["=",args_symbol,args_symbol_temp]
 			ret_insn_temp = Insn(insn_temp)
 			ret_insn_temp.insn_type = "assign"
-			ret_insn_temp.op0 = "op temp"
+			ret_insn_temp.op0 = args_index
 			ret_insn_temp.op1 = args_symbol_temp.split("_")[0]
 			self.fun_insn_stream.append(ret_insn_temp)
-		for args_temp in funars:
-			insn_temp = ["=","args temp_"+str(funars.index(args_temp)),args_temp]
-			insn_temp = Insn(insn_temp)
-			insn_temp.insn_type = "assign"
-			insn_temp.op0 = "args temp"+str(funars.index(args_temp))
-			insn_temp.op1 = args_temp.split("_")[0]
-			self.fun_insn_stream.append(insn_temp)
-			func_ret_symbol = "args temp"+str(funars.index(args_temp))
-			self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":self.fun_pool[func_name]['type'],"index":0}
+		# for args_temp in funars:
+		# 	insn_temp = ["=","args temp_"+str(funars.index(args_temp)),args_temp]
+		# 	insn_temp = Insn(insn_temp)
+		# 	insn_temp.insn_type = "assign"
+		# 	insn_temp.op0 = "args temp"+str(funars.index(args_temp))
+		# 	insn_temp.op1 = args_temp.split("_")[0]
+		# 	self.fun_insn_stream.append(insn_temp)
+		# 	func_ret_symbol = "args temp"+str(funars.index(args_temp))
+		# 	self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":self.fun_pool[func_name]['type'],"index":0}
 		func_call = ["call",func_name]
 		func_call_temp = Insn(func_call)
 		func_call_temp.insn_type = "FunctionCall"
