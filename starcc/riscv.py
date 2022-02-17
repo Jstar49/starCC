@@ -49,6 +49,7 @@ class Riscv(object):
 			# 根据IR生成汇编代码
 			self.IR2Assemble(self.fun_pool[func]['insn'],self.func_assembly,self.sp_off)
 			self.Func_tail_debug(func)
+			self.Func_end()
 		# global varibal
 		self.Global_assembly()
 		self.PrintAssemble(self.func_assembly)
@@ -59,7 +60,6 @@ class Riscv(object):
 	#global var
 	def Global_assembly(self):
 		for gvar in self.global_var_dict:
-			
 			if 'init_value' in self.global_var_dict[gvar]:
 				self.func_assembly.append("\t.global\t"+gvar)
 				self.func_assembly.append("\t.align\t2")
@@ -77,12 +77,16 @@ class Riscv(object):
 		self.func_assembly.append("\t.option\tnopic")
 		self.func_assembly.append("\t.text")
 
+	# 函数结束后寄存器归位，为下一个函数做准备
+	def Func_end(self):
+		pass
+
 	# 函数寄存器分配--初始化
 	def Reg_init(self,func):
 		
 		# 函数符号对象
 		fun_sym = self.fun_pool[func]['fun_symbol_dict']
-		# A系列寄存器备份
+		# 可用寄存器备份
 		self.a_register = copy.deepcopy(A_RRGISTER)
 		# 变量与寄存器的映射
 		self.var_register = {}
@@ -107,9 +111,6 @@ class Riscv(object):
 				self.var_register[sym] = None
 			else:
 				self.var_register[sym] = None
-
-		
-		
 		return sp_off + 4
 
 	# 输出
@@ -124,7 +125,7 @@ class Riscv(object):
 			# 遇到函数头
 			if insn.insn_type == 'func_head':
 				func_assembly.append(insn.insn[0])
-				# sp,s0寄存器初始化
+				# sp 寄存器初始化
 				self.Fun_sp_init(func_assembly,sp_off)
 			elif insn.insn_type == 'code_block':
 				self.Code_block(insn, func_assembly)
@@ -153,10 +154,11 @@ class Riscv(object):
 
 	# 函数sp寄存器初始化
 	def Fun_sp_init(self,ass_list,sp_off):
+		print("debug riscv 157",self.var_in_sp_off)
 		ass_list.append("\taddi\tsp,sp,-"+str(sp_off))
-		ass_list.append("\tsw\ts0,"+str(sp_off-4)+"(sp)")
-		ass_list.append("\taddi\ts0,sp,"+str(sp_off))
-		
+		# ass_list.append("\tsw\ts0,"+str(sp_off-4)+"(sp)")
+		# ass_list.append("\taddi\ts0,sp,"+str(sp_off))
+		ass_list.append("\tsw\tra,0(sp)")
 		
 		# 保存参数
 		for fun_sym in self.fun_symbol_dict:
@@ -164,8 +166,9 @@ class Riscv(object):
 			if "sym_type" in self.fun_symbol_dict[fun_sym] and \
 					self.fun_symbol_dict[fun_sym]['sym_type'] == 'fun_args':
 				ass_code = "\tsw\t"+self.var_register[fun_sym]+","
-				off_ = sp_off - self.var_in_sp_off[fun_sym]
-				ass_code += str(-off_)+"(s0)"
+				off_ = sp_off - self.var_in_sp_off[fun_sym]-4
+				# ass_code += str(-off_)+"(s0)"
+				ass_code += str(off_)+"(sp)"
 				ass_code += "\t\t #"+fun_sym
 				ass_list.append(ass_code)
 			# 函数内有初始化的变量
@@ -179,8 +182,9 @@ class Riscv(object):
 				ass_list.append(ass_code)
 				
 				ass_code = "\tsw\t"+reg+","
-				off_ = sp_off - self.var_in_sp_off[fun_sym]
-				ass_code += str(-off_)+"(s0)"
+				off_ = sp_off - self.var_in_sp_off[fun_sym]-4
+				# ass_code += str(-off_)+"(s0)"
+				ass_code += str(off_)+"(sp)"
 				ass_code += "\t\t #"+fun_sym
 				ass_list.append(ass_code)
 		
@@ -195,29 +199,31 @@ class Riscv(object):
 		self.var_register[ori_sym] = None
 		self.register_var[reg_num] = None
 		ass_code = "\tsw\t"+reg_num+","
-		off_ = self.sp_off - self.var_in_sp_off[ori_sym]
-		ass_code += str(-off_)+"(s0)"
+		off_ = self.sp_off - self.var_in_sp_off[ori_sym]-4
+		# ass_code += str(-off_)+"(s0)"
+		ass_code += str(off_)+"(sp)"
 		ass_code += "\t\t #"+ori_sym
 		self.func_assembly.append(ass_code)
 
 	# 根据符号取出可用的寄存器
 	def Ret_reg_by_sym(self,symbol):
-		
 		# 是否在var_register中 
 		if symbol in self.var_register:
 			# 暂时没有映射关系
-			
 			if self.var_register[symbol] == None:
 				reg = None
+				# print("debug riscv 216",self.a_register)
 				if len(self.a_register):
 					reg = self.a_register.pop()
+					self.var_register[symbol] = reg
+					self.register_var[reg] = symbol
+					self.reg_used.append(reg)
+					return reg
 				else:
-					
-					
 					reg = self.reg_used.pop(0)
-					
 					# 保存原来寄存器中の值
 					self.Save_reg(reg)
+				# print("debug riscv 225",reg)
 				self.var_register[symbol] = reg
 				self.register_var[reg] = symbol
 				self.reg_used.append(reg)
@@ -225,8 +231,9 @@ class Riscv(object):
 				
 				# 重新读取
 				ass_code = "\tlw\t"+reg+","
-				off_ = self.sp_off - self.var_in_sp_off[symbol]
-				ass_code += str(-off_)+"(s0)"
+				off_ = self.sp_off - self.var_in_sp_off[symbol]-4
+				# ass_code += str(-off_)+"(s0)"
+				ass_code += str(off_)+"(sp)"
 				ass_code += "\t\t #"+symbol
 				self.func_assembly.append(ass_code)
 				return reg
@@ -331,7 +338,9 @@ class Riscv(object):
 	
 	def Save_sp(self):
 		# self.sp_off - self.var_in_sp_off[ori_sym]
-		ass_code = "\tlw\ts0,"+ str(self.sp_off-4) +"(sp)"
+		# ass_code = "\tlw\ts0,"+ str(self.sp_off-4) +"(sp)"
+		# self.func_assembly.append(ass_code)
+		ass_code = "\tlw\tra,0(sp)"
 		self.func_assembly.append(ass_code)
 		ass_code = "\taddi\tsp,sp,"+ str(self.sp_off)
 		self.func_assembly.append(ass_code)

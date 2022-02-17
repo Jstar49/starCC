@@ -6,17 +6,14 @@
 	.type	jiet, @function
 jiet:
 	addi	sp,sp,-20
-	sw	s0,16(sp)
-	addi	s0,sp,20
-	sw	a0,-20(s0)		 #b
-	lw	a1,-16(s0)		 #a
-	li	a1,+
-	sw	a1,-16(s0)		 #a
+	sw	ra,0(sp)
+	sw	a0,16(sp)		 #b
+	li	a1,7
+	sw	a1,12(sp)		 #a
 .L1:
-	lw	a2,-12(s0)		 #func ret
 	mv	a2,a1		 #['=', 'func ret_1', 'a_0']
-	sw	a0,-20(s0)		 #b
-	lw	s0,16(sp)
+	sw	a0,16(sp)		 #b
+	lw	ra,0(sp)
 	addi	sp,sp,20
 	mv	a0,a2
 	ret
@@ -25,25 +22,38 @@ jiet:
 	.global	foo
 	.type	foo, @function
 foo:
-	addi	sp,sp,-32
-	sw	s0,28(sp)
-	addi	s0,sp,32
-	sw	a0,-32(s0)		 #a
-	lw	a1,-28(s0)		 #s
-	li	a1,9
-	sw	a1,-28(s0)		 #s
+	addi	sp,sp,-40
+	sw	ra,0(sp)
+	sw	a0,36(sp)		 #a
+	li	a1,0
+	sw	a1,28(sp)		 #s
 .L2:
-	lw	a2,-16(s0)		 #args temp0
 	mv	a2,a1		 #['=', 'args temp0_1', 's_0']
-	sw	a0,-32(s0)		 #a
+	sw	a0,36(sp)		 #a
 	mv	a0,a2
 	call	jiet
 	mv	a1,a0		 #['=', 's_1', 'fun ret']
-	lw	a3,-24(s0)		 #func ret
-	mv	a3,a1		 #['=', 'func ret_1', 's_1']
-	sw	a0,-12(s0)		 #fun ret
-	lw	s0,28(sp)
-	addi	sp,sp,32
-	mv	a0,a3
-	ret
+	li	a3,0		 #['=', 'i_1', '0']
+.L3:
+	li	a5,10
+	sgt	a4,a3,a5
+	xori	a4,a4,1
+	andi	a4,a4,0xff		 #['<=', 'if condi_1', 'i_1', '10']
+	beqz	a4,.L4		 #['beqz', 'if condi_1', 'func block 4']
+	add	a1,a1,a3		 #['+', 's_2', 's_1', 'i_1']
+	li	a6,5
+	sgt	a4,a3,a6
+	xori	a4,a4,1
+	andi	a4,a4,0xff		 #['<=', 'if condi_2', 'i_1', '5']
+	beqz	a4,.L5		 #['beqz', 'if condi_2', 'func block 5']
+	j	.L4
+	j	.L5
+.L5:
+	li	a7,1
+	add	a3,a3,a7		 #['+', 'i_2', 'i_1', '1']
+	j	.L3
+.L4:
+	sw	a0,12(sp)		 #fun ret
+	lw	a0,24(sp)		 #func ret
+	mv	a0,a1		 #['=', 'func ret_1', 's_2']
 	.size	foo, .-foo
