@@ -4,14 +4,17 @@ int jiet(int b){
 	return a;
 }
 
-int foo(int a){
-	int i,s = 0;
+int foo(int a,int b){
+	int i=0,s = 0;
 	s = jiet(s);
-	for(i=0;i<=10;i+=1){
+	// s = i<=a;
+	// for(i=0;i<3;i+=1){
+	// 	s += i;
+	// }
+	// i=0;
+	while (i<3){
 		s += i;
-		if (i<=5){
-			break;
-		}
+		i = i+1;
 	}
 	return s;
 }

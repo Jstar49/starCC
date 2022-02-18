@@ -242,7 +242,14 @@ class Riscv(object):
 				# reg重新上色
 				self.reg_used.remove(self.var_register[symbol])
 				self.reg_used.append(self.var_register[symbol])
-				return self.var_register[symbol]
+				reg = self.var_register[symbol]
+				ass_code = "\tlw\t"+reg+","
+				off_ = self.sp_off - self.var_in_sp_off[symbol]-4
+				# ass_code += str(-off_)+"(s0)"
+				ass_code += str(off_)+"(sp)"
+				ass_code += "\t\t #"+symbol+" Ret_reg_by_sym"
+				self.func_assembly.append(ass_code)
+				return reg
 		# 否则视为全局变量
 		else:
 			
@@ -262,6 +269,17 @@ class Riscv(object):
 			ass_code = "\tlw\t"+reg+",%lo("+symbol+")("+reg+")"
 			self.func_assembly.append(ass_code)
 			return reg
+
+	# 保存变量值
+	def Save_var_in_sp(self,symbol):
+		# 所有的赋值操作后改变了变量的值，必须要在sp中进行保存
+		# ass_code = "\tsw "+str(insn.insn)
+		ass_code = "\tsw\t"+self.var_register[symbol]+","
+		off_ = self.sp_off - self.var_in_sp_off[symbol]-4
+		# ass_code += str(-off_)+"(s0)"
+		ass_code += str(off_)+"(sp)"
+		ass_code += "\t\t #"+symbol +" assign"
+		self.func_assembly.append(ass_code)
 
 
 	# 重置寄存器
@@ -316,7 +334,6 @@ class Riscv(object):
 
 	# 有条件跳转
 	def Condi_jump(self,insn, ass_list):
-		
 		condi_reg = self.Ret_reg_by_sym(insn.op0)
 		ass_code = "\tbeqz\t"+condi_reg+","
 		code_block = insn.insn[2].split("func block ")[-1]
@@ -347,9 +364,12 @@ class Riscv(object):
 
 	# 返回语句
 	def Ret_insn(self, insn,ass_list):
+		print("debug riscv 350",insn.insn)
 		# Save global var
 		self.Save_global_var()
 		if self.var_register['func ret'] == 'a0':
+			self.Save_sp()
+			ass_list.append("\tret")
 			return
 		self.Reset_reg('a0')
 		# Save sp register
@@ -443,6 +463,8 @@ class Riscv(object):
 			ass_code += "\t\t #"+ str(insn.insn)
 			ass_list.append(ass_code)
 			# 
+		# 保存变量值
+		self.Save_var_in_sp(insn.op0)
 
 	# 赋值处理
 	def Assign(self,insn,ass_list):
@@ -473,12 +495,10 @@ class Riscv(object):
 			op1_reg = self.Ret_reg_by_sym(insn.op1)
 			op0_reg = self.Ret_reg_by_sym(insn.op0)
 			ass_code = "\tmv\t"+op0_reg+","+op1_reg
-			
-			
-			
 		ass_code += "\t\t #"+str(insn.insn)
 		ass_list.append(ass_code)
 		# 被赋值的是全局变量
 		if op0 in self.global_var_dict:
 			self.global_var_dict[op0]['has_edit'] = True
-
+		# 保存被赋值变量的值
+		self.Save_var_in_sp(op0)
