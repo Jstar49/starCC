@@ -111,6 +111,11 @@ class Riscv(object):
 				self.var_register[sym] = None
 			else:
 				self.var_register[sym] = None
+		# 全局变量
+		for sym in self.global_var_dict:
+			self.var_in_sp_off[sym] = sp_off
+			sp_off += 4
+
 		return sp_off + 4
 
 	# 输出
@@ -268,6 +273,7 @@ class Riscv(object):
 			self.func_assembly.append(ass_code)
 			ass_code = "\tlw\t"+reg+",%lo("+symbol+")("+reg+")"
 			self.func_assembly.append(ass_code)
+			self.Save_var_in_sp(symbol)
 			return reg
 
 	# 保存变量值
