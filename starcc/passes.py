@@ -103,11 +103,13 @@ class Passes(object):
 
 	# 输出 FUNC insn
 	def Fun_insn_print(self):
-		for insn in self.fun_insn_stream:
-			if insn.insn_type in ["func_head","code_block"]:
-				print(insn.insn)
-			else:
-				print("\t",insn.insn)
+		# self.fun_pool[func]["insn"] = self.fun_insn_stream   
+		for func in self.fun_pool:
+			for insn in self.fun_pool[func]["insn"]:
+				if insn.insn_type in ["func_head","code_block"]:
+					print(insn.insn)
+				else:
+					print("\t",insn.insn)
 
 	# 符号迭代,传入符号 var_temp,返回该符号的下一次计数,var_temp_n
 	# 从标号0开始,但标号0禁止使用
@@ -194,7 +196,7 @@ class Passes(object):
 			assign_insn = Insn(insn_temp)
 			assign_insn.insn_type = "assign"
 			assign_insn.op1 = right.split("_")[0]
-			print("debug passes 197", insn_temp)
+			# print("debug passes 197", insn_temp)
 		# assign_insn = Insn(insn_temp)
 		assign_insn.op0 = node.children[0].children[0].key
 
@@ -377,7 +379,7 @@ class Passes(object):
 			if args_index not in self.fun_symbol_dict:
 				func_ret_symbol = args_index
 				self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":self.fun_pool[func_name]['type'],"index":0}
-			print("debug passes 377", args_node.key, args_index)
+			# print("debug passes 377", args_node.key, args_index)
 			args_symbol_temp =self.OpNode(args_node,None,args_index)
 			# print(args_symbol_temp)
 			args_symbol = self.Symbol(args_index)
@@ -474,7 +476,7 @@ class Passes(object):
 			self.FunInit(func)
 			if self.fun_pool[func]["node"].children[-1].key == 'Stmt':
 				self.Node_2_IR(self.fun_pool[func]["node"].children[3])
-			self.Fun_insn_print()
+			# self.Fun_insn_print()
 			self.fun_pool[func]["insn"] = self.fun_insn_stream           
 			# print("Func exit")
 			# print(self.fun_pool[func])
@@ -484,3 +486,4 @@ class Passes(object):
 		# 全局符号
 		self.GlobalSymbolInit()
 		self.FunIteration()
+		# self.Fun_insn_print()

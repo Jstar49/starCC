@@ -24,17 +24,6 @@ operator_priority = {
 	'/':20,
 }
 
-def dot_exam():
-	dot = graphviz.Digraph(comment='The Round Table')
-	dot.node('A', 'King Arthur')
-	dot.node('B', 'Sir Bedevere the Wise')
-	dot.node('L', 'Sir Lancelot the Brave')
-	dot.edges(['AB', 'AL'])
-	dot.edge('B', 'L', constraint='false')
-	print(dot.source)
-	dot.render('round-table.gv', view=True)
-
-
 class Tree(object):
 	def __init__(self,key):
 		self.key = key
@@ -56,11 +45,12 @@ class Tree(object):
 		for i in gram_node.children:
 			self.dot_tree_in(i,gram_node)
 
-	def Print_tree(self,gram_node):
+	def Print_tree(self,gram_node,file_name):
+
 		dot.node(str(gram_node.dot_num),gram_node.key)
 		for i in gram_node.children:
 			self.dot_tree_in(i,gram_node)
-		dot.render('test.gv')
+		dot.render(file_name + '.gv')
 
 class Parse(object):
 	def __init__(self,l_stream):
@@ -154,10 +144,10 @@ class Parse(object):
 				var_name = self.tokens[index].value
 				# 参数是数组
 				if self.tokens[index+1].type == 'T_l2_bracket':
-					# print(self.tokens[index].value)
+					# 
 					arr_var = ''
 					while index < len(self.tokens) and self.tokens[index].type != 'T_r2_bracket':
-						# print(self.tokens[index].value)
+						# 
 						arr_var += self.tokens[index].value
 						index += 1
 					arr_var += self.tokens[index].value
@@ -172,13 +162,13 @@ class Parse(object):
 		index += 1
 		# 遇到 '{' ,该函数声明有代码块
 		if self.tokens[index].type == 'T_l3_braket':
-			# print("block")
+			# 
 			block_tree = Tree("Stmt")
 			block_tree.dot_num = self.dot_num
 			self.dot_num += 1
 			state_tree.add_child(block_tree)
 			# index += 1
-			# print("debug line 203",self.tokens[index].value)
+			# 
 			fun_braket = []
 			fun_braket.append(self.tokens[index])
 			index += 1
@@ -235,7 +225,7 @@ class Parse(object):
 	
 	# 标识符
 	def Identifier(self,index,gram_root):
-		print("debug parse 238", gram_root.key)
+		# 
 		iden_tree = Tree(self.tokens[index].value)
 		iden_tree.dot_num = self.dot_num
 		self.dot_num += 1
@@ -247,7 +237,7 @@ class Parse(object):
 
 	# 常数
 	def Constant(self,index,gram_root):
-		print("debug parse 250", gram_root.key)
+		# 
 		constant_tree = Tree(self.tokens[index].value)
 		constant_tree.dot_num = self.dot_num
 		self.dot_num += 1
@@ -260,13 +250,13 @@ class Parse(object):
 	# 字符串
 	def IsString(self,index,gram_root):
 		# string_node = Tree()
-		# print("string")
+		# 
 		string_value = self.tokens[index].value
 		index += 1
 		string_value += self.tokens[index].value
 		index += 1
 		string_value += self.tokens[index].value
-		# print(string_value)
+		# 
 		string_node = Tree(string_value)
 		string_node.dot_num = self.dot_num
 		string_node.type = "string"
@@ -343,7 +333,7 @@ class Parse(object):
 		fun_braket.append(self.tokens[index])
 		index += 1
 		while index < len(self.tokens):
-			# print("debug parse 344", self.tokens[index].value)
+			# 
 			if self.tokens[index].type == 'T_l1_bracket':
 				fun_braket.append(self.tokens[index])
 			elif self.tokens[index].type == 'T_r1_bracket':
@@ -352,7 +342,7 @@ class Parse(object):
 					index += 1
 					break
 			if self.tokens[index].type != 'T_comma':
-				# print("debug parse 355 not T_comma", self.tokens[index].value,self.retTokenType(index))
+				# 
 				index = self.parse(index,func_arg_tree)
 			else:
 				index += 1
@@ -382,7 +372,7 @@ class Parse(object):
 		if_true_node.dot_num = self.dot_num
 		self.dot_num += 1
 		if_tree.add_child(if_true_node)
-		# print("debug parse 381",self.tokens[index].value)
+		# 
 		while index <len(self.tokens):
 			if self.tokens[index].type == 'T_l3_braket':
 				if_braket.append(self.tokens[index])
@@ -392,7 +382,7 @@ class Parse(object):
 					index += 1
 					break
 			index = self.parse(index,if_true_node)
-		# print(self.tokens[index])
+		# 
 		if self.tokens[index].type == 'T_else' and self.tokens[index+1].type == 'T_if':
 			while self.tokens[index].type == 'T_else' and self.tokens[index+1].type == 'T_if':
 				else_if_node = Tree("Else_if")
@@ -601,11 +591,11 @@ class Parse(object):
 			gram_root.add_child(funcall_tree)
 		# 一个简单的修饰符罢了
 		elif self.retTokenType(index) == 'Identifier':
-			# print("debug parse 601 Identifier",self.tokens[index].value)
+			# 
 			index = self.Identifier(index,gram_root)
 		# 常数
 		elif self.retTokenType(index) == 'Constant':
-			# print("debug parse 605 Constant",self.tokens[index].value)
+			# 
 			index = self.Constant(index,gram_root)
 		# 赋值语句
 		elif self.retTokenType(index) == 'Assign':
@@ -631,10 +621,7 @@ class Parse(object):
 		while index < len(self.tokens):
 			index = self.parse(index,self.grammar_tree)
 
-	def printhello(self):
-		print("hello world")
-
-	def drawTree(self,gram_node):
-		gram_node.Print_tree(gram_node)
+	def drawTree(self,gram_node,file_name):
+		gram_node.Print_tree(gram_node,file_name)
 		# dot(self.grammar_tree)
 

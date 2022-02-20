@@ -7,9 +7,9 @@ class Assembly(object):
 		self.fun_pool = passes.fun_pool
 		self.passes = passes
 
-	def main(self):
+	def main(self,file_name):
 		riscv = Riscv(self.passes)
-		riscv.main()
+		riscv.main(file_name)
 
 	def PrintIR(self):
 		pass

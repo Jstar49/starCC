@@ -33,118 +33,214 @@ digraph {
 	14 -> 13
 	15 [label=7]
 	14 -> 15
-	16 [label=return]
+	16 [label=VarDeclaration]
 	8 -> 16
-	17 [label=a]
+	17 [label=T_int]
 	16 -> 17
-	18 [label=VarDeclaration]
-	None -> 18
-	19 [label=T_int]
+	18 [label=Identifier]
+	16 -> 18
+	19 [label=i]
 	18 -> 19
-	20 [label=Identifier]
+	20 [label=j]
 	18 -> 20
-	21 [label=Assign]
-	20 -> 21
-	23 [label="="]
-	21 -> 23
-	22 [label=jxx]
-	23 -> 22
-	24 [label=5]
-	23 -> 24
-	25 [label=FuncDeclaration]
-	None -> 25
-	26 [label=T_int]
-	25 -> 26
-	27 [label=Identifier]
-	25 -> 27
-	28 [label=foo]
+	21 [label=s]
+	18 -> 21
+	22 [label=Assign]
+	8 -> 22
+	24 [label="="]
+	22 -> 24
+	23 [label=s]
+	24 -> 23
+	25 [label=0]
+	24 -> 25
+	26 [label=For]
+	8 -> 26
+	27 [label=for_init]
+	26 -> 27
+	28 [label=Assign]
 	27 -> 28
-	29 [label=Args]
-	25 -> 29
-	30 [label=arg]
-	29 -> 30
-	31 [label=T_int]
+	30 [label="="]
+	28 -> 30
+	29 [label=i]
+	30 -> 29
+	31 [label=0]
 	30 -> 31
-	32 [label=a]
-	30 -> 32
-	33 [label=arg]
-	29 -> 33
-	34 [label=T_int]
-	33 -> 34
-	35 [label=b]
-	33 -> 35
-	36 [label=Stmt]
-	25 -> 36
-	37 [label=VarDeclaration]
+	32 [label=Condition]
+	26 -> 32
+	34 [label="<"]
+	32 -> 34
+	33 [label=i]
+	34 -> 33
+	35 [label=5]
+	34 -> 35
+	36 [label=For_add]
+	26 -> 36
+	37 [label=Assign]
 	36 -> 37
-	38 [label=T_int]
-	37 -> 38
-	39 [label=Identifier]
+	39 [label="+="]
 	37 -> 39
-	40 [label=Assign]
+	38 [label=i]
+	39 -> 38
+	40 [label=1]
 	39 -> 40
-	42 [label="="]
-	40 -> 42
-	41 [label=i]
-	42 -> 41
-	43 [label=0]
-	42 -> 43
-	44 [label=Assign]
-	39 -> 44
-	46 [label="="]
-	44 -> 46
-	45 [label=s]
-	46 -> 45
-	47 [label=0]
-	46 -> 47
-	48 [label=Assign]
-	39 -> 48
-	50 [label="="]
-	48 -> 50
-	49 [label=j]
-	50 -> 49
-	51 [label=0]
+	41 [label=Stmt]
+	26 -> 41
+	42 [label=Assign]
+	41 -> 42
+	44 [label="+="]
+	42 -> 44
+	43 [label=s]
+	44 -> 43
+	45 [label=i]
+	44 -> 45
+	46 [label=Assign]
+	41 -> 46
+	48 [label="="]
+	46 -> 48
+	47 [label=j]
+	48 -> 47
+	49 [label=5]
+	48 -> 49
+	50 [label=while]
+	41 -> 50
+	51 [label=Condition]
 	50 -> 51
-	52 [label=Assign]
-	36 -> 52
-	54 [label="="]
-	52 -> 54
-	53 [label=s]
-	54 -> 53
-	55 [label=FunctionCall]
-	54 -> 55
-	56 [label=jiet]
+	53 [label=">"]
+	51 -> 53
+	52 [label=j]
+	53 -> 52
+	54 [label=0]
+	53 -> 54
+	55 [label=True]
+	50 -> 55
+	56 [label=Assign]
 	55 -> 56
-	57 [label=fun_call_arg]
-	55 -> 57
-	58 [label=a]
-	57 -> 58
-	59 [label=Assign]
-	36 -> 59
-	61 [label="+="]
-	59 -> 61
-	60 [label=s]
-	61 -> 60
-	62 [label=jxx]
-	61 -> 62
-	63 [label=Assign]
-	36 -> 63
-	65 [label="+="]
-	63 -> 65
-	64 [label=jxx]
-	65 -> 64
-	66 [label=1]
-	65 -> 66
-	67 [label=Assign]
-	36 -> 67
-	69 [label="+="]
-	67 -> 69
-	68 [label=s]
-	69 -> 68
+	58 [label="+="]
+	56 -> 58
+	57 [label=s]
+	58 -> 57
+	59 [label=j]
+	58 -> 59
+	60 [label=Assign]
+	55 -> 60
+	62 [label="-="]
+	60 -> 62
+	61 [label=j]
+	62 -> 61
+	63 [label=1]
+	62 -> 63
+	64 [label=return]
+	8 -> 64
+	65 [label=s]
+	64 -> 65
+	66 [label=VarDeclaration]
+	None -> 66
+	67 [label=T_int]
+	66 -> 67
+	68 [label=Identifier]
+	66 -> 68
+	69 [label=Assign]
+	68 -> 69
+	71 [label="="]
+	69 -> 71
 	70 [label=jxx]
-	69 -> 70
-	71 [label=return]
-	36 -> 71
-	72 [label=s]
+	71 -> 70
+	72 [label=5]
 	71 -> 72
+	73 [label=FuncDeclaration]
+	None -> 73
+	74 [label=T_int]
+	73 -> 74
+	75 [label=Identifier]
+	73 -> 75
+	76 [label=foo]
+	75 -> 76
+	77 [label=Args]
+	73 -> 77
+	78 [label=arg]
+	77 -> 78
+	79 [label=T_int]
+	78 -> 79
+	80 [label=a]
+	78 -> 80
+	81 [label=arg]
+	77 -> 81
+	82 [label=T_int]
+	81 -> 82
+	83 [label=b]
+	81 -> 83
+	84 [label=Stmt]
+	73 -> 84
+	85 [label=VarDeclaration]
+	84 -> 85
+	86 [label=T_int]
+	85 -> 86
+	87 [label=Identifier]
+	85 -> 87
+	88 [label=Assign]
+	87 -> 88
+	90 [label="="]
+	88 -> 90
+	89 [label=i]
+	90 -> 89
+	91 [label=0]
+	90 -> 91
+	92 [label=Assign]
+	87 -> 92
+	94 [label="="]
+	92 -> 94
+	93 [label=s]
+	94 -> 93
+	95 [label=0]
+	94 -> 95
+	96 [label=Assign]
+	87 -> 96
+	98 [label="="]
+	96 -> 98
+	97 [label=j]
+	98 -> 97
+	99 [label=0]
+	98 -> 99
+	100 [label=Assign]
+	84 -> 100
+	102 [label="="]
+	100 -> 102
+	101 [label=s]
+	102 -> 101
+	103 [label=FunctionCall]
+	102 -> 103
+	104 [label=jiet]
+	103 -> 104
+	105 [label=fun_call_arg]
+	103 -> 105
+	106 [label=a]
+	105 -> 106
+	107 [label=Assign]
+	84 -> 107
+	109 [label="+="]
+	107 -> 109
+	108 [label=s]
+	109 -> 108
+	110 [label=jxx]
+	109 -> 110
+	111 [label=Assign]
+	84 -> 111
+	113 [label="+="]
+	111 -> 113
+	112 [label=jxx]
+	113 -> 112
+	114 [label=10]
+	113 -> 114
+	115 [label=Assign]
+	84 -> 115
+	117 [label="+="]
+	115 -> 117
+	116 [label=s]
+	117 -> 116
+	118 [label=jxx]
+	117 -> 118
+	119 [label=return]
+	84 -> 119
+	120 [label=s]
+	119 -> 120
 }
