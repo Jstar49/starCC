@@ -19,7 +19,7 @@ class Check(object):
 
 	def Print(self,root_node):
 		for node in root_node.children:
-			print(node.key)
+			# print(node.key)
 			self.Print(node)
 
 	def CheckVarDeclaration(self,root_node,root_key):
@@ -28,17 +28,12 @@ class Check(object):
 		var_pool = {}
 		for node in root_node.children:
 			if node.key == 'VarDeclaration':
-				# print(node.key)
-				# root_node.children.remove(node)
 				varDec_list.append(node)
 				varDec_Node = node
-				# print(varDec_Node.children[0].key)
 				var_type = varDec_Node.children[0].key
 				varDec_Node.children.remove(varDec_Node.children[0])
-				# print(varDec_Node.children[0].key)
 				# 遍历 Identifier 节点
 				for iden_node in varDec_Node.children[0].children:
-					# print(iden_node.key)
 					# 设置变量类型
 					iden = iden_node.key
 					if iden_node.key == 'Assign':
@@ -52,7 +47,6 @@ class Check(object):
 					if root_key == 'root':
 						var_pool[iden]["SurvivalRange"] = "global"
 				continue
-			# self.CheckVarDeclaration(node)
 		for node in varDec_list:
 			root_node.children.remove(node)
 		return var_pool
@@ -85,7 +79,6 @@ class Check(object):
 		# for node in self.parse.grammar_tree.children:
 		# 首先检查全局变量
 		self.global_var_pool = self.CheckVarDeclaration(self.parse.grammar_tree,"root")
-		# self.Print(self.parse.grammar_tree)
 		self.CheckFunction(self.parse.grammar_tree)
-		print(self.global_var_pool)
-		print(self.fun_pool)
+		# print("debug check 83",self.global_var_pool)
+		# print("debug check 84",self.fun_pool)

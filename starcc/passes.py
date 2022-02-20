@@ -33,6 +33,8 @@ class Passes(object):
 			global_sym = sym
 			global_sym_type = self.global_var_pool[sym]["type"]
 			self.global_var_dict[global_sym] = {"symbol":global_sym,"type":global_sym_type,"index":0}
+			if "init_value" in self.global_var_pool[sym]:
+				self.global_var_dict[global_sym]["init_value"] = self.global_var_pool[sym]["init_value"]
 	# 初始化函数内定义的符号
 	def FunSymbolInit(self,func_d):
 		self.fun_symbol_dict = {}
@@ -40,11 +42,15 @@ class Passes(object):
 			func_sym = func_d["args"][sym]["arg_symbol"]
 			func_sym_type = func_d["args"][sym]["arg_type"]
 			self.fun_symbol_dict[func_sym] = {"symbol":func_sym,"type":func_sym_type,"index":0}
+			self.fun_symbol_dict[func_sym]['sym_type'] = 'fun_args'
 		for sym in func_d["var_pool"]:
+			# print("debug Passes 45",func_d["var_pool"][sym])
 			func_sym = sym
 			func_sym_type = func_d["var_pool"][sym]["type"]
 			self.fun_symbol_dict[func_sym] = {"symbol":func_sym,"type":func_sym_type,"index":0}
-		# print("fun_symbol_dict",self.fun_symbol_dict)
+			self.fun_symbol_dict[func_sym]['sym_type'] = 'fun_var'
+			if 'init_value' in func_d["var_pool"][sym]:
+				self.fun_symbol_dict[func_sym]['init_value'] = func_d["var_pool"][sym]["init_value"]
 
 	# 检查未定义的symbol
 	def CheckNode(self,node):
@@ -70,7 +76,7 @@ class Passes(object):
 		# 函数 insn 流清零
 		self.fun_insn_stream = []
 		# 函数代码块清零
-		self.func_code_block_index = 1
+		self.func_code_block_index = 1 if self.func_code_block_index==0 else self.func_code_block_index+1
 		# print(self.fun_pool[func]["type"])
 		func_type = self.fun_pool[func]["type"]
 		if func_type == "T_void":
@@ -80,6 +86,10 @@ class Passes(object):
 		# 添加 temp符号
 		func_ret_symbol = "op temp"
 		self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":func_type,"index":0}
+		# 函数返回值
+		# func_ret_symbol = "fun ret"
+		# self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":func_type,"index":0}
+		
 		# 添加函数头
 		func_head = [func + ":"]
 		func_head_insn_temp = Insn(func_head)
@@ -93,11 +103,13 @@ class Passes(object):
 
 	# 输出 FUNC insn
 	def Fun_insn_print(self):
-		for insn in self.fun_insn_stream:
-			if insn.insn_type in ["func_head","code_block"]:
-				print(insn.insn)
-			else:
-				print("\t",insn.insn)
+		# self.fun_pool[func]["insn"] = self.fun_insn_stream   
+		for func in self.fun_pool:
+			for insn in self.fun_pool[func]["insn"]:
+				if insn.insn_type in ["func_head","code_block"]:
+					print(insn.insn)
+				else:
+					print("\t",insn.insn)
 
 	# 符号迭代,传入符号 var_temp,返回该符号的下一次计数,var_temp_n
 	# 从标号0开始,但标号0禁止使用
@@ -132,19 +144,24 @@ class Passes(object):
 		# insn：父insn
 		# root_symbol：所属符号
 		"""
-		# print(node.key)
 		if node.key == "FunctionCall":
+			# 函数返回值
+			# func_ret_symbol = "fun ret"
+			# self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":func_type,"index":0}
+			
 			return self.Deal_functionCall(node)
 		elif len(node.children):
 			left = self.OpNode(node.children[0],insn,root_symbol)
-			# if len(node.children[1].children):
-			# print(node.key)
 			right = self.OpNode(node.children[1],insn,root_symbol)
 			op_type = node.key
 			symbol = self.Symbol(root_symbol)
 			insn_temp = [op_type,symbol,left,right]
-			# print(insn_temp)
 			Op_insn = Insn(insn_temp)
+			Op_insn.insn_type = 'Operation'
+			Op_insn.op0 = root_symbol
+			Op_insn.op1 = left.split("_")[0]
+			Op_insn.op2 = right.split("_")[0]
+
 			self.fun_insn_stream.append(Op_insn)
 			node.children = []
 			node.key = symbol
@@ -166,11 +183,23 @@ class Passes(object):
 		symbol_1 = self.SymbolNow(symbol)
 		symbol = self.Symbol(symbol)
 		insn_temp = []
+		assign_insn = None
 		if node.children[0].type  != '=':
 			insn_temp = [node.children[0].type,symbol,symbol_1,right]
+			assign_insn = Insn(insn_temp)
+			assign_insn.insn_type = "Operation"
+			assign_insn.op1 = symbol_1.split("_")[0]
+			assign_insn.op2 = right.split("_")[0]
+			# print("Passes debug 181",insn_temp,node.children[0].children[0].key)
 		else:
 			insn_temp = ["=",symbol,right]
-		assign_insn = Insn(insn_temp)
+			assign_insn = Insn(insn_temp)
+			assign_insn.insn_type = "assign"
+			assign_insn.op1 = right.split("_")[0]
+			# print("debug passes 197", insn_temp)
+		# assign_insn = Insn(insn_temp)
+		assign_insn.op0 = node.children[0].children[0].key
+
 		self.fun_insn_stream.append(assign_insn)
 		node.trans_flag = 1
 
@@ -201,6 +230,7 @@ class Passes(object):
 		if len(node.children[3].children):
 			insn_temp = ["beqz",for_condi,func_code_block_index]
 			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.op0 = for_condi.split("_")[0]
 			j_insn_temp.insn_type = "condi_jump"
 			self.fun_insn_stream.append(j_insn_temp)
 			# for 的行为语句
@@ -236,6 +266,7 @@ class Passes(object):
 		if node.children[-1].key == "True":
 			insn_temp = ["beqz",while_condi,func_code_block_index]
 			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.op0 = while_condi.split("_")[0]
 			j_insn_temp.insn_type = "condi_jump"
 			self.fun_insn_stream.append(j_insn_temp)
 			self.Node_2_IR(node.children[-1])
@@ -253,7 +284,7 @@ class Passes(object):
 		self.fun_insn_stream.append(code_bb_insn_temp)
 
 	# if节点
-	def Deal_if(self,node):
+	def Deal_if(self,node,root_node):
 		if_condi = self.Condi_Node(node.children[0].children[0])
 		func_code_block_index = self.Block_index()
 		has_else = False
@@ -277,6 +308,7 @@ class Passes(object):
 			if has_else or has_else_if:
 				insn_temp[2] = else_block
 			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.op0 = if_condi.split("_")[0]
 			j_insn_temp.insn_type = "condi_jump"
 			self.fun_insn_stream.append(j_insn_temp)
 			self.Node_2_IR(node.children[-1])
@@ -312,6 +344,7 @@ class Passes(object):
 			if has_else or has_else_if:
 				insn_temp[2] = else_block
 			j_insn_temp = Insn(insn_temp)
+			j_insn_temp.op0 = if_condi.split("_")[0]
 			j_insn_temp.insn_type = "condi_jump"
 			self.fun_insn_stream.append(j_insn_temp)
 			# 解析当前节点的语句
@@ -342,24 +375,43 @@ class Passes(object):
 		funars = []
 		for args_node in node.children[1].children:
 			# print(args_node.key)
-			args_symbol_temp =self.OpNode(args_node,None,"op temp")
+			args_index = "args temp"+str(node.children[1].children.index(args_node))
+			if args_index not in self.fun_symbol_dict:
+				func_ret_symbol = args_index
+				self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":self.fun_pool[func_name]['type'],"index":0}
+			# print("debug passes 377", args_node.key, args_index)
+			args_symbol_temp =self.OpNode(args_node,None,args_index)
 			# print(args_symbol_temp)
-			args_symbol = self.Symbol("op temp")
+			args_symbol = self.Symbol(args_index)
 			funars.append(args_symbol)
 			insn_temp = ["=",args_symbol,args_symbol_temp]
 			ret_insn_temp = Insn(insn_temp)
+			ret_insn_temp.insn_type = "assign"
+			ret_insn_temp.op0 = args_index
+			ret_insn_temp.op1 = args_symbol_temp.split("_")[0]
 			self.fun_insn_stream.append(ret_insn_temp)
-		for args_temp in funars:
-			insn_temp = ["=","args temp_"+str(funars.index(args_temp)),args_temp]
-			insn_temp = Insn(insn_temp)
-			self.fun_insn_stream.append(insn_temp)
+		# for args_temp in funars:
+		# 	insn_temp = ["=","args temp_"+str(funars.index(args_temp)),args_temp]
+		# 	insn_temp = Insn(insn_temp)
+		# 	insn_temp.insn_type = "assign"
+		# 	insn_temp.op0 = "args temp"+str(funars.index(args_temp))
+		# 	insn_temp.op1 = args_temp.split("_")[0]
+		# 	self.fun_insn_stream.append(insn_temp)
+		# 	func_ret_symbol = "args temp"+str(funars.index(args_temp))
+		# 	self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":self.fun_pool[func_name]['type'],"index":0}
 		func_call = ["call",func_name]
 		func_call_temp = Insn(func_call)
 		func_call_temp.insn_type = "FunctionCall"
 		self.fun_insn_stream.append(func_call_temp)
 		if self.fun_pool[func_name]['type'] != 'T_void':
-			# print("debug 279",self.fun_pool[func_name]['type'])
-			return func_name+" ret"
+			# print("debug 279 passes",self.fun_pool[func_name]['type'])
+			# 函数返回值
+			func_ret_symbol = "fun ret"
+			self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":self.fun_pool[func_name]['type'],"index":0}
+			func_ret_symbol = "args temp"
+			self.fun_symbol_dict[func_ret_symbol] = {"symbol":func_ret_symbol,"type":self.fun_pool[func_name]['type'],"index":0}
+
+			return "fun ret"
 
 	def Node_2_IR(self,root_node):
 		for node in root_node.children:
@@ -377,14 +429,18 @@ class Passes(object):
 				ret_symbol = self.Symbol("func ret")
 				insn_temp = ["=",ret_symbol,ret_symbol_temp]
 				ret_insn_temp = Insn(insn_temp)
+				ret_insn_temp.op0 = "func ret"
+				ret_insn_temp.op1 = ret_symbol_temp.split("_")[0]
+				ret_insn_temp.insn_type = "assign"
 				self.fun_insn_stream.append(ret_insn_temp)
 				insn_temp = ["return",ret_symbol]
 				ret_insn = Insn(insn_temp)
+				ret_insn.insn_type = "return"
 				self.fun_insn_stream.append(ret_insn)
 				node.trans_flag = 1
 			# 遇到if节点
 			elif node.key in ['if']:
-				self.Deal_if(node)
+				self.Deal_if(node,root_node)
 			# 遇到while节点
 			elif node.key == 'while':
 				self.Deal_while(node)
@@ -407,10 +463,11 @@ class Passes(object):
 
 	def FunIteration(self):
 		for func in self.fun_pool:
-			print(func)
+			# print(func)
 			# 函数符号初始化
 			self.FunSymbolInit(self.fun_pool[func])
-			print(self.fun_pool[func])
+			self.fun_pool[func]['fun_symbol_dict'] = self.fun_symbol_dict
+			# print(self.fun_pool[func])
 			# 检查函数是否用到了未定义的符号
 			# print(self.fun_pool[func]["node"].children[-1].key)
 			if self.fun_pool[func]["node"].children[-1].key == 'Stmt':
@@ -419,13 +476,14 @@ class Passes(object):
 			self.FunInit(func)
 			if self.fun_pool[func]["node"].children[-1].key == 'Stmt':
 				self.Node_2_IR(self.fun_pool[func]["node"].children[3])
-			self.Fun_insn_print()
+			# self.Fun_insn_print()
 			self.fun_pool[func]["insn"] = self.fun_insn_stream           
-			print("Func exit")
-			print(self.fun_pool[func])
+			# print("Func exit")
+			# print(self.fun_pool[func])
 
 	# 主函数
 	def main(self):
 		# 全局符号
 		self.GlobalSymbolInit()
 		self.FunIteration()
+		# self.Fun_insn_print()
